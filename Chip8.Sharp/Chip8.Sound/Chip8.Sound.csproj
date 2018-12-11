@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chip8.Core\Chip8.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SDL" Version="1.2.15.16" />
+  </ItemGroup>
+</Project>

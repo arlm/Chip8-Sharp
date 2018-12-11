@@ -1,0 +1,47 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.Core", "Chip8.Core\Chip8.Core.csproj", "{13F0FFE7-D3E4-4F12-84EF-4E66E35E9188}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.CPU", "Chip8.CPU\Chip8.CPU.csproj", "{D0000A6B-1208-474E-A4DC-9C3AAE97AA4B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.Sound", "Chip8.Sound\Chip8.Sound.csproj", "{601041D6-9802-4AC9-B289-68BE51AE29A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8", "Chip8\Chip8.csproj", "{D1BA2BCC-32C5-47B1-AF42-633124D63679}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05D2CF24-E03F-4D32-906B-641573A16429}"
+	ProjectSection(SolutionItems) = preProject
+		CHIP-8 Specs.md = CHIP-8 Specs.md
+		CHIP-8 OpCodes.md = CHIP-8 OpCodes.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.Tests", "Chip8.Tests\Chip8.Tests.csproj", "{ACF18D83-5BD5-4AA9-B794-711E069719B5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13F0FFE7-D3E4-4F12-84EF-4E66E35E9188}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13F0FFE7-D3E4-4F12-84EF-4E66E35E9188}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13F0FFE7-D3E4-4F12-84EF-4E66E35E9188}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13F0FFE7-D3E4-4F12-84EF-4E66E35E9188}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0000A6B-1208-474E-A4DC-9C3AAE97AA4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0000A6B-1208-474E-A4DC-9C3AAE97AA4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0000A6B-1208-474E-A4DC-9C3AAE97AA4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0000A6B-1208-474E-A4DC-9C3AAE97AA4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{601041D6-9802-4AC9-B289-68BE51AE29A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{601041D6-9802-4AC9-B289-68BE51AE29A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{601041D6-9802-4AC9-B289-68BE51AE29A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{601041D6-9802-4AC9-B289-68BE51AE29A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1BA2BCC-32C5-47B1-AF42-633124D63679}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1BA2BCC-32C5-47B1-AF42-633124D63679}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1BA2BCC-32C5-47B1-AF42-633124D63679}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1BA2BCC-32C5-47B1-AF42-633124D63679}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACF18D83-5BD5-4AA9-B794-711E069719B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACF18D83-5BD5-4AA9-B794-711E069719B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACF18D83-5BD5-4AA9-B794-711E069719B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACF18D83-5BD5-4AA9-B794-711E069719B5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
