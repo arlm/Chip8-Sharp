@@ -5,7 +5,6 @@ namespace Chip8.Core
 {
     public partial class CPU
     {
-
         // The CHIP-8 has 35 opcodes which are all two bytes long.
         ushort opcode;
 
@@ -56,6 +55,8 @@ namespace Chip8.Core
 
         public bool DrawFlag { get; set; }
 
+        Random rand = new Random();
+
         // Initialize registers and memory once
         public CPU()
         {
@@ -72,9 +73,9 @@ namespace Chip8.Core
             // Clear memory
 
             // Load fontset
-            for (int i = 0; i < 80; ++i)
+            for (int index = 0; index < 80; ++index)
             {
-                memory[i] = CHIP8_FONTSET[i];
+                memory[index] = CHIP8_FONTSET[index];
             }
 
             // Reset timers
@@ -107,30 +108,25 @@ namespace Chip8.Core
             opcode = (ushort)((memory[pc] << 8) | memory[pc + 1]);
 
             // Decode Opcode
+            int x = (opcode & 0x0F00) >> 8;
+            int y = (opcode & 0x00F0) >> 4;
+
+            byte vx = V[x];
+            byte vy = V[y];
+
+            byte nn = (byte)(opcode & 0x00FF);
+            ushort nnn = (ushort)(opcode & 0x0FFF);
+
             switch (opcode & 0xF000)
             {
                 // In some cases we can not rely solely on the first four bits to see what the opcode means.
                 // For example, 0x00E0 and 0x00EE both start with 0x00.
                 // In this case we add an additional switch and compare the last four bits:
                 case 0x0000:
-                    switch (opcode & 0x000F)
+                    switch (nn)
                     {
                         // 0x00E0: Clears the screen
-                        case 0x0000:
-
-                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
-                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
-                            // (in which case you need to store the program counter in the stack).
-                            // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
-
-                            break;
-
-                        // 0x0033: Stores the Binary-coded decimal representation of VX at the addresses I, I plus 1, and I plus 2
-                        case 0x0003:
-                            memory[I] = (byte)(V[(opcode & 0x0F00) >> 8] / 100);
-                            memory[I + 1] = (byte)((V[(opcode & 0x0F00) >> 8] / 10) % 10);
-                            memory[I + 2] = (byte)((V[(opcode & 0x0F00) >> 8] % 100) % 10);
+                        case 0x00E0:
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -139,38 +135,8 @@ namespace Chip8.Core
                             pc += 2;
                             break;
 
-                        // 0x8XY4: This opcode adds the value of VY to VX.
-                        // Register VF is set to 1 when there is a carry and set to 0 when there isn’t.
-                        case 0x0004:
-                            int VX = (opcode & 0x0F00) >> 8;
-                            int VY = (opcode & 0x00F0) >> 4;
-
-                            if (V[VY] > (0xFF - V[VX]))
-                            {
-                                // Carry
-                                // Because the register can only store values from 0 to 255 (8 bit value),
-                                // it means that if the sum of VX and VY is larger than 255,
-                                // it can’t be stored in the register (or actually it starts counting from 0 again).
-                                // If the sum of VX and VY is larger than 255, 
-                                // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
-                                V[0xF] = 1;
-                            }
-                            else
-                            {
-                                V[0xF] = 0;
-                            }
-
-                            V[VX] += V[VY];
-
-                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
-                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
-                            // (in which case you need to store the program counter in the stack).
-                            // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
-                            break;
-
-                        // 0x00EE: Returns from subrouti
-                        case 0x000E:
+                        // 0x00EE: Returns from subroutine
+                        case 0x0EE:
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -179,9 +145,17 @@ namespace Chip8.Core
                             pc += 2; break;
 
                         default:
-                            Console.WriteLine($"Unknown opcode: {opcode:X}");
+                            Console.WriteLine($"Illegal call to RCA 1802 program: {opcode:X}");
                             break;
                     }
+                    break;
+
+                // 0x1NNN: Jumps to address NNN.
+                case 0x1000:
+                    // Now that we have stored the program counter, we can set it to the address NNN.
+                    // Remember, because we’re calling a subroutine at a specific address, 
+                    // you should not increase the program counter by two.
+                    pc = nnn;
                     break;
 
                 // 0x2NNN: This opcode calls the subroutine at address NNN.
@@ -197,12 +171,75 @@ namespace Chip8.Core
                     // Now that we have stored the program counter, we can set it to the address NNN.
                     // Remember, because we’re calling a subroutine at a specific address, 
                     // you should not increase the program counter by two.
-                    pc = (ushort)(opcode & 0x0FFF);
+                    pc = nnn;
                     break;
 
-                // 0xANNN: Sets I to the address NNN
-                case 0xA000:
-                    I = (ushort)(opcode & 0x0FFF);
+                // 0x3XNN: Skips the next instruction if VX equals NN.
+                // (Usually the next instruction is a jump to skip a code block)    
+                case 0x3000:
+                    if (vx == nn)
+                    {
+                        // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                        // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                        // (in which case you need to store the program counter in the stack).
+                        // If the next opcode should be skipped, increase the program counter by four.
+                        pc += 4;
+                    }
+                    else
+                    {
+                        // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                        // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                        // (in which case you need to store the program counter in the stack).
+                        // If the next opcode should be skipped, increase the program counter by four.
+                        pc += 2;
+                    }
+                    break;
+
+                // 0x4XNN: Skips the next instruction if VX doesn't equal NN.
+                // (Usually the next instruction is a jump to skip a code block)    
+                case 0x4000:
+                    if (vx != nn)
+                    {
+                        // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                        // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                        // (in which case you need to store the program counter in the stack).
+                        // If the next opcode should be skipped, increase the program counter by four.
+                        pc += 4;
+                    }
+                    else
+                    {
+                        // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                        // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                        // (in which case you need to store the program counter in the stack).
+                        // If the next opcode should be skipped, increase the program counter by four.
+                        pc += 2;
+                    }
+                    break;
+
+                // 0x5XY0: Skips the next instruction if VX equals VY.
+                // (Usually the next instruction is a jump to skip a code block)    
+                case 0x5000:
+                    if (vx == vy)
+                    {
+                        // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                        // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                        // (in which case you need to store the program counter in the stack).
+                        // If the next opcode should be skipped, increase the program counter by four.
+                        pc += 4;
+                    }
+                    else
+                    {
+                        // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                        // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                        // (in which case you need to store the program counter in the stack).
+                        // If the next opcode should be skipped, increase the program counter by four.
+                        pc += 2;
+                    }
+                    break;
+
+                // 0x6XNN: Sets VX to NN.
+                case 0x6000:
+                    V[x] = nn;
 
                     // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                     // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -211,11 +248,235 @@ namespace Chip8.Core
                     pc += 2;
                     break;
 
+                // 0x7XNN: Adds NN to VX. (Carry flag is not changed)
+                case 0x7000:
+                    V[x] += vy;
+
+                    // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                    // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                    // (in which case you need to store the program counter in the stack).
+                    // If the next opcode should be skipped, increase the program counter by four.
+                    pc += 2;
+                    break;
+
+                case 0x8000:
+                    {
+                        switch (opcode & 0x000F)
+                        {
+                            // 0x8XY0: Sets VX to the value of VY.
+                            case 0x0000:
+                                V[x] = vy;
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            // 0x8XY1: Sets VX to VX or VY. (Bitwise OR operation)
+                            case 0x0001:
+                                V[x] |= vy;
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            // 0x8XY2: Sets VX to VX and VY. (Bitwise AND operation)
+                            case 0x0002:
+                                V[x] &= vy;
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            // 0x8XY3: Sets VX to VX xor VY.
+                            case 0x0003:
+                                V[x] ^= vy;
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            // 0x8XY4: This opcode adds the value of VY to VX.
+                            // Register VF is set to 1 when there is a carry and set to 0 when there isn’t.
+                            case 0x0004:
+                                if (vy > (0xFF - vx))
+                                {
+                                    // Carry
+                                    // Because the register can only store values from 0 to 255 (8 bit value),
+                                    // it means that if the sum of VX and VY is larger than 255,
+                                    // it can’t be stored in the register (or actually it starts counting from 0 again).
+                                    // If the sum of VX and VY is larger than 255, 
+                                    // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
+                                    V[0xF] = 1;
+                                }
+                                else
+                                {
+                                    V[0xF] = 0;
+                                }
+
+                                V[x] += vy;
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            // 0x8XY5: VY is subtracted from VX. VF is set to 0 when
+                            // there's a borrow, and 1 when there isn't. 
+                            case 0x0005:
+                                if (vy > vx)
+                                {
+                                    // Carry
+                                    // Because the register can only store values from 0 to 255 (8 bit value),
+                                    // it means that if the sum of VX and VY is larger than 255,
+                                    // it can’t be stored in the register (or actually it starts counting from 0 again).
+                                    // If the sum of VX and VY is larger than 255, 
+                                    // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
+                                    V[0xF] = 1;
+                                }
+                                else
+                                {
+                                    V[0xF] = 0;
+                                }
+
+                                V[x] -= vy;
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            // 0x8XY6: Stores the least significant bit of VX in VF 
+                            // and then shifts VX to the right by 1.
+                            case 0x0006:
+                                V[0xF] = (byte)(vx & 0x01);
+                                V[x] >>= 1;
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            // 0x8XY7: Sets VX to VY minus VX. VF is set to 0 when 
+                            // there's a borrow, and 1 when there isn't.
+                            case 0x0007:
+                                if (vx > vy)
+                                {
+                                    // Carry
+                                    // Because the register can only store values from 0 to 255 (8 bit value),
+                                    // it means that if the sum of VX and VY is larger than 255,
+                                    // it can’t be stored in the register (or actually it starts counting from 0 again).
+                                    // If the sum of VX and VY is larger than 255, 
+                                    // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
+                                    V[0xF] = 1;
+                                }
+                                else
+                                {
+                                    V[0xF] = 0;
+                                }
+
+                                V[x] = (byte)(vy - vx);
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            // 0x8XYE: Stores the most significant bit of VX in VF  
+                            // and then shifts VX to the left by 1.
+                            case 0x000E:
+                                V[0xF] = (byte)(vx & 0x80);
+                                V[x] <<= 1;
+
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                                break;
+
+                            default:
+                                Console.WriteLine($"Unknown opcode: {opcode:X}");
+                                break;
+                        }
+                        break;
+                    }
+
+                // 0x9XY0: Skips the next instruction if VX doesn't equal VY.
+                // (Usually the next instruction is a jump to skip a code block)    
+                case 0x9000:
+                    if (vx != vy)
+                    {
+                        // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                        // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                        // (in which case you need to store the program counter in the stack).
+                        // If the next opcode should be skipped, increase the program counter by four.
+                        pc += 4;
+                    }
+                    else
+                    {
+                        // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                        // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                        // (in which case you need to store the program counter in the stack).
+                        // If the next opcode should be skipped, increase the program counter by four.
+                        pc += 2;
+                    }
+                    break;
+
+                // 0xANNN: Sets I to the address NNN
+                case 0xA000:
+                    I = nnn;
+
+                    // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                    // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                    // (in which case you need to store the program counter in the stack).
+                    // If the next opcode should be skipped, increase the program counter by four.
+                    pc += 2;
+                    break;
+
+                // 0xBNNN: Jumps to the address NNN plus V0.
+                case 0xB000:
+                    // Now that we have stored the program counter, we can set it to the address NNN.
+                    // Remember, because we’re calling a subroutine at a specific address, 
+                    // you should not increase the program counter by two.
+                    pc = (ushort)(V[0] + nnn);
+                    break;
+
+                // 0xCXNN: Sets VX to the result of a bitwise and operation on a random number
+                // (Typically: 0 to 255) and NN.
+                case 0xC000:
+                    V[x] = (byte)(rand.Next(0, 255) & nn);
+
+                    // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                    // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                    // (in which case you need to store the program counter in the stack).
+                    // If the next opcode should be skipped, increase the program counter by four.
+                    pc += 2;
+                    break;
+
+                // 0xDXYN: Draws a sprite at coordinate (VX, VY) 
                 case 0xD000:
                     {
                         // Fetch the position and height of the sprite
-                        ushort x = V[(opcode & 0x0F00) >> 8];
-                        ushort y = V[(opcode & 0x00F0) >> 4];
                         ushort height = (ushort)(opcode & 0x000F);
 
                         ushort pixel;
@@ -236,7 +497,7 @@ namespace Chip8.Core
                                 // Note that (0x80 >> column) scan through the byte, one bit at the time
                                 if ((pixel & (0x80 >> column)) != 0)
                                 {
-                                    var currentPixel = x + column + ((y + row) * 64);
+                                    var currentPixel = vx + column + ((vy + row) * 64);
 
                                     // Check if the pixel on the display is set to 1.
                                     //  If it is set, we need to register the collision by setting the VF register
@@ -265,9 +526,9 @@ namespace Chip8.Core
                 case 0xE000:
                     switch (opcode & 0x00FF)
                     {
-                        // EX9E: Skips the next instruction if the key stored in VX is pressed
+                        // 0xEX9E: Skips the next instruction if the key stored in VX is pressed
                         case 0x009E:
-                            if (key[V[(opcode & 0x0F00) >> 8]] != 0)
+                            if (key[vx] != 0)
                             {
                                 pc += 4;
                             }
@@ -280,6 +541,175 @@ namespace Chip8.Core
                                 pc += 2;
                             }
                             break;
+
+                        // 0xEX9E: Skips the next instruction if the key stored in VX is pressed
+                        case 0x00A1:
+                            if (key[vx] == 0)
+                            {
+                                pc += 4;
+                            }
+                            else
+                            {
+                                // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                                // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                                // (in which case you need to store the program counter in the stack).
+                                // If the next opcode should be skipped, increase the program counter by four.
+                                pc += 2;
+                            }
+                            break;
+
+                        default:
+                            Console.WriteLine($"Unknown opcode: {opcode:X}");
+                            break;
+                    }
+                    break;
+
+                case 0xF000:
+                    switch (opcode & 0x00FF)
+                    {
+                        // 0xFX07: Sets VX to the value of the delay timer.
+                        case 0x0007:
+                            V[x] = delay_timer;
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        // 0xFX0A: A key press is awaited, and then stored in VX.
+                        // (Blocking Operation. All instruction halted until next key event)
+                        case 0x000A:
+                            bool keyPressed = false;
+
+                            while (!keyPressed)
+                            {
+                                foreach (var item in key)
+                                {
+                                    keyPressed |= item > 0;
+
+                                    if (keyPressed)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        // 0xFX15: Sets the delay timer to VX.
+                        case 0x0015:
+                            delay_timer = vx;
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        // 0xFX18: Sets the sound timer to VX.
+                        case 0x0018:
+                            sound_timer = vx;
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        // 0xFX1E: Adds VX to I.
+                        // VF is set to 1 when there is a range overflow (I+VX>0xFFF), and to 0 when there isn't.
+                        case 0x001E:
+                            if (I + vx > 0xFFF)
+                            {
+                                // Carry
+                                // Because the register can only store values from 0 to 255 (8 bit value),
+                                // it means that if the sum of VX and VY is larger than 255,
+                                // it can’t be stored in the register (or actually it starts counting from 0 again).
+                                // If the sum of VX and VY is larger than 255, 
+                                // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
+                                V[0xF] = 1;
+                            }
+                            else
+                            {
+                                V[0xF] = 0;
+                            }
+
+                            I += vx;
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        // 0xFX29: Sets I to the location of the sprite for the character in VX.
+                        // Characters 0x0-0xF are represented by a 4x5 font.
+                        case 0x0029:
+                            I = memory[vx];
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        // 0x0033: Stores the Binary-coded decimal representation of VX at the addresses I, I plus 1, and I plus 2
+                        case 0x0033:
+                            memory[I] = (byte)(vx / 100);
+                            memory[I + 1] = (byte)(vx / 10 % 10);
+                            memory[I + 2] = (byte)(vx % 100 % 10);
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        // 0xFX55: Stores V0 to VX (including VX) in memory starting at address I.
+                        // The offset from I is increased by 1 for each value written, but I itself is left unmodified
+                        case 0x0055:
+                            for (int index = 0; I <= index; ++index)
+                            {
+                                memory[I + index] = V[index];
+                            }
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        // 0xFX65: Fills V0 to VX (including VX) with values from memory starting at address I.
+                        // The offset from I is increased by 1 for each value written, but I itself is left unmodified
+                        case 0x0065:
+                            for (int index = 0; I <= index; ++index)
+                            {
+                                V[index] = memory[I + index];
+                            }
+
+                            // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
+                            // This is true unless you jump to a certain address in the memory or if you call a subroutine
+                            // (in which case you need to store the program counter in the stack).
+                            // If the next opcode should be skipped, increase the program counter by four.
+                            pc += 2;
+                            break;
+
+                        default:
+                            Console.WriteLine($"Unknown opcode: {opcode:X}");
+                            break;
                     }
                     break;
 
@@ -289,7 +719,6 @@ namespace Chip8.Core
             }
 
             // Execute Opcode
-
 
             // Update timers
             if (delay_timer > 0)
