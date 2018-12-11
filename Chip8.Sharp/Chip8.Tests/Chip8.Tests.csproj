@@ -38,17 +38,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Chip8.CPU\Chip8.CPU.csproj">
-      <Project>{D0000A6B-1208-474E-A4DC-9C3AAE97AA4B}</Project>
-      <Name>Chip8.CPU</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Chip8.Core\Chip8.Core.csproj">
       <Project>{13F0FFE7-D3E4-4F12-84EF-4E66E35E9188}</Project>
       <Name>Chip8.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Chip8.Sound\Chip8.Sound.csproj">
-      <Project>{601041D6-9802-4AC9-B289-68BE51AE29A8}</Project>
-      <Name>Chip8.Sound</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

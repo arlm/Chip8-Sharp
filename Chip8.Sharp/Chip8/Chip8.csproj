@@ -7,8 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chip8.Core\Chip8.Core.csproj" />
-    <ProjectReference Include="..\Chip8.CPU\Chip8.CPU.csproj" />
-    <ProjectReference Include="..\Chip8.Sound\Chip8.Sound.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SDL" Version="1.2.15.16" />
