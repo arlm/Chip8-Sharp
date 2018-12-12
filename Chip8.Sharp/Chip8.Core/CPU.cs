@@ -89,12 +89,8 @@ namespace Chip8.Core
             using (var stream = File.OpenRead(fileName))
             {
                 var buffer = new byte[MAX_BUFFER_SIZE];
-                var bufferSize = stream.Read(buffer, 0, MAX_BUFFER_SIZE);
-
-                for (int index = 0; index < bufferSize; ++index)
-                {
-                    memory[index + 0x200] = buffer[index];
-                }
+                var bufferSize = stream.Read(memory, 0x200, MAX_BUFFER_SIZE);
+                Console.WriteLine($"Loaded {bufferSize} bytes");
             }
         }
 
