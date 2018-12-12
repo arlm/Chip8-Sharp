@@ -7,8 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chip8.Core\Chip8.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="SDL" Version="1.2.15.16" />
+    <ProjectReference Include="..\..\SDL2-CS\SDL2-CS.Core.csproj" />
   </ItemGroup>
 </Project>
