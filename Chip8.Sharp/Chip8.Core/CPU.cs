@@ -9,7 +9,7 @@ namespace Chip8.Core
         ushort opcode;
 
         // The CHIP-8 has 4K memory in total
-        readonly byte[] memory = new byte[4096];
+        readonly byte[] memory = new byte[0x1000];
 
         // The CHIP-8 has 15 8-bit general purpose registers named V0, V1 up to VE.
         // The 16th register is used  for the ‘carry flag’.
@@ -727,6 +727,7 @@ namespace Chip8.Core
                 if (sound_timer == 1)
                 {
                     Console.WriteLine("BEEP!");
+                    //Console.Beep(500, milliseconds);
                 }
 
                 --sound_timer;
