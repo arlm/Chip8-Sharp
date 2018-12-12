@@ -736,7 +736,7 @@ namespace Chip8.Core
 
         public void SetKeys()
         {
-
+            // TODO: implement setkeys
         }
     }
 }

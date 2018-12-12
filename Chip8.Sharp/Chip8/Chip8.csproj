@@ -9,4 +9,15 @@
     <ProjectReference Include="..\Chip8.Core\Chip8.Core.csproj" />
     <ProjectReference Include="..\..\SDL2-CS\SDL2-CS.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="progs\pong2.c8">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="progs\invaders.c8">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="progs\tetris.c8">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

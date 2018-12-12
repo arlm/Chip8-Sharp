@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Chip8.Core;
 using SDL2;
 
@@ -31,7 +32,7 @@ namespace Chip8
             myChip8 = new CPU();
 
             // Load (copy) the game into the memory
-            myChip8.LoadGame("pong2.c8");
+            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}pong2.c8");
 
             // Emulation loop
             for (; ; )
