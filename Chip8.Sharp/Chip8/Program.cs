@@ -1,37 +1,53 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Chip8.Core;
 using SDL2;
 
 namespace Chip8
 {
+    public enum KeyPressSurfaces
+    {
+        Default,
+        Up,
+        Down,
+        Left,
+        Right,
+        Count
+    }
+
     class Program
     {
         // In this example we assume you will create a separate class to handle the opcodes.
         private static CPU myChip8;
 
-        private const int WIDTH = 1024;
-        private const int HEIGHT = 768;
-        private static Random r = new Random();
+        private const int WIDTH = 640;
+        private const int HEIGHT = 480;
 
-        private static IntPtr rendererPtr;
-        private static IntPtr windowPtr;
-        private static IntPtr screenSurfacePtr;
-        private static IntPtr helloWorldPtr;
+        private static readonly IntPtr[] surfacesPtr = new IntPtr[(int)KeyPressSurfaces.Count];
+        private static IntPtr currentSurfacePtr;
+
+        private static SDLDriver driver = new SDLDriver();
 
         static int Main(string[] args)
         {
-            if (!Init())
+            if (!driver.Init(WIDTH, HEIGHT))
             {
                 Console.WriteLine("Failed to initialize!");
                 return -1;
             }
 
             // Setup the graphics (window size, display mode, etc) 
-            if (!SetupGraphics())
+            if (!driver.SetupGraphics($"assets{Path.DirectorySeparatorChar}CHIP-8.logo.bmp"))
+            {
+                Console.WriteLine("Failed to setup graphics!");
+                return -2;
+            }
+
+            if (!LoadMedia())
             {
                 Console.WriteLine("Failed to load media!");
-                return -2;
+                return -3;
             }
 
             //Main loop flag
@@ -40,6 +56,10 @@ namespace Chip8
             //Event handler
             SDL.SDL_Event evt;
 
+            //Set default current surface
+            currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default];
+            Console.WriteLine("Loaded...");
+
             //While application is running
             while (!quit)
             {
@@ -47,21 +67,66 @@ namespace Chip8
                 while (SDL.SDL_PollEvent(out evt) != 0)
                 {
                     //User requests quit
-                    quit |= evt.type == SDL.SDL_EventType.SDL_QUIT;
+                    if (evt.type == SDL.SDL_EventType.SDL_QUIT)
+                    {
+                        Console.WriteLine("Quitting...");
+                        quit = true;
+                    }
+                    //User presses a key
+                    else if (evt.type == SDL.SDL_EventType.SDL_KEYDOWN)
+                    {
+                        //Select surfaces based on key press
+                        switch (evt.key.keysym.sym)
+                        {
+                            case SDL.SDL_Keycode.SDLK_ESCAPE:
+                                Console.WriteLine("ESCAPE");
+                                Console.WriteLine("Quitting...");
+                                quit = true;
+                                break;
+
+                            case SDL.SDL_Keycode.SDLK_UP:
+                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Up];
+                                Console.WriteLine("UP");
+                                Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                break;
+
+                            case SDL.SDL_Keycode.SDLK_DOWN:
+                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Down];
+                                Console.WriteLine("DOWN");
+                                Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                break;
+
+                            case SDL.SDL_Keycode.SDLK_LEFT:
+                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Left];
+                                Console.WriteLine("LEFT");
+                                Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                break;
+
+                            case SDL.SDL_Keycode.SDLK_RIGHT:
+                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Right];
+                                Console.WriteLine("RIGHT");
+                                Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                break;
+
+                            default:
+                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default];
+                                Console.WriteLine("Default Key Press");
+                                break;
+                        }
+                    }
                 }
 
-                //Apply the image
-                SDL.SDL_BlitSurface(helloWorldPtr, IntPtr.Zero, screenSurfacePtr, IntPtr.Zero);
-
-                //Update the surface
-                SDL.SDL_UpdateWindowSurface(windowPtr);
-
+                if (!driver.DrawSurface(currentSurfacePtr))
+                {
+                    Console.WriteLine("Failed to draw surface!");
+                }
             }
 
             Quit();
 
             return 0;
 
+            /*
             // Setup the input system (register input callbacks)
             SetupInput();
 
@@ -95,74 +160,23 @@ namespace Chip8
                 // 60 Hz = 1000 ms /60 = 16.666 ms  => approx. 17 ms (17 ms * 60 = 1020 ms)
                 SDL.SDL_Delay(17);
             }
+            */
         }
 
-        private static bool Init()
+        private static void Quit()
         {
-            //Initialization flag
-            bool result = true;
+            currentSurfacePtr = IntPtr.Zero;
 
-            //Initialize SDL
-            if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
+            for (int index = 0; index < (int)KeyPressSurfaces.Count; ++index)
             {
-                Console.WriteLine($"SDL could not initialize! SDL_Error: {SDL.SDL_GetError()}");
-
-                result = false;
-            }
-            else
-            {
-                //Create window
-                windowPtr = SDL.SDL_CreateWindow("SDL Tutorial", SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN);
-
-                if (windowPtr == IntPtr.Zero)
+                if (surfacesPtr[index] != IntPtr.Zero)
                 {
-                    Console.WriteLine("Window could not be created! SDL_Error: {SDL.SDL_GetError()}");
-                    result = false;
-                }
-                else
-                {
-                    //Get window surface
-                    screenSurfacePtr = SDL.SDL_GetWindowSurface(windowPtr);
+                    SDL.SDL_FreeSurface(surfacesPtr[index]);
+                    surfacesPtr[index] = IntPtr.Zero;
                 }
             }
 
-            return result;
-        }
-
-        private static bool SetupGraphics()
-        {
-            //Initialization flag
-            bool result = true && LoadMedia($"assets{Path.DirectorySeparatorChar}CHIP-8.logo.bmp");
-
-            const int INTERVAL = 150;
-            int counter = 2500;
-            SDL.SDL_Event evt;
-
-            //While application is running
-            while (counter > 0)
-            {
-                //Handle events on queue
-                while (SDL.SDL_PollEvent(out evt) != 0)
-                {
-                    //User requests quit
-                    if (evt.type == SDL.SDL_EventType.SDL_QUIT)
-                    {
-                        Quit();
-                        return false;
-                    }
-                }
-
-                //Apply the image
-                SDL.SDL_BlitSurface(helloWorldPtr, IntPtr.Zero, screenSurfacePtr, IntPtr.Zero);
-
-                //Update the surface
-                SDL.SDL_UpdateWindowSurface(windowPtr);
-
-                SDL.SDL_Delay(INTERVAL);
-                counter -= INTERVAL;
-            }
-
-            return result;
+            driver.Quit();
         }
 
         private static void SetupInput()
@@ -172,7 +186,7 @@ namespace Chip8
                 switch (evt.type)
                 {
                     case SDL.SDL_EventType.SDL_QUIT:
-                        Quit();
+                        driver.Quit();
                         break;
 
                     case SDL.SDL_EventType.SDL_SENSORUPDATE:
@@ -232,34 +246,52 @@ namespace Chip8
             }
         }
 
-        private static void Quit()
-        {
-            SDL.SDL_FreeSurface(helloWorldPtr);
-            SDL.SDL_DestroyRenderer(rendererPtr);
-            SDL.SDL_DestroyWindow(windowPtr);
-            SDL.SDL_Quit();
-        }
-
-        private static void DrawGraphics()
-        {
-            LoadMedia($"assets{Path.DirectorySeparatorChar}CHIP-8.logo.bmp");
-        }
-
-        private static bool LoadMedia(string fileName)
+        static bool LoadMedia()
         {
             //Loading success flag
-            bool result = true;
+            bool success = true;
 
-            //Load splash image
-            helloWorldPtr = SDL.SDL_LoadBMP(fileName);
-
-            if (helloWorldPtr == IntPtr.Zero)
+            //Load default surface
+            surfacesPtr[(int)KeyPressSurfaces.Default] = driver.LoadSurface("assets/press.bmp");
+            if (surfacesPtr[(int)KeyPressSurfaces.Default] == IntPtr.Zero)
             {
-                Console.WriteLine($"Unable to load image {fileName}! SDL Error: {SDL.SDL_GetError()}");
-                result = false;
+                Console.WriteLine("Failed to load default image!");
+                success = false;
             }
 
-            return result;
+            //Load up surface
+            surfacesPtr[(int)KeyPressSurfaces.Up] = driver.LoadSurface("assets/up.bmp");
+            if (surfacesPtr[(int)KeyPressSurfaces.Up] == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to load up image!");
+                success = false;
+            }
+
+            //Load down surface
+            surfacesPtr[(int)KeyPressSurfaces.Down] = driver.LoadSurface("assets/down.bmp");
+            if (surfacesPtr[(int)KeyPressSurfaces.Down] == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to load down image!");
+                success = false;
+            }
+
+            //Load left surface
+            surfacesPtr[(int)KeyPressSurfaces.Left] = driver.LoadSurface("assets/left.bmp");
+            if (surfacesPtr[(int)KeyPressSurfaces.Left] == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to load left image!");
+                success = false;
+            }
+
+            //Load right surface
+            surfacesPtr[(int)KeyPressSurfaces.Right] = driver.LoadSurface("assets/right.bmp");
+            if (surfacesPtr[(int)KeyPressSurfaces.Right] == IntPtr.Zero)
+            {
+                Console.WriteLine("Failed to load right image!");
+                success = false;
+            }
+
+            return success;
         }
     }
 }
