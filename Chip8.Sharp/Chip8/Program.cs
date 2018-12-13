@@ -16,14 +16,51 @@ namespace Chip8
 
         private static IntPtr rendererPtr;
         private static IntPtr windowPtr;
+        private static IntPtr screenSurfacePtr;
+        private static IntPtr helloWorldPtr;
 
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
-
-            var result = SDL.SDL_Init(SDL.SDL_INIT_EVERYTHING);
+            if (!Init())
+            {
+                Console.WriteLine("Failed to initialize!");
+                return -1;
+            }
 
             // Setup the graphics (window size, display mode, etc) 
-            SetupGraphics();
+            if (!SetupGraphics())
+            {
+                Console.WriteLine("Failed to load media!");
+                return -2;
+            }
+
+            //Main loop flag
+            bool quit = false;
+
+            //Event handler
+            SDL.SDL_Event evt;
+
+            //While application is running
+            while (!quit)
+            {
+                //Handle events on queue
+                while (SDL.SDL_PollEvent(out evt) != 0)
+                {
+                    //User requests quit
+                    quit |= evt.type == SDL.SDL_EventType.SDL_QUIT;
+                }
+
+                //Apply the image
+                SDL.SDL_BlitSurface(helloWorldPtr, IntPtr.Zero, screenSurfacePtr, IntPtr.Zero);
+
+                //Update the surface
+                SDL.SDL_UpdateWindowSurface(windowPtr);
+
+            }
+
+            Quit();
+
+            return 0;
 
             // Setup the input system (register input callbacks)
             SetupInput();
@@ -58,21 +95,74 @@ namespace Chip8
                 // 60 Hz = 1000 ms /60 = 16.666 ms  => approx. 17 ms (17 ms * 60 = 1020 ms)
                 SDL.SDL_Delay(17);
             }
-
-            Quit();
         }
 
-        private static void SetupGraphics()
+        private static bool Init()
         {
-            windowPtr = SDL.SDL_CreateWindow("CHIP-8", 0, 0, WIDTH, HEIGHT, SDL.SDL_WindowFlags.SDL_WINDOW_ALLOW_HIGHDPI);
-            SDL.SDL_ShowWindow(windowPtr);
+            //Initialization flag
+            bool result = true;
 
-            rendererPtr = SDL.SDL_GetRenderer(windowPtr);
+            //Initialize SDL
+            if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
+            {
+                Console.WriteLine($"SDL could not initialize! SDL_Error: {SDL.SDL_GetError()}");
 
-            SDL.SDL_SetRenderDrawColor(rendererPtr, 0, 0, 0, 255);
-            SDL.SDL_RenderClear(rendererPtr);
+                result = false;
+            }
+            else
+            {
+                //Create window
+                windowPtr = SDL.SDL_CreateWindow("SDL Tutorial", SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN);
 
-            SDL.SDL_RenderPresent(rendererPtr);
+                if (windowPtr == IntPtr.Zero)
+                {
+                    Console.WriteLine("Window could not be created! SDL_Error: {SDL.SDL_GetError()}");
+                    result = false;
+                }
+                else
+                {
+                    //Get window surface
+                    screenSurfacePtr = SDL.SDL_GetWindowSurface(windowPtr);
+                }
+            }
+
+            return result;
+        }
+
+        private static bool SetupGraphics()
+        {
+            //Initialization flag
+            bool result = true && LoadMedia($"assets{Path.DirectorySeparatorChar}CHIP-8.logo.bmp");
+
+            const int INTERVAL = 150;
+            int counter = 2500;
+            SDL.SDL_Event evt;
+
+            //While application is running
+            while (counter > 0)
+            {
+                //Handle events on queue
+                while (SDL.SDL_PollEvent(out evt) != 0)
+                {
+                    //User requests quit
+                    if (evt.type == SDL.SDL_EventType.SDL_QUIT)
+                    {
+                        Quit();
+                        return false;
+                    }
+                }
+
+                //Apply the image
+                SDL.SDL_BlitSurface(helloWorldPtr, IntPtr.Zero, screenSurfacePtr, IntPtr.Zero);
+
+                //Update the surface
+                SDL.SDL_UpdateWindowSurface(windowPtr);
+
+                SDL.SDL_Delay(INTERVAL);
+                counter -= INTERVAL;
+            }
+
+            return result;
         }
 
         private static void SetupInput()
@@ -144,6 +234,7 @@ namespace Chip8
 
         private static void Quit()
         {
+            SDL.SDL_FreeSurface(helloWorldPtr);
             SDL.SDL_DestroyRenderer(rendererPtr);
             SDL.SDL_DestroyWindow(windowPtr);
             SDL.SDL_Quit();
@@ -151,18 +242,24 @@ namespace Chip8
 
         private static void DrawGraphics()
         {
-            SDL.SDL_SetRenderDrawColor(rendererPtr, 255, 255, 255, 255);
+            LoadMedia($"assets{Path.DirectorySeparatorChar}CHIP-8.logo.bmp");
+        }
 
-            var rect = new SDL.SDL_Rect
+        private static bool LoadMedia(string fileName)
+        {
+            //Loading success flag
+            bool result = true;
+
+            //Load splash image
+            helloWorldPtr = SDL.SDL_LoadBMP(fileName);
+
+            if (helloWorldPtr == IntPtr.Zero)
             {
-                x = 10,
-                y = 10,
-                w = 10,
-                h = 10
-            };
+                Console.WriteLine($"Unable to load image {fileName}! SDL Error: {SDL.SDL_GetError()}");
+                result = false;
+            }
 
-            SDL.SDL_RenderDrawRect(rendererPtr, ref rect);
-            SDL.SDL_RenderPresent(rendererPtr);
+            return result;
         }
     }
 }
