@@ -27,6 +27,11 @@ namespace Chip8
         private static readonly IntPtr[] surfacesPtr = new IntPtr[(int)KeyPressSurfaces.Count];
         private static IntPtr currentSurfacePtr;
 
+        //Set text color as black
+        SDL.SDL_Color textColor = new SDL.SDL_Color { r = 0, g = 0, b = 0, a = 255 };
+
+        readonly Timer timer = new Timer();
+
         private static SDLDriver driver = new SDLDriver();
 
         static int Main(string[] args)
@@ -44,10 +49,17 @@ namespace Chip8
                 return -2;
             }
 
+            // Setup the input system (register input callbacks)
+            if (!driver.SetupInput())
+            {
+                Console.WriteLine("Failed to setup input!");
+                return -3;
+            }
+
             if (!LoadMedia())
             {
                 Console.WriteLine("Failed to load media!");
-                return -3;
+                return -4;
             }
 
             //Main loop flag
@@ -67,56 +79,62 @@ namespace Chip8
                 while (SDL.SDL_PollEvent(out evt) != 0)
                 {
                     //User requests quit
-                    if (evt.type == SDL.SDL_EventType.SDL_QUIT)
+                    switch (evt.type)
                     {
-                        Console.WriteLine("Quitting...");
-                        quit = true;
-                    }
-                    //User presses a key
-                    else if (evt.type == SDL.SDL_EventType.SDL_KEYDOWN)
-                    {
-                        //Select surfaces based on key press
-                        switch (evt.key.keysym.sym)
-                        {
-                            case SDL.SDL_Keycode.SDLK_ESCAPE:
-                                Console.WriteLine("ESCAPE");
-                                Console.WriteLine("Quitting...");
-                                quit = true;
-                                break;
+                        case SDL.SDL_EventType.SDL_QUIT:
+                            Console.WriteLine("Quitting...");
+                            quit = true;
+                            break;
 
-                            case SDL.SDL_Keycode.SDLK_UP:
-                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Up];
-                                Console.WriteLine("UP");
-                                Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
-                                break;
+                        case SDL.SDL_EventType.SDL_KEYDOWN:
+                            //Select surfaces based on key press
+                            switch (evt.key.keysym.sym)
+                            {
+                                case SDL.SDL_Keycode.SDLK_ESCAPE:
+                                    Console.WriteLine("ESCAPE");
+                                    Console.WriteLine("Quitting...");
+                                    quit = true;
+                                    break;
 
-                            case SDL.SDL_Keycode.SDLK_DOWN:
-                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Down];
-                                Console.WriteLine("DOWN");
-                                Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
-                                break;
+                                case SDL.SDL_Keycode.SDLK_UP:
+                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Up];
+                                    Console.WriteLine("UP");
+                                    Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                    break;
 
-                            case SDL.SDL_Keycode.SDLK_LEFT:
-                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Left];
-                                Console.WriteLine("LEFT");
-                                Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
-                                break;
+                                case SDL.SDL_Keycode.SDLK_DOWN:
+                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Down];
+                                    Console.WriteLine("DOWN");
+                                    Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                    break;
 
-                            case SDL.SDL_Keycode.SDLK_RIGHT:
-                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Right];
-                                Console.WriteLine("RIGHT");
-                                Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
-                                break;
+                                case SDL.SDL_Keycode.SDLK_LEFT:
+                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Left];
+                                    Console.WriteLine("LEFT");
+                                    Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                    break;
 
-                            default:
-                                currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default];
-                                Console.WriteLine("Default Key Press");
-                                break;
-                        }
+                                case SDL.SDL_Keycode.SDLK_RIGHT:
+                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Right];
+                                    Console.WriteLine("RIGHT");
+                                    Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                    break;
+
+                                default:
+                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default];
+                                    Console.WriteLine("Default Key Press");
+                                    break;
+                            }
+                            break;
                     }
                 }
 
                 if (!driver.DrawSurface(currentSurfacePtr))
+                {
+                    Console.WriteLine("Failed to draw surface!");
+                }
+
+                if (!driver.Render())
                 {
                     Console.WriteLine("Failed to draw surface!");
                 }
@@ -127,8 +145,7 @@ namespace Chip8
             return 0;
 
             /*
-            // Setup the input system (register input callbacks)
-            SetupInput();
+
 
             // Initialize the CHIP-8 system (Clear the memory, registers and screen)
             myChip8 = new CPU();
@@ -177,73 +194,6 @@ namespace Chip8
             }
 
             driver.Quit();
-        }
-
-        private static void SetupInput()
-        {
-            while (SDL.SDL_PollEvent(out var evt) > 0)
-            {
-                switch (evt.type)
-                {
-                    case SDL.SDL_EventType.SDL_QUIT:
-                        driver.Quit();
-                        break;
-
-                    case SDL.SDL_EventType.SDL_SENSORUPDATE:
-                        break;
-
-                    case SDL.SDL_EventType.SDL_KEYDOWN:
-                        break;
-                    case SDL.SDL_EventType.SDL_KEYUP:
-                        break;
-
-                    case SDL.SDL_EventType.SDL_MOUSEMOTION:
-                        break;
-                    case SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN:
-                        break;
-                    case SDL.SDL_EventType.SDL_MOUSEBUTTONUP:
-                        break;
-                    case SDL.SDL_EventType.SDL_MOUSEWHEEL:
-                        break;
-
-                    case SDL.SDL_EventType.SDL_FINGERMOTION:
-                        break;
-                    case SDL.SDL_EventType.SDL_FINGERDOWN:
-                        break;
-                    case SDL.SDL_EventType.SDL_FINGERUP:
-                        break;
-                    case SDL.SDL_EventType.SDL_MULTIGESTURE:
-                        break;
-
-                    case SDL.SDL_EventType.SDL_JOYDEVICEADDED:
-                        break;
-                    case SDL.SDL_EventType.SDL_JOYDEVICEREMOVED:
-                        break;
-                    case SDL.SDL_EventType.SDL_JOYBUTTONDOWN:
-                        break;
-                    case SDL.SDL_EventType.SDL_JOYBUTTONUP:
-                        break;
-                    case SDL.SDL_EventType.SDL_JOYHATMOTION:
-                        break;
-                    case SDL.SDL_EventType.SDL_JOYAXISMOTION:
-                        break;
-                    case SDL.SDL_EventType.SDL_JOYBALLMOTION:
-                        break;
-
-                    case SDL.SDL_EventType.SDL_CONTROLLERDEVICEADDED:
-                        break;
-                    case SDL.SDL_EventType.SDL_CONTROLLERDEVICEREMOVED:
-                        break;
-                    case SDL.SDL_EventType.SDL_CONTROLLERDEVICEREMAPPED:
-                        break;
-                    case SDL.SDL_EventType.SDL_CONTROLLERBUTTONDOWN:
-                        break;
-                    case SDL.SDL_EventType.SDL_CONTROLLERBUTTONUP:
-                        break;
-                    case SDL.SDL_EventType.SDL_CONTROLLERAXISMOTION:
-                        break;
-                }
-            }
         }
 
         static bool LoadMedia()
