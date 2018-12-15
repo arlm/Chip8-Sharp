@@ -138,7 +138,8 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2; break;
+                            pc += 2;
+                            break;
 
                         default:
                             Console.WriteLine($"Illegal call to RCA 1802 program: {opcode:X}");

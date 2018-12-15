@@ -16,7 +16,7 @@ namespace Chip8
         Count
     }
 
-    class Program
+    class Program : IDisposable
     {
         // In this example we assume you will create a separate class to handle the opcodes.
         private static CPU myChip8;
@@ -24,8 +24,8 @@ namespace Chip8
         private const int WIDTH = 640;
         private const int HEIGHT = 480;
 
-        private static readonly IntPtr[] surfacesPtr = new IntPtr[(int)KeyPressSurfaces.Count];
-        private static IntPtr currentSurfacePtr;
+        private static readonly Texture[] textures = new Texture[(int)KeyPressSurfaces.Count];
+        private static Texture currentTexture;
 
         //Set text color as black
         SDL.SDL_Color textColor = new SDL.SDL_Color { r = 0, g = 0, b = 0, a = 255 };
@@ -69,7 +69,7 @@ namespace Chip8
             SDL.SDL_Event evt;
 
             //Set default current surface
-            currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default];
+            currentTexture = textures[(int)KeyPressSurfaces.Default];
             Console.WriteLine("Loaded...");
 
             //While application is running
@@ -97,31 +97,31 @@ namespace Chip8
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_UP:
-                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Up];
+                                    currentTexture = textures[(int)KeyPressSurfaces.Up];
                                     Console.WriteLine("UP");
-                                    Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                    Task.Delay(1500).ContinueWith(_ => currentTexture = textures[(int)KeyPressSurfaces.Default]);
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_DOWN:
-                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Down];
+                                    currentTexture = textures[(int)KeyPressSurfaces.Down];
                                     Console.WriteLine("DOWN");
-                                    Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                    Task.Delay(1500).ContinueWith(_ => currentTexture = textures[(int)KeyPressSurfaces.Default]);
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_LEFT:
-                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Left];
+                                    currentTexture = textures[(int)KeyPressSurfaces.Left];
                                     Console.WriteLine("LEFT");
-                                    Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                    Task.Delay(1500).ContinueWith(_ => currentTexture = textures[(int)KeyPressSurfaces.Default]);
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_RIGHT:
-                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Right];
+                                    currentTexture = textures[(int)KeyPressSurfaces.Right];
                                     Console.WriteLine("RIGHT");
-                                    Task.Delay(1500).ContinueWith(_ => currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default]);
+                                    Task.Delay(1500).ContinueWith(_ => currentTexture = textures[(int)KeyPressSurfaces.Default]);
                                     break;
 
                                 default:
-                                    currentSurfacePtr = surfacesPtr[(int)KeyPressSurfaces.Default];
+                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
                                     Console.WriteLine("Default Key Press");
                                     break;
                             }
@@ -129,18 +129,16 @@ namespace Chip8
                     }
                 }
 
-                if (!driver.DrawSurface(currentSurfacePtr))
+                if (!driver.Render(currentTexture))
                 {
-                    Console.WriteLine("Failed to draw surface!");
+                    Console.WriteLine("Failed to render texture!");
                 }
 
-                if (!driver.Render())
+                if (!driver.Present())
                 {
-                    Console.WriteLine("Failed to draw surface!");
+                    Console.WriteLine("Failed to present render!");
                 }
             }
-
-            Quit();
 
             return 0;
 
@@ -180,68 +178,138 @@ namespace Chip8
             */
         }
 
-        private static void Quit()
-        {
-            currentSurfacePtr = IntPtr.Zero;
-
-            for (int index = 0; index < (int)KeyPressSurfaces.Count; ++index)
-            {
-                if (surfacesPtr[index] != IntPtr.Zero)
-                {
-                    SDL.SDL_FreeSurface(surfacesPtr[index]);
-                    surfacesPtr[index] = IntPtr.Zero;
-                }
-            }
-
-            driver.Quit();
-        }
-
         static bool LoadMedia()
         {
             //Loading success flag
             bool success = true;
+            IntPtr surface;
 
             //Load default surface
-            surfacesPtr[(int)KeyPressSurfaces.Default] = driver.LoadSurface("assets/press.bmp");
-            if (surfacesPtr[(int)KeyPressSurfaces.Default] == IntPtr.Zero)
+            textures[(int)KeyPressSurfaces.Default] = new Texture(driver);
+            surface = driver.LoadSurface("assets/press.bmp");
+            if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load default image!");
                 success = false;
             }
+            else
+            {
+                textures[(int)KeyPressSurfaces.Default].LoadFromSurface(surface);
+
+                SDL.SDL_FreeSurface(surface);
+                surface = IntPtr.Zero;
+            }
 
             //Load up surface
-            surfacesPtr[(int)KeyPressSurfaces.Up] = driver.LoadSurface("assets/up.bmp");
-            if (surfacesPtr[(int)KeyPressSurfaces.Up] == IntPtr.Zero)
+            textures[(int)KeyPressSurfaces.Up] = new Texture(driver);
+            surface = driver.LoadSurface("assets/up.bmp");
+            if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load up image!");
                 success = false;
             }
+            else
+            {
+                textures[(int)KeyPressSurfaces.Up].LoadFromSurface(surface);
+
+                SDL.SDL_FreeSurface(surface);
+                surface = IntPtr.Zero;
+            }
 
             //Load down surface
-            surfacesPtr[(int)KeyPressSurfaces.Down] = driver.LoadSurface("assets/down.bmp");
-            if (surfacesPtr[(int)KeyPressSurfaces.Down] == IntPtr.Zero)
+            textures[(int)KeyPressSurfaces.Down] = new Texture(driver);
+            surface = driver.LoadSurface("assets/down.bmp");
+            if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load down image!");
                 success = false;
             }
+            else
+            {
+                textures[(int)KeyPressSurfaces.Down].LoadFromSurface(surface);
+
+                SDL.SDL_FreeSurface(surface);
+                surface = IntPtr.Zero;
+
+            }
 
             //Load left surface
-            surfacesPtr[(int)KeyPressSurfaces.Left] = driver.LoadSurface("assets/left.bmp");
-            if (surfacesPtr[(int)KeyPressSurfaces.Left] == IntPtr.Zero)
+            textures[(int)KeyPressSurfaces.Left] = new Texture(driver);
+            surface = driver.LoadSurface("assets/left.bmp");
+            if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load left image!");
                 success = false;
             }
+            else
+            {
+                textures[(int)KeyPressSurfaces.Left].LoadFromSurface(surface);
+
+                SDL.SDL_FreeSurface(surface);
+                surface = IntPtr.Zero;
+
+            }
 
             //Load right surface
-            surfacesPtr[(int)KeyPressSurfaces.Right] = driver.LoadSurface("assets/right.bmp");
-            if (surfacesPtr[(int)KeyPressSurfaces.Right] == IntPtr.Zero)
+            textures[(int)KeyPressSurfaces.Right] = new Texture(driver);
+            surface = driver.LoadSurface("assets/right.bmp");
+            if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load right image!");
                 success = false;
             }
+            else
+            {
+                textures[(int)KeyPressSurfaces.Right].LoadFromSurface(surface);
+
+                SDL.SDL_FreeSurface(surface);
+                surface = IntPtr.Zero;
+
+            }
 
             return success;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // dispose managed state (managed objects).
+                    currentTexture = null;
+
+                    for (int index = 0; index < (int)KeyPressSurfaces.Count; ++index)
+                    {
+                        textures[index]?.Dispose();
+                        textures[index] = null;
+                    }
+                }
+
+                // free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+         ~Program() {
+           // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+           Dispose(false);
+         }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // uncomment the following line if the finalizer is overridden above.
+             GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

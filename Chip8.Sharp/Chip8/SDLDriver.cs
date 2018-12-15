@@ -1,18 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using SDL2;
 
 namespace Chip8
 {
-    public class SDLDriver
+    public class SDLDriver : IDisposable
     {
-        private IntPtr windowPtr;
-        private IntPtr screenSurfacePtr;
-        private IntPtr rendererPtr;
-        private IntPtr fontPtr;
         private Texture textTexture;
+        private Texture videoTexture;
 
-        private int width;
-        private int height;
+        internal IntPtr windowPtr;
+        internal IntPtr rendererPtr;
+        internal IntPtr fontPtr;
+
+        internal int width;
+        internal int height;
+
+        public List<Texture> Textures { get; } = new List<Texture>();
 
         public bool Init(int width, int height)
         {
@@ -60,8 +64,8 @@ namespace Chip8
                         // Initialize renderer color
                         SDL.SDL_SetRenderDrawColor(rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
 
-                        //Get window surface
-                        screenSurfacePtr = SDL.SDL_GetWindowSurface(windowPtr);
+                        textTexture = new Texture(rendererPtr, fontPtr);
+                        videoTexture = new Texture(rendererPtr, fontPtr);
                     }
                 }
             }
@@ -80,6 +84,19 @@ namespace Chip8
                 result = false;
             }
 
+            //Open the font
+            fontPtr = SDL_ttf.TTF_OpenFont("assets/lazy.ttf", 18);
+
+            if (fontPtr == IntPtr.Zero)
+            {
+                Console.WriteLine($"Failed to load lazy font! SDL_ttf Error: {SDL.SDL_GetError()}");
+                result = false;
+            }
+            else if (rendererPtr != IntPtr.Zero)
+            {
+                textTexture = new Texture(rendererPtr, fontPtr);
+            }
+
             return result;
         }
 
@@ -94,6 +111,7 @@ namespace Chip8
             {
                 splashSurfacePtr = LoadSurface(fileName);
                 result &= splashSurfacePtr != IntPtr.Zero;
+                videoTexture.LoadFromSurface(splashSurfacePtr);
 
                 if (result)
                 {
@@ -110,16 +128,16 @@ namespace Chip8
                             //User requests quit
                             if (evt.type == SDL.SDL_EventType.SDL_QUIT)
                             {
-                                Quit();
+                                Dispose();
                                 return false;
                             }
                         }
 
-                        //Apply the image
-                        SDL.SDL_BlitSurface(splashSurfacePtr, IntPtr.Zero, screenSurfacePtr, IntPtr.Zero);
+                        //Render current frame
+                        videoTexture.Render(0, 0);
 
-                        //Update the surface
-                        SDL.SDL_UpdateWindowSurface(windowPtr);
+                        //Update screen
+                        SDL.SDL_RenderPresent(rendererPtr);
 
                         SDL.SDL_Delay(INTERVAL);
                         counter -= INTERVAL;
@@ -137,24 +155,19 @@ namespace Chip8
                 SDL.SDL_RenderClear(rendererPtr);
             }
 
-            //Open the font
-            fontPtr = SDL_ttf.TTF_OpenFont("assets/lazy.ttf", 18);
-
-            if (fontPtr == IntPtr.Zero)
+            if (fontPtr != IntPtr.Zero)
             {
-                Console.WriteLine($"Failed to load lazy font! SDL_ttf Error: {SDL.SDL_GetError()}");
-                result = false;
-            }
-            else
-            {
-                textTexture = new Texture(rendererPtr, fontPtr);
-
                 //Render text
                 SDL.SDL_Color textColor = new SDL.SDL_Color { r = 0, g = 0, b = 0 };
                 if (!textTexture.LoadFromRenderedText("The quick brown fox jumps over the lazy dog", textColor))
                 {
                     Console.WriteLine("Failed to render text texture!\n");
                     result = false;
+                }
+                else
+                {
+                    textTexture.X = 48;
+                    textTexture.Y = height - textTexture.Height - 5;
                 }
             }
 
@@ -171,7 +184,7 @@ namespace Chip8
                 switch (evt.type)
                 {
                     case SDL.SDL_EventType.SDL_QUIT:
-                        Quit();
+                        Dispose();
                         result = false;
                         break;
 
@@ -247,64 +260,105 @@ namespace Chip8
             return loadedSurface;
         }
 
-        public void Quit()
-        {
-            textTexture?.Dispose();
-            textTexture = null;
-
-            if (fontPtr != IntPtr.Zero)
-            {
-                SDL_ttf.TTF_CloseFont(fontPtr);
-                fontPtr = IntPtr.Zero;
-            }
-
-            if (rendererPtr != IntPtr.Zero)
-            {
-                SDL.SDL_DestroyRenderer(rendererPtr);
-                rendererPtr = IntPtr.Zero;
-            }
-
-            if (windowPtr != IntPtr.Zero)
-            {
-                SDL.SDL_DestroyWindow(windowPtr);
-                windowPtr = IntPtr.Zero;
-            }
-
-            //Quit SDL subsystems
-            SDL_ttf.TTF_Quit();
-            SDL_image.IMG_Quit();
-            SDL.SDL_Quit();
-        }
-
-        public bool DrawSurface(IntPtr surfacePtr)
+        public bool ClearScreen(byte r, byte g, byte b)
         {
             //Initialization flag
             bool result = true;
 
-            //Apply the image
-            result &= SDL.SDL_BlitSurface(surfacePtr, IntPtr.Zero, screenSurfacePtr, IntPtr.Zero) == 0;
-
-            //Update the surface
-            result &= SDL.SDL_UpdateWindowSurface(windowPtr) == 0;
+            SDL.SDL_SetRenderDrawColor(rendererPtr, r, g, b, 0xFF);
+            SDL.SDL_RenderClear(rendererPtr);
 
             return result;
         }
 
-        public bool Render()
+        public bool Render(Texture texture, int x = 0, int y = 0, SDL.SDL_Rect? clip = null)
         {
             //Initialization flag
             bool result = true;
 
-            //Clear screen
-            SDL.SDL_SetRenderDrawColor(rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
-            SDL.SDL_RenderClear(rendererPtr);
+            //result &= ClearScreen(0xFF, 0xFF, 0xFF);
 
             //Render current frame
-            textTexture.Render(48, height - 32);
+            texture.Render(0, 0, clip);
+            textTexture.Render();
+
+            return result;
+        }
+
+        public bool Present()
+        {
+            //Initialization flag
+            bool result = true;
 
             //Update screen
             SDL.SDL_RenderPresent(rendererPtr);
+
             return result;
         }
+
+        #region IDisposable Support
+        private bool disposedValue; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // dispose managed state (managed objects).
+
+                    videoTexture?.Dispose();
+                    videoTexture = null;
+
+                    textTexture?.Dispose();
+                    textTexture = null;
+                }
+
+                // free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // set large fields to null.
+
+                if (fontPtr != IntPtr.Zero)
+                {
+                    SDL_ttf.TTF_CloseFont(fontPtr);
+                    fontPtr = IntPtr.Zero;
+                }
+
+                if (rendererPtr != IntPtr.Zero)
+                {
+                    SDL.SDL_DestroyRenderer(rendererPtr);
+                    rendererPtr = IntPtr.Zero;
+                }
+
+                if (windowPtr != IntPtr.Zero)
+                {
+                    SDL.SDL_DestroyWindow(windowPtr);
+                    windowPtr = IntPtr.Zero;
+                }
+
+                //Quit SDL subsystems
+                SDL_ttf.TTF_Quit();
+                SDL_image.IMG_Quit();
+                SDL.SDL_Quit();
+
+                disposedValue = true;
+            }
+        }
+
+        // override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        ~SDLDriver()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // uncomment the following line if the finalizer is overridden above.
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
