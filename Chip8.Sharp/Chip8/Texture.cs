@@ -37,7 +37,8 @@ namespace Chip8
         {
             if (texturePtr != IntPtr.Zero)
             {
-                throw new InvalidOperationException("A texture is already loaded");
+                SDL.SDL_DestroyTexture(texturePtr);
+                texturePtr = IntPtr.Zero;
             }
 
             //The final texture
@@ -78,7 +79,8 @@ namespace Chip8
         {
             if (texturePtr != IntPtr.Zero)
             {
-                throw new InvalidOperationException("A texture is already loaded");
+                SDL.SDL_DestroyTexture(texturePtr);
+                texturePtr = IntPtr.Zero;
             }
 
             //The final texture
@@ -125,7 +127,8 @@ namespace Chip8
         {
             if (texturePtr != IntPtr.Zero)
             {
-                throw new InvalidOperationException("A texture is already loaded");
+                SDL.SDL_DestroyTexture(texturePtr);
+                texturePtr = IntPtr.Zero;
             }
 
             //Render text surface

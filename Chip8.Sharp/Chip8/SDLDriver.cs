@@ -6,7 +6,6 @@ namespace Chip8
 {
     public class SDLDriver : IDisposable
     {
-        private Texture textTexture;
         private Texture videoTexture;
 
         internal IntPtr windowPtr;
@@ -64,7 +63,6 @@ namespace Chip8
                         // Initialize renderer color
                         SDL.SDL_SetRenderDrawColor(rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
 
-                        textTexture = new Texture(rendererPtr, fontPtr);
                         videoTexture = new Texture(rendererPtr, fontPtr);
                     }
                 }
@@ -91,10 +89,6 @@ namespace Chip8
             {
                 Console.WriteLine($"Failed to load lazy font! SDL_ttf Error: {SDL.SDL_GetError()}");
                 result = false;
-            }
-            else if (rendererPtr != IntPtr.Zero)
-            {
-                textTexture = new Texture(rendererPtr, fontPtr);
             }
 
             return result;
@@ -153,22 +147,6 @@ namespace Chip8
                 }
 
                 SDL.SDL_RenderClear(rendererPtr);
-            }
-
-            if (fontPtr != IntPtr.Zero)
-            {
-                //Render text
-                SDL.SDL_Color textColor = new SDL.SDL_Color { r = 0, g = 0, b = 0 };
-                if (!textTexture.LoadFromRenderedText("The quick brown fox jumps over the lazy dog", textColor))
-                {
-                    Console.WriteLine("Failed to render text texture!\n");
-                    result = false;
-                }
-                else
-                {
-                    textTexture.X = 48;
-                    textTexture.Y = height - textTexture.Height - 5;
-                }
             }
 
             return result;
@@ -280,7 +258,6 @@ namespace Chip8
 
             //Render current frame
             texture.Render(0, 0, clip);
-            textTexture.Render();
 
             return result;
         }
@@ -309,9 +286,6 @@ namespace Chip8
 
                     videoTexture?.Dispose();
                     videoTexture = null;
-
-                    textTexture?.Dispose();
-                    textTexture = null;
                 }
 
                 // free unmanaged resources (unmanaged objects) and override a finalizer below.

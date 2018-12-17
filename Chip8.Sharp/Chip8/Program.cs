@@ -28,9 +28,12 @@ namespace Chip8
         private static Texture currentTexture;
 
         //Set text color as black
-        SDL.SDL_Color textColor = new SDL.SDL_Color { r = 0, g = 0, b = 0, a = 255 };
+        private static readonly SDL.SDL_Color textColor = new SDL.SDL_Color { r = 0, g = 0, b = 0, a = 255 };
+        private static string timerText;
+        private static Texture fpsTextTexture;
 
-        readonly Timer timer = new Timer();
+        private static readonly Timer fpsTimer = new Timer();
+        private static int countedFrames;
 
         private static SDLDriver driver = new SDLDriver();
 
@@ -71,6 +74,10 @@ namespace Chip8
             //Set default current surface
             currentTexture = textures[(int)KeyPressSurfaces.Default];
             Console.WriteLine("Loaded...");
+
+            //Start counting frames per second
+            countedFrames = 0;
+            fpsTimer.Start();
 
             //While application is running
             while (!quit)
@@ -134,10 +141,40 @@ namespace Chip8
                     Console.WriteLine("Failed to render texture!");
                 }
 
+                //Calculate and correct fps
+                var avgFPS = countedFrames / (fpsTimer.Ticks / 1000.0);
+
+                // It is possible for there to be a very small amount of time passed
+                // for the first frame and have it give us a really high fps.
+                // This is why we correct the value if it is really high.
+                if (avgFPS > 2000000)
+                {
+                    avgFPS = 0;
+                }
+
+                //Set text to be rendered
+                timerText = $"Average {avgFPS:0.00} Frames Per Second";
+
+                //Render text
+                if (!fpsTextTexture.LoadFromRenderedText(timerText, textColor))
+                {
+                    Console.WriteLine("Unable to render FPS texture!");
+                }
+
+                //Clear screen
+                //SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
+                //SDL.SDL_RenderClear(driver.rendererPtr);
+
+                //Render textures
+                fpsTextTexture.Render((WIDTH - fpsTextTexture.Width) / 2, (HEIGHT - (int)(fpsTextTexture.Height * 1.75)));
+
+                //Update screen
                 if (!driver.Present())
                 {
                     Console.WriteLine("Failed to present render!");
                 }
+
+                ++countedFrames;
             }
 
             return 0;
@@ -183,6 +220,8 @@ namespace Chip8
             //Loading success flag
             bool success = true;
             IntPtr surface;
+
+            fpsTextTexture = new Texture(driver);
 
             //Load default surface
             textures[(int)KeyPressSurfaces.Default] = new Texture(driver);
@@ -281,6 +320,9 @@ namespace Chip8
                 {
                     // dispose managed state (managed objects).
                     currentTexture = null;
+
+                    fpsTextTexture?.Dispose();
+                    fpsTextTexture = null;
 
                     for (int index = 0; index < (int)KeyPressSurfaces.Count; ++index)
                     {
