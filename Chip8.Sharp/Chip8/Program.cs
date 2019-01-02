@@ -35,6 +35,14 @@ namespace Chip8
         private static readonly Timer fpsTimer = new Timer();
         private static int countedFrames;
 
+        private static byte[] keys = 
+        {
+             0x00, 0x00, 0x00, 0x00,
+             0x00, 0x00, 0x00, 0x00,
+             0x00, 0x00, 0x00, 0x00,
+             0x00, 0x00, 0x00, 0x00
+         };
+
         private static SDLDriver driver = new SDLDriver();
 
         static int Main(string[] args)
@@ -75,6 +83,12 @@ namespace Chip8
             currentTexture = textures[(int)KeyPressSurfaces.Default];
             Console.WriteLine("Loaded...");
 
+            // Initialize the CHIP-8 system (Clear the memory, registers and screen)
+            myChip8 = new CPU();
+
+            // Load (copy) the game into the memory
+            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}pong2.c8");
+
             //Start counting frames per second
             countedFrames = 0;
             fpsTimer.Start();
@@ -82,6 +96,21 @@ namespace Chip8
             //While application is running
             while (!quit)
             {
+
+                // Emulate one cycle of the system
+                myChip8.EmulateCycle();
+
+                // If the draw flag is set, update the screen
+                // Because the system does not draw every cycle, we should set a draw flag when we need to update our screen.
+                // Only two opcodes should set this flag:
+                //    0x00E0 – Clears the screen
+                //    0xDXYN – Draws a sprite on the screen
+
+                //if (myChip8.DrawFlag)
+                //{
+                //    DrawGraphics();
+                //}
+
                 //Handle events on queue
                 while (SDL.SDL_PollEvent(out evt) != 0)
                 {
@@ -106,30 +135,124 @@ namespace Chip8
                                 case SDL.SDL_Keycode.SDLK_UP:
                                     currentTexture = textures[(int)KeyPressSurfaces.Up];
                                     Console.WriteLine("UP");
-                                    Task.Delay(1500).ContinueWith(_ => currentTexture = textures[(int)KeyPressSurfaces.Default]);
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_DOWN:
                                     currentTexture = textures[(int)KeyPressSurfaces.Down];
                                     Console.WriteLine("DOWN");
-                                    Task.Delay(1500).ContinueWith(_ => currentTexture = textures[(int)KeyPressSurfaces.Default]);
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_LEFT:
                                     currentTexture = textures[(int)KeyPressSurfaces.Left];
                                     Console.WriteLine("LEFT");
-                                    Task.Delay(1500).ContinueWith(_ => currentTexture = textures[(int)KeyPressSurfaces.Default]);
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_RIGHT:
                                     currentTexture = textures[(int)KeyPressSurfaces.Right];
                                     Console.WriteLine("RIGHT");
-                                    Task.Delay(1500).ContinueWith(_ => currentTexture = textures[(int)KeyPressSurfaces.Default]);
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_1:
+                                    keys[0x0] = 1;
+                                    Console.WriteLine("1");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_2:
+                                    keys[0x1] = 1;
+                                    Console.WriteLine("2");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_3:
+                                    keys[0x2] = 1;
+                                    Console.WriteLine("3");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_4:
+                                    keys[0x3] = 1;
+                                    Console.WriteLine("4");
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_q:
+                                    keys[0x4] = 1;
+                                    Console.WriteLine("q");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_w:
+                                    keys[0x5] = 1;
+                                    Console.WriteLine("w");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_e:
+                                    keys[0x6] = 1;
+                                    Console.WriteLine("e");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_r:
+                                    keys[0x7] = 1;
+                                    Console.WriteLine("r");
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_a:
+                                    keys[0x8] = 1;
+                                    Console.WriteLine("a");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_s:
+                                    keys[0x9] = 1;
+                                    Console.WriteLine("s");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_d:
+                                    keys[0xA] = 1;
+                                    Console.WriteLine("d");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_f:
+                                    keys[0xA] = 1;
+                                    Console.WriteLine("f");
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_z:
+                                    keys[0xB] = 1;
+                                    Console.WriteLine("z");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_y:
+                                    keys[0xB] = 1;
+                                    Console.WriteLine("y");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_x:
+                                    keys[0xC] = 1;
+                                    Console.WriteLine("x");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_c:
+                                    keys[0xD] = 1;
+                                    Console.WriteLine("c");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_v:
+                                    keys[0xE] = 1;
+                                    Console.WriteLine("v");
                                     break;
 
                                 default:
                                     currentTexture = textures[(int)KeyPressSurfaces.Default];
                                     Console.WriteLine("Default Key Press");
+                                    break;
+                            }
+                            break;
+
+                        case SDL.SDL_EventType.SDL_KEYUP:
+                            //Select surfaces based on key press
+                            switch (evt.key.keysym.sym)
+                            {
+                                case SDL.SDL_Keycode.SDLK_UP:
+                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_DOWN:
+                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_LEFT:
+                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_RIGHT:
+                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    break;
+
+                                default:
+                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
                                     break;
                             }
                             break;
@@ -140,6 +263,13 @@ namespace Chip8
                 {
                     Console.WriteLine("Failed to render texture!");
                 }
+
+                // Store key press state (Press and Release)
+                // If we press or release a key, we should store this state in the part that emulates the keypad
+                myChip8.SetKeys(keys);
+
+                // 60 Hz = 1000 ms /60 = 16.666 ms  => approx. 17 ms (17 ms * 60 = 1020 ms)
+                //SDL.SDL_Delay(17);
 
                 //Calculate and correct fps
                 var avgFPS = countedFrames / (fpsTimer.Ticks / 1000.0);
@@ -178,41 +308,6 @@ namespace Chip8
             }
 
             return 0;
-
-            /*
-
-
-            // Initialize the CHIP-8 system (Clear the memory, registers and screen)
-            myChip8 = new CPU();
-
-            // Load (copy) the game into the memory
-            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}pong2.c8");
-
-            // Emulation loop
-            for (; ; )
-            {
-                // Emulate one cycle of the system
-                myChip8.EmulateCycle();
-
-                // If the draw flag is set, update the screen
-                // Because the system does not draw every cycle, we should set a draw flag when we need to update our screen.
-                // Only two opcodes should set this flag:
-                //    0x00E0 – Clears the screen
-                //    0xDXYN – Draws a sprite on the screen
-
-                if (myChip8.DrawFlag)
-                {
-                    DrawGraphics();
-                }
-
-                // Store key press state (Press and Release)
-                // If we press or release a key, we should store this state in the part that emulates the keypad
-                myChip8.SetKeys();
-
-                // 60 Hz = 1000 ms /60 = 16.666 ms  => approx. 17 ms (17 ms * 60 = 1020 ms)
-                SDL.SDL_Delay(17);
-            }
-            */
         }
 
         static bool LoadMedia()

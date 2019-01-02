@@ -51,7 +51,7 @@ namespace Chip8.Core
         ushort sp;
 
         // The CHIP-8 has a HEX based keypad(0x0 - 0xF), you can use an array to store the current state of the key.
-        byte[] key = new byte[16];
+        byte[] keys = new byte[16];
 
         public bool DrawFlag { get; set; }
 
@@ -525,7 +525,7 @@ namespace Chip8.Core
                     {
                         // 0xEX9E: Skips the next instruction if the key stored in VX is pressed
                         case 0x009E:
-                            if (key[vx] != 0)
+                            if (keys[vx] != 0)
                             {
                                 pc += 4;
                             }
@@ -541,7 +541,7 @@ namespace Chip8.Core
 
                         // 0xEX9E: Skips the next instruction if the key stored in VX is pressed
                         case 0x00A1:
-                            if (key[vx] == 0)
+                            if (keys[vx] == 0)
                             {
                                 pc += 4;
                             }
@@ -582,7 +582,7 @@ namespace Chip8.Core
 
                             while (!keyPressed)
                             {
-                                foreach (var item in key)
+                                foreach (var item in keys)
                                 {
                                     keyPressed |= item > 0;
 
@@ -735,9 +735,14 @@ namespace Chip8.Core
             }
         }
 
-        public void SetKeys()
+        public void SetKeys(byte[] keys)
         {
-            // TODO: implement setkeys
+            if (keys.Length != this.keys.Length)
+            {
+                throw new InvalidOperationException($"Keys should be exactly {this.keys.Length} bytes long.");
+            }
+
+            keys.CopyTo(this.keys, 0);
         }
     }
 }
