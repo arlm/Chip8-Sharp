@@ -31,11 +31,14 @@ namespace Chip8
         private static readonly SDL.SDL_Color textColor = new SDL.SDL_Color { r = 0, g = 0, b = 0, a = 255 };
         private static string timerText;
         private static Texture fpsTextTexture;
+        private static Texture pixelTexture;
+        private static bool debugKeys = true;
+        private static bool debugPixels = false;
 
         private static readonly Timer fpsTimer = new Timer();
         private static int countedFrames;
 
-        private static byte[] keys = 
+        private static readonly byte[] keys =
         {
              0x00, 0x00, 0x00, 0x00,
              0x00, 0x00, 0x00, 0x00,
@@ -89,6 +92,14 @@ namespace Chip8
             // Load (copy) the game into the memory
             myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}pong2.c8");
 
+            //Rotation variables
+            double angle = 0;
+            SDL.SDL_Point screenCenter = new SDL.SDL_Point
+            {
+                x = WIDTH / 2,
+                y = HEIGHT / 2
+            };
+
             //Start counting frames per second
             countedFrames = 0;
             fpsTimer.Start();
@@ -106,10 +117,10 @@ namespace Chip8
                 //    0x00E0 – Clears the screen
                 //    0xDXYN – Draws a sprite on the screen
 
-                //if (myChip8.DrawFlag)
-                //{
-                //    DrawGraphics();
-                //}
+                if (myChip8.DrawFlag)
+                {
+                    DrawGraphics();
+                }
 
                 //Handle events on queue
                 while (SDL.SDL_PollEvent(out evt) != 0)
@@ -224,6 +235,15 @@ namespace Chip8
                                     Console.WriteLine("v");
                                     break;
 
+                                case SDL.SDL_Keycode.SDLK_PLUS:
+                                    debugKeys = false;
+                                    debugPixels = true;
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_RETURN:
+                                    debugKeys = true;
+                                    debugPixels = false;
+                                    break;
+
                                 default:
                                     currentTexture = textures[(int)KeyPressSurfaces.Default];
                                     Console.WriteLine("Default Key Press");
@@ -259,9 +279,17 @@ namespace Chip8
                     }
                 }
 
-                if (!driver.Render(currentTexture))
+                if (debugKeys)
                 {
-                    Console.WriteLine("Failed to render texture!");
+                    if (!driver.Render(currentTexture))
+                    {
+                        Console.WriteLine("Failed to render texture!");
+                    }
+                }
+
+                if (debugPixels)
+                {
+                    angle = RotateRectangle(angle, screenCenter);
                 }
 
                 // Store key press state (Press and Release)
@@ -308,6 +336,70 @@ namespace Chip8
             }
 
             return 0;
+        }
+
+        private static double RotateRectangle(double angle, SDL.SDL_Point screenCenter)
+        {
+            //rotate
+            angle += 2;
+            if (angle > 360)
+            {
+                angle -= 360;
+            }
+
+            //Set self as render target
+            pixelTexture.SetAsRenderTarget();
+
+            //Clear screen
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
+            SDL.SDL_RenderClear(driver.rendererPtr);
+
+            //Render red filled quad
+            SDL.SDL_Rect fillRect = new SDL.SDL_Rect
+            {
+                x = WIDTH / 4,
+                y = HEIGHT / 4,
+                w = WIDTH / 2,
+                h = HEIGHT / 2
+            };
+
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0xFF, 0x00, 0x00, 0xFF);
+            SDL.SDL_RenderFillRect(driver.rendererPtr, ref fillRect);
+
+            //Render green outlined quad
+            SDL.SDL_Rect outlineRect = new SDL.SDL_Rect
+            {
+                x = WIDTH / 6,
+                y = HEIGHT / 6,
+                w = WIDTH * 2 / 3,
+                h = HEIGHT * 2 / 3
+            };
+
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0x00, 0xFF, 0x00, 0xFF);
+            SDL.SDL_RenderDrawRect(driver.rendererPtr, ref outlineRect);
+
+            //Draw blue horizontal line
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0x00, 0x00, 0xFF, 0xFF);
+            SDL.SDL_RenderDrawLine(driver.rendererPtr, 0, HEIGHT / 2, WIDTH, HEIGHT / 2);
+
+            //Draw vertical line of yellow dots
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0xFF, 0xFF, 0x00, 0xFF);
+            for (int i = 0; i < HEIGHT; i += 4)
+            {
+                SDL.SDL_RenderDrawPoint(driver.rendererPtr, WIDTH / 2, i);
+            }
+
+            //Reset render target
+            SDL.SDL_SetRenderTarget(driver.rendererPtr, IntPtr.Zero);
+
+            //Show rendered to texture
+            pixelTexture.Render(0, 0, null, angle, screenCenter);
+            return angle;
+        }
+
+        private static void DrawGraphics()
+        {
+
         }
 
         static bool LoadMedia()
@@ -401,6 +493,14 @@ namespace Chip8
 
             }
 
+            //Load right surface
+            pixelTexture = new Texture(driver);
+            if (!pixelTexture.CreateBlank(WIDTH, HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
+            {
+                Console.WriteLine("Failed to create target texture!");
+                success = false;
+            }
+
             return success;
         }
 
@@ -434,10 +534,11 @@ namespace Chip8
         }
 
         // override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
-         ~Program() {
-           // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-           Dispose(false);
-         }
+        ~Program()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(false);
+        }
 
         // This code added to correctly implement the disposable pattern.
         public void Dispose()
@@ -445,7 +546,7 @@ namespace Chip8
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
             Dispose(true);
             // uncomment the following line if the finalizer is overridden above.
-             GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

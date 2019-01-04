@@ -55,6 +55,8 @@ namespace Chip8.Core
 
         public bool DrawFlag { get; set; }
 
+        public byte[] Graphics => gfx;
+
         Random rand = new Random();
 
         // Initialize registers and memory once

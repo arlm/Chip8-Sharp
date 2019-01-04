@@ -10,6 +10,9 @@ namespace Chip8
         private IntPtr texturePtr;
         private readonly IntPtr rendererPtr;
         private readonly IntPtr fontPtr;
+        private IntPtr pixelsPtr;
+        private byte[] pixels;
+        private int pitch;
 
         public int X { get; set; }
         public int Y { get; set; }
@@ -163,6 +166,24 @@ namespace Chip8
             return texturePtr != IntPtr.Zero;
         }
 
+        public bool CreateBlank(int width, int height, SDL.SDL_TextureAccess access)
+        {
+            //Create uninitialized texture
+            texturePtr = SDL.SDL_CreateTexture(rendererPtr, SDL.SDL_PIXELFORMAT_RGBA8888, (int)access, width, height);
+
+            if (texturePtr == IntPtr.Zero)
+            {
+                Console.WriteLine($"Unable to create blank texture! SDL Error: {SDL.SDL_GetError()}\n");
+            }
+            else
+            {
+                Width = width;
+                Height = height;
+            }
+
+            return texturePtr != IntPtr.Zero;
+        }
+
         //Set color modulation
         public void SetColor(byte red, byte green, byte blue)
         {
@@ -234,6 +255,88 @@ namespace Chip8
             }
         }
 
+        //Set self as render target
+        public void SetAsRenderTarget()
+        {
+            //Make self render target
+            SDL.SDL_SetRenderTarget(rendererPtr, texturePtr);
+        }
+
+        public bool Lock()
+        {
+            bool success = true;
+
+            //Texture is already locked
+            if (pixelsPtr != IntPtr.Zero)
+            {
+                Console.WriteLine("Texture is already locked!\n");
+                success = false;
+            }
+            //Lock texture
+            else
+            {
+                if (SDL.SDL_LockTexture(texturePtr, IntPtr.Zero, out pixelsPtr, out pitch) != 0)
+                {
+                    Console.WriteLine($"Unable to lock texture! {SDL.SDL_GetError()}\n");
+                    success = false;
+                }
+                else
+                {
+                    pixels = new byte[pitch * Height * 4];
+                    Marshal.Copy(pixelsPtr, pixels, 0, pitch * Height * 4);
+                }
+            }
+
+            return success;
+        }
+
+        public bool Unlock()
+        {
+            bool success = true;
+
+            //Texture is not locked
+            if (pixelsPtr == IntPtr.Zero)
+            {
+                Console.WriteLine("Texture is not locked!\n");
+                success = false;
+            }
+            //Unlock texture
+            else
+            {
+                Marshal.Copy(pixels, 0, pixelsPtr, pitch * Height * 4);
+
+                SDL.SDL_UnlockTexture(texturePtr);
+                pixelsPtr = IntPtr.Zero;
+                pixels = null;
+                pitch = 0;
+            }
+
+            return success;
+        }
+
+        public byte[] Pixels => pixels;
+
+        public void CopyPixels(byte[] pixels)
+        {
+            //Texture is locked
+            if (pixelsPtr != IntPtr.Zero)
+            {
+                //Copy to locked pixels
+                Buffer.BlockCopy(pixels, 0, this.pixels, 0, pitch * Height);
+            }
+        }
+
+        public int Pitch => pitch;
+
+        //Get the pixel requested
+        public uint GetPixel32(uint x, uint y)
+        {
+            uint[] pixels32 = new uint[pitch * Height];
+            Buffer.BlockCopy(pixels, 0, pixels32, 0, pitch * Height * 4);
+
+            return pixels32[(y * (pitch / 4)) + x];
+        }
+
         #region IDisposable Support
         private bool disposedValue; // To detect redundant calls
 
@@ -253,6 +356,10 @@ namespace Chip8
                     SDL.SDL_DestroyTexture(texturePtr);
                     texturePtr = IntPtr.Zero;
                 }
+
+                pixelsPtr = IntPtr.Zero;
+                pixels = null;
+                pitch = 0;
 
                 disposedValue = true;
             }
