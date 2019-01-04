@@ -5,6 +5,9 @@ namespace Chip8.Core
 {
     public partial class CPU
     {
+        public const int WIDTH = 64;
+        public const int HEIGHT = 32;
+
         // The CHIP-8 has 35 opcodes which are all two bytes long.
         ushort opcode;
 
@@ -32,7 +35,7 @@ namespace Chip8.Core
 
         // The graphics of the CHIP-8 are black and white and the screen has a total of 2048 pixels(64 x 32).
         // This can easily be implemented using an array that hold the pixel state(1 or 0)
-        readonly byte[] gfx = new byte[64 * 32];
+        readonly byte[] gfx = new byte[WIDTH * HEIGHT];
 
 
         // Interupts and hardware registers.
@@ -496,7 +499,7 @@ namespace Chip8.Core
                                 // Note that (0x80 >> column) scan through the byte, one bit at the time
                                 if ((pixel & (0x80 >> column)) != 0)
                                 {
-                                    var currentPixel = vx + column + ((vy + row) * 64);
+                                    var currentPixel = vx + column + ((vy + row) * WIDTH);
 
                                     // Check if the pixel on the display is set to 1.
                                     //  If it is set, we need to register the collision by setting the VF register

@@ -28,11 +28,23 @@ namespace Chip8
         private static Texture currentTexture;
 
         //Set text color as black
-        private static readonly SDL.SDL_Color textColor = new SDL.SDL_Color { r = 0, g = 0, b = 0, a = 255 };
+        private static readonly SDL.SDL_Color black = new SDL.SDL_Color { r = 0x00, g = 0x00, b = 0x00, a = 0xFF };
+        private static readonly SDL.SDL_Color white = new SDL.SDL_Color { r = 0xFF, g = 0xFF, b = 0xFF, a = 0xFF };
+
+        private static readonly SDL.SDL_Color ambar = new SDL.SDL_Color { r = 0xFF, g = 0xB0, b = 0x00, a = 0xFF };
+        private static readonly SDL.SDL_Color lightAmbar = new SDL.SDL_Color { r = 0xFF, g = 0xCC, b = 0x00, a = 0xFF };
+        private static readonly SDL.SDL_Color green1 = new SDL.SDL_Color { r = 0x33, g = 0xFF, b = 0x00, a = 0xFF };
+        private static readonly SDL.SDL_Color green2 = new SDL.SDL_Color { r = 0x00, g = 0xFF, b = 0x33, a = 0xFF };
+        private static readonly SDL.SDL_Color green3 = new SDL.SDL_Color { r = 0x00, g = 0xFF, b = 0x66, a = 0xFF };
+        private static readonly SDL.SDL_Color appleIIGray = new SDL.SDL_Color { r = 0x33, g = 0xFF, b = 0x33, a = 0xFF };
+        private static readonly SDL.SDL_Color appleIIcGray = new SDL.SDL_Color { r = 0x66, g = 0xFF, b = 0x66, a = 0xFF };
+        private static readonly SDL.SDL_Color gray = new SDL.SDL_Color { r = 0x28, g = 0x28, b = 0x28, a = 0xFF };
+
         private static string timerText;
         private static Texture fpsTextTexture;
+        private static Texture pixelDebugTexture;
         private static Texture pixelTexture;
-        private static bool debugKeys = true;
+        private static bool debugKeys = false;
         private static bool debugPixels = false;
 
         private static readonly Timer fpsTimer = new Timer();
@@ -237,10 +249,10 @@ namespace Chip8
 
                                 case SDL.SDL_Keycode.SDLK_PLUS:
                                     debugKeys = false;
-                                    debugPixels = true;
+                                    debugPixels = !debugPixels;
                                     break;
                                 case SDL.SDL_Keycode.SDLK_RETURN:
-                                    debugKeys = true;
+                                    debugKeys = !debugKeys;
                                     debugPixels = false;
                                     break;
 
@@ -313,8 +325,13 @@ namespace Chip8
                 //Set text to be rendered
                 timerText = $"Average {avgFPS:0.00} Frames Per Second";
 
+                SDL.SDL_Color color = white;
+
+                if (debugKeys) { color = black; }
+                if (debugPixels) { color = green1; }
+
                 //Render text
-                if (!fpsTextTexture.LoadFromRenderedText(timerText, textColor))
+                if (!fpsTextTexture.LoadFromRenderedText(timerText, color))
                 {
                     Console.WriteLine("Unable to render FPS texture!");
                 }
@@ -348,7 +365,7 @@ namespace Chip8
             }
 
             //Set self as render target
-            pixelTexture.SetAsRenderTarget();
+            pixelDebugTexture.SetAsRenderTarget();
 
             //Clear screen
             SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -393,13 +410,14 @@ namespace Chip8
             SDL.SDL_SetRenderTarget(driver.rendererPtr, IntPtr.Zero);
 
             //Show rendered to texture
-            pixelTexture.Render(0, 0, null, angle, screenCenter);
+            pixelDebugTexture.Render(0, 0, null, angle, screenCenter);
             return angle;
         }
 
         private static void DrawGraphics()
         {
-
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0x00, 0x00, 0x00, 0xFF);
+            SDL.SDL_RenderClear(driver.rendererPtr);
         }
 
         static bool LoadMedia()
@@ -493,9 +511,15 @@ namespace Chip8
 
             }
 
-            //Load right surface
+            pixelDebugTexture = new Texture(driver);
+            if (!pixelDebugTexture.CreateBlank(WIDTH, HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
+            {
+                Console.WriteLine("Failed to create target debug texture!");
+                success = false;
+            }
+
             pixelTexture = new Texture(driver);
-            if (!pixelTexture.CreateBlank(WIDTH, HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
+            if (!pixelTexture.CreateBlank(CPU.WIDTH, CPU.HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
             {
                 Console.WriteLine("Failed to create target texture!");
                 success = false;
@@ -524,6 +548,12 @@ namespace Chip8
                         textures[index]?.Dispose();
                         textures[index] = null;
                     }
+
+                    pixelTexture?.Dispose();
+                    pixelTexture = null;
+
+                    pixelDebugTexture?.Dispose();
+                    pixelDebugTexture = null;
                 }
 
                 // free unmanaged resources (unmanaged objects) and override a finalizer below.
