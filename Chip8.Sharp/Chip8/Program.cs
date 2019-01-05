@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
 using Chip8.Core;
 using SDL2;
 
@@ -36,8 +35,8 @@ namespace Chip8
         private static readonly SDL.SDL_Color green1 = new SDL.SDL_Color { r = 0x33, g = 0xFF, b = 0x00, a = 0xFF };
         private static readonly SDL.SDL_Color green2 = new SDL.SDL_Color { r = 0x00, g = 0xFF, b = 0x33, a = 0xFF };
         private static readonly SDL.SDL_Color green3 = new SDL.SDL_Color { r = 0x00, g = 0xFF, b = 0x66, a = 0xFF };
-        private static readonly SDL.SDL_Color appleIIGray = new SDL.SDL_Color { r = 0x33, g = 0xFF, b = 0x33, a = 0xFF };
-        private static readonly SDL.SDL_Color appleIIcGray = new SDL.SDL_Color { r = 0x66, g = 0xFF, b = 0x66, a = 0xFF };
+        private static readonly SDL.SDL_Color appleIIGreen = new SDL.SDL_Color { r = 0x33, g = 0xFF, b = 0x33, a = 0xFF };
+        private static readonly SDL.SDL_Color appleIIcGreen = new SDL.SDL_Color { r = 0x66, g = 0xFF, b = 0x66, a = 0xFF };
         private static readonly SDL.SDL_Color gray = new SDL.SDL_Color { r = 0x28, g = 0x28, b = 0x28, a = 0xFF };
 
         private static string timerText;
@@ -46,6 +45,7 @@ namespace Chip8
         private static Texture pixelTexture;
         private static bool debugKeys = false;
         private static bool debugPixels = false;
+        private static float zoom = 9.5f;
 
         private static readonly Timer fpsTimer = new Timer();
         private static int countedFrames;
@@ -102,7 +102,7 @@ namespace Chip8
             myChip8 = new CPU();
 
             // Load (copy) the game into the memory
-            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}pong2.c8");
+            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}demo.c8");
 
             //Rotation variables
             double angle = 0;
@@ -119,19 +119,21 @@ namespace Chip8
             //While application is running
             while (!quit)
             {
-
-                // Emulate one cycle of the system
-                myChip8.EmulateCycle();
-
-                // If the draw flag is set, update the screen
-                // Because the system does not draw every cycle, we should set a draw flag when we need to update our screen.
-                // Only two opcodes should set this flag:
-                //    0x00E0 – Clears the screen
-                //    0xDXYN – Draws a sprite on the screen
-
-                if (myChip8.DrawFlag)
+                if (!debugKeys && !debugPixels)
                 {
-                    DrawGraphics();
+                    // Emulate one cycle of the system
+                    myChip8.EmulateCycle();
+
+                    // If the draw flag is set, update the screen
+                    // Because the system does not draw every cycle, we should set a draw flag when we need to update our screen.
+                    // Only two opcodes should set this flag:
+                    //    0x00E0 – Clears the screen
+                    //    0xDXYN – Draws a sprite on the screen
+
+                    if (myChip8.DrawFlag)
+                    {
+                        DrawGraphics(screenCenter, zoom);
+                    }
                 }
 
                 //Handle events on queue
@@ -247,13 +249,44 @@ namespace Chip8
                                     Console.WriteLine("v");
                                     break;
 
-                                case SDL.SDL_Keycode.SDLK_PLUS:
+                                case SDL.SDL_Keycode.SDLK_BACKSPACE:
                                     debugKeys = false;
                                     debugPixels = !debugPixels;
+
+                                    if (debugPixels)
+                                    {
+                                        Console.WriteLine("Entering debug pixel mode");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Leaving debug pixel mode");
+                                    }
                                     break;
                                 case SDL.SDL_Keycode.SDLK_RETURN:
                                     debugKeys = !debugKeys;
                                     debugPixels = false;
+
+                                    if (debugKeys)
+                                    {
+                                        Console.WriteLine("Entering debug keys mode");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Leaving debug keys mode");
+                                    }
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_PLUS:
+                                    zoom += 0.5f;
+                                    Console.WriteLine($"Zoom level: {zoom}x");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_MINUS:
+                                    zoom -= 0.5f;
+                                    Console.WriteLine($"Zoom level: {zoom}x");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_0:
+                                    zoom = 1.0f;
+                                    Console.WriteLine($"Zoom level: {zoom}x");
                                     break;
 
                                 default:
@@ -414,10 +447,51 @@ namespace Chip8
             return angle;
         }
 
-        private static void DrawGraphics()
+        private static void DrawGraphics(SDL.SDL_Point screenCenter, float scale)
         {
-            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0x00, 0x00, 0x00, 0xFF);
+            //Set self as render target
+            pixelDebugTexture.SetAsRenderTarget();
+
+            SDL.SDL_Color color = black;
+
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, color.r, color.g, color.b, color.a);
             SDL.SDL_RenderClear(driver.rendererPtr);
+            SDL.SDL_RenderSetScale(driver.rendererPtr, scale, scale);
+
+            color = gray;
+
+            //Render red filled quad
+            SDL.SDL_Rect fillRect = new SDL.SDL_Rect
+            {
+                x = 0,
+                y = 0,
+                w = CPU.WIDTH,
+                h = CPU.HEIGHT
+            };
+
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, color.r, color.g, color.b, color.a);
+            SDL.SDL_RenderFillRect(driver.rendererPtr, ref fillRect);
+
+            color = appleIIGreen;
+
+            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, color.r, color.g, color.b, color.a);
+
+            for(int index = 0; index < myChip8.Graphics.Length; index++)
+            {
+                if (myChip8.Graphics[index] == 1)
+                {
+                    var y = index / CPU.WIDTH;
+                    var x = index % CPU.WIDTH;
+
+                    SDL.SDL_RenderDrawPoint(driver.rendererPtr, x, y);
+                }
+            }
+
+            //Reset render target
+            SDL.SDL_SetRenderTarget(driver.rendererPtr, IntPtr.Zero);
+
+            //Show rendered to texture
+            pixelDebugTexture.Render(0, 0, null, 0, screenCenter);
         }
 
         static bool LoadMedia()
@@ -519,7 +593,7 @@ namespace Chip8
             }
 
             pixelTexture = new Texture(driver);
-            if (!pixelTexture.CreateBlank(CPU.WIDTH, CPU.HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
+            if (!pixelTexture.CreateBlank(WIDTH, HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
             {
                 Console.WriteLine("Failed to create target texture!");
                 success = false;
