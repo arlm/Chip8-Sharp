@@ -9,20 +9,26 @@ namespace Chip8.Core
         public const int HEIGHT = 32;
 
         // The CHIP-8 has 35 opcodes which are all two bytes long.
-        ushort opcode;
+        internal ushort opcode;
 
         // The CHIP-8 has 4K memory in total
-        readonly byte[] memory = new byte[0x1000];
+        internal byte[] memory = new byte[0x1000];
 
-        // The CHIP-8 has 15 8-bit general purpose registers named V0, V1 up to VE.
+        // The CHIP-8 has 16 8-bit general purpose registers named V0, V1 up to VF.
+        // Usually referred to as Vx, where x is a hexadecimal digit (0 through F).
         // The 16th register is used  for the ‘carry flag’.
-        readonly byte[] V = new byte[16];
+        // The VF register should not be used by any program, 
+        // as it is used as a flag by some instructions.
+        internal readonly byte[] V = new byte[16];
 
         // The Index register which can have a value from 0x000 to 0xFFF
-        ushort I;
+        // This register is generally used to store memory addresses, 
+        // so only the lowest (rightmost) 12 bits are usually used.
+        internal ushort I;
 
         // Theis program counter which can have a value from 0x000 to 0xFFF
-        ushort pc;
+        // It is used to store the currently executing address. 
+        internal ushort PC;
 
         // The systems memory map:
         // 0x000-0x1FF - CHIP-8 interpreter (contains font set in emu)
@@ -35,26 +41,33 @@ namespace Chip8.Core
 
         // The graphics of the CHIP-8 are black and white and the screen has a total of 2048 pixels(64 x 32).
         // This can easily be implemented using an array that hold the pixel state(1 or 0)
-        readonly byte[] gfx = new byte[WIDTH * HEIGHT];
+        internal byte[] gfx = new byte[WIDTH * HEIGHT];
 
 
         // Interupts and hardware registers.
         // The CHIP-8  has none, but there are two timer registers that count at 60 Hz.
+        // Delay Timer
         // When set above zero they will count down to zero.
-        byte delay_timer;
+        // When these registers are non-zero, they are automatically decremented at a rate of 60Hz.
+        internal byte DT;
 
         // The system’s buzzer sounds whenever the sound timer reaches zero.
-        byte sound_timer;
+        // Sound Timer
+        // When these registers are non-zero, they are automatically decremented at a rate of 60Hz.
+        // The sound produced by the CHIP-8 has only one tone. The frequency of this tone is decided by the author.
+        internal byte ST;
 
         // While the specification don’t mention a stack, you will need to implement one as part of the interpreter yourself.
         // The stack is used to remember the current location before a jump is performed.
         // So anytime you perform a jump or call a subroutine, store the program counter in the stack before proceeding.
         // The system has 16 levels of stack and in order to remember which level of the stack is used, you need to implement a stack pointer (sp).
-        readonly ushort[] stack = new ushort[16];
-        ushort sp;
+        internal readonly ushort[] stack = new ushort[16];
+
+        // The stack pointer (SP) can be 8-bit, it is used to point to the topmost level of the stack.
+        internal ushort SP;
 
         // The CHIP-8 has a HEX based keypad(0x0 - 0xF), you can use an array to store the current state of the key.
-        byte[] keys = new byte[16];
+        internal byte[] keys = new byte[16];
 
         public bool DrawFlag { get; set; }
 
@@ -66,11 +79,11 @@ namespace Chip8.Core
         public CPU()
         {
             // The system expects the application to be loaded at memory location 0x200. 
-            pc = 0x200;     // Program counter starts at 0x200
+            PC = 0x200;     // Program counter starts at 0x200
 
             opcode = 0;     // Reset current opcode  
             I = 0;          // Reset index register
-            sp = 0;         // Reset stack pointer
+            SP = 0;         // Reset stack pointer
 
             // Clear display  
             // Clear stack
@@ -78,10 +91,7 @@ namespace Chip8.Core
             // Clear memory
 
             // Load fontset
-            for (int index = 0; index < 80; ++index)
-            {
-                memory[index] = CHIP8_FONTSET[index];
-            }
+            Buffer.BlockCopy(CHIP8_FONTSET, 0, memory, 0, CHIP8_FONTSET.Length);
 
             // Reset timers
         }
@@ -99,6 +109,11 @@ namespace Chip8.Core
             }
         }
 
+        public void LoadMemory(byte[] data, int index = 0)
+        {
+            data.CopyTo(this.memory, index);
+        }
+
         public void EmulateCycle()
         {
             // Fetch Opcode
@@ -106,7 +121,7 @@ namespace Chip8.Core
             // During this step, the system will fetch one opcode from the memory at the location specified by the program counter (pc).
             // In the emulator, data is stored in an array in which each address contains one byte.
             // As one opcode is 2 bytes long, we will need to fetch two successive bytes and merge them to get the actual opcode.
-            opcode = (ushort)((memory[pc] << 8) | memory[pc + 1]);
+            opcode = (ushort)((memory[PC] << 8) | memory[PC + 1]);
 
             // Decode Opcode
             int x = (opcode & 0x0F00) >> 8;
@@ -133,7 +148,7 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0x00EE: Returns from subroutine
@@ -143,7 +158,7 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         default:
@@ -157,23 +172,23 @@ namespace Chip8.Core
                     // Now that we have stored the program counter, we can set it to the address NNN.
                     // Remember, because we’re calling a subroutine at a specific address, 
                     // you should not increase the program counter by two.
-                    pc = nnn;
+                    PC = nnn;
                     break;
 
                 // 0x2NNN: This opcode calls the subroutine at address NNN.
                 case 0x2000:
                     // Because we will need to temporary jump to address NNN,
                     // it means that we should store the current address of the program counter in the stack.
-                    stack[sp] = pc;
+                    stack[SP] = PC;
 
                     //  After storing the value of the program counter in the stack,
                     // increase the stack pointer to prevent overwriting the current stack. 
-                    ++sp;
+                    ++SP;
 
                     // Now that we have stored the program counter, we can set it to the address NNN.
                     // Remember, because we’re calling a subroutine at a specific address, 
                     // you should not increase the program counter by two.
-                    pc = nnn;
+                    PC = nnn;
                     break;
 
                 // 0x3XNN: Skips the next instruction if VX equals NN.
@@ -185,7 +200,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 4;
+                        PC += 4;
                     }
                     else
                     {
@@ -193,7 +208,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 2;
+                        PC += 2;
                     }
                     break;
 
@@ -206,7 +221,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 4;
+                        PC += 4;
                     }
                     else
                     {
@@ -214,7 +229,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 2;
+                        PC += 2;
                     }
                     break;
 
@@ -227,7 +242,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 4;
+                        PC += 4;
                     }
                     else
                     {
@@ -235,7 +250,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 2;
+                        PC += 2;
                     }
                     break;
 
@@ -247,7 +262,7 @@ namespace Chip8.Core
                     // This is true unless you jump to a certain address in the memory or if you call a subroutine
                     // (in which case you need to store the program counter in the stack).
                     // If the next opcode should be skipped, increase the program counter by four.
-                    pc += 2;
+                    PC += 2;
                     break;
 
                 // 0x7XNN: Adds NN to VX. (Carry flag is not changed)
@@ -258,7 +273,7 @@ namespace Chip8.Core
                     // This is true unless you jump to a certain address in the memory or if you call a subroutine
                     // (in which case you need to store the program counter in the stack).
                     // If the next opcode should be skipped, increase the program counter by four.
-                    pc += 2;
+                    PC += 2;
                     break;
 
                 case 0x8000:
@@ -273,7 +288,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             // 0x8XY1: Sets VX to VX or VY. (Bitwise OR operation)
@@ -284,7 +299,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             // 0x8XY2: Sets VX to VX and VY. (Bitwise AND operation)
@@ -295,7 +310,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             // 0x8XY3: Sets VX to VX xor VY.
@@ -306,7 +321,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             // 0x8XY4: This opcode adds the value of VY to VX.
@@ -333,7 +348,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             // 0x8XY5: VY is subtracted from VX. VF is set to 0 when
@@ -360,7 +375,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             // 0x8XY6: Stores the least significant bit of VX in VF 
@@ -373,7 +388,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             // 0x8XY7: Sets VX to VY minus VX. VF is set to 0 when 
@@ -400,7 +415,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             // 0x8XYE: Stores the most significant bit of VX in VF  
@@ -413,7 +428,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                                 break;
 
                             default:
@@ -432,7 +447,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 4;
+                        PC += 4;
                     }
                     else
                     {
@@ -440,7 +455,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 2;
+                        PC += 2;
                     }
                     break;
 
@@ -452,7 +467,7 @@ namespace Chip8.Core
                     // This is true unless you jump to a certain address in the memory or if you call a subroutine
                     // (in which case you need to store the program counter in the stack).
                     // If the next opcode should be skipped, increase the program counter by four.
-                    pc += 2;
+                    PC += 2;
                     break;
 
                 // 0xBNNN: Jumps to the address NNN plus V0.
@@ -460,7 +475,7 @@ namespace Chip8.Core
                     // Now that we have stored the program counter, we can set it to the address NNN.
                     // Remember, because we’re calling a subroutine at a specific address, 
                     // you should not increase the program counter by two.
-                    pc = (ushort)(V[0] + nnn);
+                    PC = (ushort)(V[0] + nnn);
                     break;
 
                 // 0xCXNN: Sets VX to the result of a bitwise and operation on a random number
@@ -472,7 +487,7 @@ namespace Chip8.Core
                     // This is true unless you jump to a certain address in the memory or if you call a subroutine
                     // (in which case you need to store the program counter in the stack).
                     // If the next opcode should be skipped, increase the program counter by four.
-                    pc += 2;
+                    PC += 2;
                     break;
 
                 // 0xDXYN: Draws a sprite at coordinate (VX, VY) 
@@ -521,7 +536,7 @@ namespace Chip8.Core
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
                         // If the next opcode should be skipped, increase the program counter by four.
-                        pc += 2;
+                        PC += 2;
                     }
                     break;
 
@@ -532,7 +547,7 @@ namespace Chip8.Core
                         case 0x009E:
                             if (keys[vx] != 0)
                             {
-                                pc += 4;
+                                PC += 4;
                             }
                             else
                             {
@@ -540,7 +555,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                             }
                             break;
 
@@ -548,7 +563,7 @@ namespace Chip8.Core
                         case 0x00A1:
                             if (keys[vx] == 0)
                             {
-                                pc += 4;
+                                PC += 4;
                             }
                             else
                             {
@@ -556,7 +571,7 @@ namespace Chip8.Core
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
                                 // (in which case you need to store the program counter in the stack).
                                 // If the next opcode should be skipped, increase the program counter by four.
-                                pc += 2;
+                                PC += 2;
                             }
                             break;
 
@@ -571,13 +586,13 @@ namespace Chip8.Core
                     {
                         // 0xFX07: Sets VX to the value of the delay timer.
                         case 0x0007:
-                            V[x] = delay_timer;
+                            V[x] = DT;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0xFX0A: A key press is awaited, and then stored in VX.
@@ -602,29 +617,29 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0xFX15: Sets the delay timer to VX.
                         case 0x0015:
-                            delay_timer = vx;
+                            DT = vx;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0xFX18: Sets the sound timer to VX.
                         case 0x0018:
-                            sound_timer = vx;
+                            ST = vx;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0xFX1E: Adds VX to I.
@@ -651,7 +666,7 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0xFX29: Sets I to the location of the sprite for the character in VX.
@@ -663,7 +678,7 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0x0033: Stores the Binary-coded decimal representation of VX at the addresses I, I plus 1, and I plus 2
@@ -676,7 +691,7 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0xFX55: Stores V0 to VX (including VX) in memory starting at address I.
@@ -691,7 +706,7 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         // 0xFX65: Fills V0 to VX (including VX) with values from memory starting at address I.
@@ -706,7 +721,7 @@ namespace Chip8.Core
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
-                            pc += 2;
+                            PC += 2;
                             break;
 
                         default:
@@ -723,20 +738,20 @@ namespace Chip8.Core
             // Execute Opcode
 
             // Update timers
-            if (delay_timer > 0)
+            if (DT > 0)
             {
-                --delay_timer;
+                --DT;
             }
 
-            if (sound_timer > 0)
+            if (ST > 0)
             {
-                if (sound_timer == 1)
+                if (ST == 1)
                 {
                     Console.WriteLine("BEEP!");
                     //Console.Beep(500, milliseconds);
                 }
 
-                --sound_timer;
+                --ST;
             }
         }
 
