@@ -6,7 +6,7 @@ namespace Chip8.Core
         // Programs may also refer to a group of sprites representing the hexadecimal digits 0 through F.
         // These sprites are 5 bytes long, or 8x5 pixels.
         // The data should be stored in the interpreter area of Chip-8 memory (0x000 to 0x1FF). 
-        readonly static byte[] CHIP8_FONTSET =
+        internal readonly static byte[] CHIP8_FONTSET =
         {
             //**** 11110000
             //*  * 10010000

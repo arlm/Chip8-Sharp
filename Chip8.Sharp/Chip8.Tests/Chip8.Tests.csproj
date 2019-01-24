@@ -33,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Test.cs" />
+    <Compile Include="Utils\GammaFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -42,6 +43,9 @@
       <Project>{13F0FFE7-D3E4-4F12-84EF-4E66E35E9188}</Project>
       <Name>Chip8.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

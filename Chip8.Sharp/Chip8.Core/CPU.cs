@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Chip8.Core
 {
@@ -112,6 +114,8 @@ namespace Chip8.Core
         public void LoadMemory(byte[] data, int index = 0)
         {
             data.CopyTo(this.memory, index);
+
+            Buffer.BlockCopy(CHIP8_FONTSET, 0, memory, 0, CHIP8_FONTSET.Length);
         }
 
         public void EmulateCycle()
@@ -121,7 +125,7 @@ namespace Chip8.Core
             // During this step, the system will fetch one opcode from the memory at the location specified by the program counter (pc).
             // In the emulator, data is stored in an array in which each address contains one byte.
             // As one opcode is 2 bytes long, we will need to fetch two successive bytes and merge them to get the actual opcode.
-            opcode = (ushort)((memory[PC] << 8) | memory[PC + 1]);
+            opcode = unchecked((ushort)((memory[PC] << 8) | memory[PC + 1]));
 
             // Decode Opcode
             int x = (opcode & 0x0F00) >> 8;
@@ -130,8 +134,8 @@ namespace Chip8.Core
             byte vx = V[x];
             byte vy = V[y];
 
-            byte nn = (byte)(opcode & 0x00FF);
-            ushort nnn = (ushort)(opcode & 0x0FFF);
+            byte nn = unchecked((byte)(opcode & 0x00FF));
+            ushort nnn = unchecked((ushort)(opcode & 0x0FFF));
 
             switch (opcode & 0xF000)
             {
@@ -143,6 +147,7 @@ namespace Chip8.Core
                     {
                         // 0x00E0: Clears the screen
                         case 0x00E0:
+                            gfx = new byte[WIDTH * HEIGHT];
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -153,17 +158,30 @@ namespace Chip8.Core
 
                         // 0x00EE: Returns from subroutine
                         case 0x0EE:
+                            if (SP == 0)
+                            {
+                                string message = "Illegal return operation, stack is empty.";
+                                Console.WriteLine(message);
+                                throw new StackOverflowException(message);
+                            }
+
+                            PC = stack[SP - 1];
+                            SP--;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
                             // (in which case you need to store the program counter in the stack).
                             // If the next opcode should be skipped, increase the program counter by four.
                             PC += 2;
+
                             break;
 
                         default:
-                            Console.WriteLine($"Illegal call to RCA 1802 program: {opcode:X}");
-                            break;
+                            {
+                                string message = $"Illegal call to RCA 1802 program: 0x{opcode:X4}";
+                                Console.WriteLine(message);
+                                throw new InvalidOperationException(message);
+                            }
                     }
                     break;
 
@@ -172,11 +190,26 @@ namespace Chip8.Core
                     // Now that we have stored the program counter, we can set it to the address NNN.
                     // Remember, because we’re calling a subroutine at a specific address, 
                     // you should not increase the program counter by two.
+
+                    if (nnn < 0x200)
+                    {
+                        string message = $"Illegal jump target: 0x{opcode:X4}";
+                        Console.WriteLine(message);
+                        throw new InvalidOperationException(message);
+                    }
+
                     PC = nnn;
                     break;
 
                 // 0x2NNN: This opcode calls the subroutine at address NNN.
                 case 0x2000:
+                    if (SP > 0xF)
+                    {
+                        string message = "Illegal call operation, stack is full.";
+                        Console.WriteLine(message);
+                        throw new StackOverflowException(message);
+                    }
+
                     // Because we will need to temporary jump to address NNN,
                     // it means that we should store the current address of the program counter in the stack.
                     stack[SP] = PC;
@@ -236,6 +269,16 @@ namespace Chip8.Core
                 // 0x5XY0: Skips the next instruction if VX equals VY.
                 // (Usually the next instruction is a jump to skip a code block)    
                 case 0x5000:
+                    if (x > 0xF)
+                    {
+                        throw new InvalidOperationException("SE Vx, Vy operation should not use X bigger than 0xF");
+                    }
+
+                    if (y > 0xF)
+                    {
+                        throw new InvalidOperationException("LD Vx, Vy operation should not use Y bigger than 0xF");
+                    }
+
                     if (vx == vy)
                     {
                         // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -256,6 +299,11 @@ namespace Chip8.Core
 
                 // 0x6XNN: Sets VX to NN.
                 case 0x6000:
+                    if (x > 0xF)
+                    {
+                        throw new InvalidOperationException("LD Vx, byte operation should not use X bigger than 0xF");
+                    }
+
                     V[x] = nn;
 
                     // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -267,7 +315,12 @@ namespace Chip8.Core
 
                 // 0x7XNN: Adds NN to VX. (Carry flag is not changed)
                 case 0x7000:
-                    V[x] += vy;
+                    if (x > 0xF)
+                    {
+                        throw new InvalidOperationException("ADD Vx, byte operation should not use X bigger than 0xF");
+                    }
+
+                    V[x] += nn;
 
                     // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                     // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -282,6 +335,16 @@ namespace Chip8.Core
                         {
                             // 0x8XY0: Sets VX to the value of VY.
                             case 0x0000:
+                                if (x > 0xF)
+                                {
+                                    throw new InvalidOperationException("LD Vx, Vy operation should not use X bigger than 0xF");
+                                }
+
+                                if (y > 0xF)
+                                {
+                                    throw new InvalidOperationException("LD Vx, Vy operation should not use Y bigger than 0xF");
+                                }
+
                                 V[x] = vy;
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -293,6 +356,16 @@ namespace Chip8.Core
 
                             // 0x8XY1: Sets VX to VX or VY. (Bitwise OR operation)
                             case 0x0001:
+                                if (x > 0xF)
+                                {
+                                    throw new InvalidOperationException("OR Vx, Vy operation should not use X bigger than 0xF");
+                                }
+
+                                if (y > 0xF)
+                                {
+                                    throw new InvalidOperationException("OR Vx, Vy operation should not use Y bigger than 0xF");
+                                }
+
                                 V[x] |= vy;
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -304,6 +377,17 @@ namespace Chip8.Core
 
                             // 0x8XY2: Sets VX to VX and VY. (Bitwise AND operation)
                             case 0x0002:
+                                if (x > 0xF)
+                                {
+                                    throw new InvalidOperationException("AND Vx, Vy operation should not use X bigger than 0xF");
+                                }
+
+                                if (y > 0xF)
+                                {
+                                    throw new InvalidOperationException("AND Vx, Vy operation should not use Y bigger than 0xF");
+                                }
+
+
                                 V[x] &= vy;
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -315,6 +399,16 @@ namespace Chip8.Core
 
                             // 0x8XY3: Sets VX to VX xor VY.
                             case 0x0003:
+                                if (x > 0xF)
+                                {
+                                    throw new InvalidOperationException("XOR Vx, Vy operation should not use X bigger than 0xF");
+                                }
+
+                                if (y > 0xF)
+                                {
+                                    throw new InvalidOperationException("XOR Vx, Vy operation should not use Y bigger than 0xF");
+                                }
+
                                 V[x] ^= vy;
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -327,8 +421,20 @@ namespace Chip8.Core
                             // 0x8XY4: This opcode adds the value of VY to VX.
                             // Register VF is set to 1 when there is a carry and set to 0 when there isn’t.
                             case 0x0004:
+                                if (x >= 0xF)
+                                {
+                                    throw new InvalidOperationException("ADD Vx, Vy operation should not use X as 0xF or bigger (the carry flag register)");
+                                }
+
+                                if (y >= 0xF)
+                                {
+                                    throw new InvalidOperationException("ADD Vx, Vy operation should not use Y as 0xF or bigger (the carry flag register)");
+                                }
+
                                 if (vy > (0xFF - vx))
                                 {
+                                    V[x] += vy;
+
                                     // Carry
                                     // Because the register can only store values from 0 to 255 (8 bit value),
                                     // it means that if the sum of VX and VY is larger than 255,
@@ -339,10 +445,10 @@ namespace Chip8.Core
                                 }
                                 else
                                 {
+                                    V[x] += vy;
+
                                     V[0xF] = 0;
                                 }
-
-                                V[x] += vy;
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -354,8 +460,20 @@ namespace Chip8.Core
                             // 0x8XY5: VY is subtracted from VX. VF is set to 0 when
                             // there's a borrow, and 1 when there isn't. 
                             case 0x0005:
-                                if (vy > vx)
+                                if (x >= 0xF)
                                 {
+                                    throw new InvalidOperationException("SUB Vx, Vy operation should not use X as 0xF or bigger (the carry flag register)");
+                                }
+
+                                if (y >= 0xF)
+                                {
+                                    throw new InvalidOperationException("SUB Vx, Vy operation should not use Y as 0xF or bigger (the carry flag register)");
+                                }
+
+                                if (vx > vy)
+                                {
+                                    V[x] -= vy;
+
                                     // Carry
                                     // Because the register can only store values from 0 to 255 (8 bit value),
                                     // it means that if the sum of VX and VY is larger than 255,
@@ -366,10 +484,10 @@ namespace Chip8.Core
                                 }
                                 else
                                 {
+                                    V[x] -= vy;
+
                                     V[0xF] = 0;
                                 }
-
-                                V[x] -= vy;
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -381,7 +499,17 @@ namespace Chip8.Core
                             // 0x8XY6: Stores the least significant bit of VX in VF 
                             // and then shifts VX to the right by 1.
                             case 0x0006:
-                                V[0xF] = (byte)(vx & 0x01);
+                                if (x >= 0xF)
+                                {
+                                    throw new InvalidOperationException("SHR Vx, {Vy} operation should not use X as 0xF or bigger (the carry flag register)");
+                                }
+
+                                if (y >= 0xF)
+                                {
+                                    throw new InvalidOperationException("SHR Vx, {Vy} operation should not use Y as 0xF or bigger (the carry flag register)");
+                                }
+
+                                V[0xF] = unchecked((byte)(vx & 0x01));
                                 V[x] >>= 1;
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -394,9 +522,21 @@ namespace Chip8.Core
                             // 0x8XY7: Sets VX to VY minus VX. VF is set to 0 when 
                             // there's a borrow, and 1 when there isn't.
                             case 0x0007:
-                                if (vx > vy)
+                                if (x >= 0xF)
                                 {
-                                    // Carry
+                                    throw new InvalidOperationException("SUBN Vx, Vy operation should not use X as 0xF or bigger (the carry flag register)");
+                                }
+
+                                if (y >= 0xF)
+                                {
+                                    throw new InvalidOperationException("SUBN Vx, Vy operation should not use Y as 0xF or bigger (the carry flag register)");
+                                }
+
+                                if (vy > vx)
+                                {
+                                    V[x] = unchecked((byte)(vy - vx));
+                                 
+                                       // Carry
                                     // Because the register can only store values from 0 to 255 (8 bit value),
                                     // it means that if the sum of VX and VY is larger than 255,
                                     // it can’t be stored in the register (or actually it starts counting from 0 again).
@@ -406,10 +546,10 @@ namespace Chip8.Core
                                 }
                                 else
                                 {
-                                    V[0xF] = 0;
+                                    V[x] = unchecked((byte)(vy - vx));
+                                   
+                                     V[0xF] = 0;
                                 }
-
-                                V[x] = (byte)(vy - vx);
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                                 // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -421,7 +561,17 @@ namespace Chip8.Core
                             // 0x8XYE: Stores the most significant bit of VX in VF  
                             // and then shifts VX to the left by 1.
                             case 0x000E:
-                                V[0xF] = (byte)(vx & 0x80);
+                                if (x >= 0xF)
+                                {
+                                    throw new InvalidOperationException("SUBN Vx, Vy operation should not use X as 0xF or bigger (the carry flag register)");
+                                }
+
+                                if (y >= 0xF)
+                                {
+                                    throw new InvalidOperationException("SUBN Vx, Vy operation should not use Y as 0xF or bigger (the carry flag register)");
+                                }
+
+                                V[0xF] = unchecked((byte)((vx & 0x80) >> 7));
                                 V[x] <<= 1;
 
                                 // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -432,7 +582,7 @@ namespace Chip8.Core
                                 break;
 
                             default:
-                                Console.WriteLine($"Unknown opcode: {opcode:X}");
+                                Console.WriteLine($"Unknown opcode: {opcode:X4}");
                                 break;
                         }
                         break;
@@ -441,6 +591,16 @@ namespace Chip8.Core
                 // 0x9XY0: Skips the next instruction if VX doesn't equal VY.
                 // (Usually the next instruction is a jump to skip a code block)    
                 case 0x9000:
+                    if (x > 0xF)
+                    {
+                        throw new InvalidOperationException("SNE Vx, Vy operation should not use X bigger than 0xF");
+                    }
+
+                    if (y > 0xF)
+                    {
+                        throw new InvalidOperationException("SNE Vx, Vy operation should not use Y bigger than 0xF");
+                    }
+
                     if (vx != vy)
                     {
                         // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -475,13 +635,34 @@ namespace Chip8.Core
                     // Now that we have stored the program counter, we can set it to the address NNN.
                     // Remember, because we’re calling a subroutine at a specific address, 
                     // you should not increase the program counter by two.
-                    PC = (ushort)(V[0] + nnn);
+                    int dest = V[0] + nnn;
+
+                    if (dest < 0x200)
+                    {
+                        string message = $"Illegal jump target: 0x{dest:X4} => 0x{opcode:X4} + V[0] (0x{V[0]:X2})";
+                        Console.WriteLine(message);
+                        throw new InvalidOperationException(message);
+                    }
+
+                    if (dest > 0xFFF)
+                    {
+                        string message = $"Illegal jump target: 0x{dest:X4} => 0x{opcode:X4} + V[0] (0x{V[0]:X2})";
+                        Console.WriteLine(message);
+                        throw new InvalidOperationException(message);
+                    }
+
+                    PC = unchecked((ushort)dest);
                     break;
 
                 // 0xCXNN: Sets VX to the result of a bitwise and operation on a random number
                 // (Typically: 0 to 255) and NN.
                 case 0xC000:
-                    V[x] = (byte)(rand.Next(0, 255) & nn);
+                    if (x > 0xF)
+                    {
+                        throw new InvalidOperationException("RND Vx, byte operation should not use X bigger than 0xF");
+                    }
+
+                    V[x] = unchecked((byte)(rand.Next(0, 0x100) & nn));
 
                     // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                     // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -494,7 +675,7 @@ namespace Chip8.Core
                 case 0xD000:
                     {
                         // Fetch the position and height of the sprite
-                        ushort height = (ushort)(opcode & 0x000F);
+                        ushort height = unchecked((ushort)(opcode & 0x000F));
 
                         ushort pixel;
 
@@ -545,6 +726,16 @@ namespace Chip8.Core
                     {
                         // 0xEX9E: Skips the next instruction if the key stored in VX is pressed
                         case 0x009E:
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("SKP Vx operation should not use X bigger than 0xF");
+                            }
+
+                            if (vx > 0xF)
+                            {
+                                throw new InvalidOperationException("SKP Vx operation should not use VX value bigger than 0xF");
+                            }
+
                             if (keys[vx] != 0)
                             {
                                 PC += 4;
@@ -561,6 +752,16 @@ namespace Chip8.Core
 
                         // 0xEX9E: Skips the next instruction if the key stored in VX is pressed
                         case 0x00A1:
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("SKP Vx operation should not use X bigger than 0xF");
+                            }
+
+                            if (vx > 0xF)
+                            {
+                                throw new InvalidOperationException("SKP Vx operation should not use VX value bigger than 0xF");
+                            }
+
                             if (keys[vx] == 0)
                             {
                                 PC += 4;
@@ -576,7 +777,7 @@ namespace Chip8.Core
                             break;
 
                         default:
-                            Console.WriteLine($"Unknown opcode: {opcode:X}");
+                            Console.WriteLine($"Unknown opcode: {opcode:X4}");
                             break;
                     }
                     break;
@@ -586,6 +787,11 @@ namespace Chip8.Core
                     {
                         // 0xFX07: Sets VX to the value of the delay timer.
                         case 0x0007:
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("LD Vx, DT operation should not use X bigger than 0xF");
+                            }
+
                             V[x] = DT;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -602,15 +808,19 @@ namespace Chip8.Core
 
                             while (!keyPressed)
                             {
-                                foreach (var item in keys)
+                                for (int index = 0; index < keys.Length; index++)
                                 {
-                                    keyPressed |= item > 0;
+                                    byte keyValue = keys[index];
+                                    keyPressed |= keyValue > 0;
 
                                     if (keyPressed)
                                     {
+                                        V[x] = unchecked((byte)index);
                                         break;
                                     }
                                 }
+
+                                Thread.Sleep(250);
                             }
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -622,6 +832,11 @@ namespace Chip8.Core
 
                         // 0xFX15: Sets the delay timer to VX.
                         case 0x0015:
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("LD DT, Vx operation should not use X bigger than 0xF");
+                            }
+
                             DT = vx;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -633,6 +848,11 @@ namespace Chip8.Core
 
                         // 0xFX18: Sets the sound timer to VX.
                         case 0x0018:
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("LD ST, Vx operation should not use X bigger than 0xF");
+                            }
+
                             ST = vx;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -645,19 +865,14 @@ namespace Chip8.Core
                         // 0xFX1E: Adds VX to I.
                         // VF is set to 1 when there is a range overflow (I+VX>0xFFF), and to 0 when there isn't.
                         case 0x001E:
-                            if (I + vx > 0xFFF)
+                            if (x > 0xF)
                             {
-                                // Carry
-                                // Because the register can only store values from 0 to 255 (8 bit value),
-                                // it means that if the sum of VX and VY is larger than 255,
-                                // it can’t be stored in the register (or actually it starts counting from 0 again).
-                                // If the sum of VX and VY is larger than 255, 
-                                // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
-                                V[0xF] = 1;
+                                throw new InvalidOperationException("ADD I, Vx operation should not use X bigger than 0xF");
                             }
-                            else
+
+                            if ((I + vx) > 0xFFF)
                             {
-                                V[0xF] = 0;
+                                throw new InvalidOperationException("ADD I, Vx operation should not exceed 0xFFF");
                             }
 
                             I += vx;
@@ -672,7 +887,17 @@ namespace Chip8.Core
                         // 0xFX29: Sets I to the location of the sprite for the character in VX.
                         // Characters 0x0-0xF are represented by a 4x5 font.
                         case 0x0029:
-                            I = memory[vx];
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("LD F, Vx operation should not use X bigger than 0xF");
+                            }
+
+                            if (vx > 0x0F)
+                            {
+                                throw new InvalidOperationException("LD F, Vx operation should not try to access sprites higher than 0x0F");
+                            }
+
+                            I = unchecked((ushort)(vx * 5));
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -683,9 +908,24 @@ namespace Chip8.Core
 
                         // 0x0033: Stores the Binary-coded decimal representation of VX at the addresses I, I plus 1, and I plus 2
                         case 0x0033:
-                            memory[I] = (byte)(vx / 100);
-                            memory[I + 1] = (byte)(vx / 10 % 10);
-                            memory[I + 2] = (byte)(vx % 100 % 10);
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("LD B, Vx operation should not use X bigger than 0xF");
+                            }
+
+                            if (I < 0x200)
+                            {
+                                throw new InvalidOperationException("LD B, Vx operation should be below 0x200");
+                            }
+
+                            if ((I + 2) > 0xFFF)
+                            {
+                                throw new InvalidOperationException("LD B, Vx operation should not exceed address 0xFFF");
+                            }
+
+                            memory[I] = unchecked((byte)(vx / 100));
+                            memory[I + 1] = unchecked((byte)(vx / 10 % 10));
+                            memory[I + 2] = unchecked((byte)(vx % 100 % 10));
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -697,7 +937,24 @@ namespace Chip8.Core
                         // 0xFX55: Stores V0 to VX (including VX) in memory starting at address I.
                         // The offset from I is increased by 1 for each value written, but I itself is left unmodified
                         case 0x0055:
-                            for (int index = 0; I <= index; ++index)
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("LD [I], Vx operation should not use X bigger than 0xF");
+                            }
+
+                            int destAddr = I + x;
+
+                            if (destAddr > 0xFFF)
+                            {
+                                throw new InvalidOperationException("LD [I], Vx operation should not exceed 0xFFF");
+                            }
+
+                            if (destAddr < 0x200)
+                            {
+                                throw new InvalidOperationException("LD [I], Vx operation should be below 0x200");
+                            }
+
+                            for (int index = 0; index <= x; ++index)
                             {
                                 memory[I + index] = V[index];
                             }
@@ -712,7 +969,17 @@ namespace Chip8.Core
                         // 0xFX65: Fills V0 to VX (including VX) with values from memory starting at address I.
                         // The offset from I is increased by 1 for each value written, but I itself is left unmodified
                         case 0x0065:
-                            for (int index = 0; I <= index; ++index)
+                            if (x > 0xF)
+                            {
+                                throw new InvalidOperationException("LD Vx, [I] operation should not use X bigger than 0xF");
+                            }
+
+                            if ((I + x) > 0xFFF)
+                            {
+                                throw new InvalidOperationException("LD Vx, [I] operation should not exceed 0xFFF");
+                            }
+
+                            for (int index = 0; index <= x; ++index)
                             {
                                 V[index] = memory[I + index];
                             }
@@ -725,13 +992,13 @@ namespace Chip8.Core
                             break;
 
                         default:
-                            Console.WriteLine($"Unknown opcode: {opcode:X}");
+                            Console.WriteLine($"Unknown opcode: {opcode:X4}");
                             break;
                     }
                     break;
 
                 default:
-                    Console.WriteLine($"Unknown opcode: {opcode:X}");
+                    Console.WriteLine($"Unknown opcode: {opcode:X4}");
                     break;
             }
 
