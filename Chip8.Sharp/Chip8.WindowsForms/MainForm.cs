@@ -321,7 +321,7 @@ namespace Chip8.WindowsForms
 
                 while (elapsedTime >= targetElapsedTime60Hz)
                 {
-                    this.Invoke((Action)Tick60Hz);
+                    pbScreen.Invoke((Action)Tick60Hz);
                     elapsedTime -= targetElapsedTime60Hz;
                     lastTime += targetElapsedTime60Hz;
                 }
@@ -342,10 +342,18 @@ namespace Chip8.WindowsForms
 
             if (myChip8.DrawFlag)
             {
-                Draw(zoom);
+                if (pbScreen.InvokeRequired)
+                {
+                    pbScreen.Invoke((Action)(() => {
+                        Draw(zoom);
+                        pbScreen.Refresh();
+                    }));
+                } else
+                {
+                    Draw(zoom);
+                    pbScreen.Refresh();
+                }
             }
-
-            pbScreen.Refresh();
         }
 
         void Draw(double zoom)
