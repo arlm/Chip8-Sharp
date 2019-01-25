@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Chip8.WPF"
         mc:Ignorable="d"
-        Title="CHIP-8 Emulator (WPF)" Height="519" Width="656" Loaded="Window_Loaded">
-    <Grid>
-        <Image Name="imgScreen" HorizontalAlignment="Center"  VerticalAlignment="Center" Stretch="Uniform" />
+        Title="CHIP-8 Emulator (WPF)" Height="549" Width="652" Loaded="Window_Loaded" PreviewKeyDown="OnKeyDown" PreviewKeyUp="OnKeyUp" WindowStyle="ToolWindow">
+    <Grid Margin="0,0,0,0">
+        <ComboBox Name="cbPrograms" HorizontalAlignment="Left" Height="25" Width="640" VerticalAlignment="Top" Margin="0,0,0,0" SelectionChanged="ComboBox_SelectionChanged" />
+        <Image Name="imgScreen" Margin="0,33,0,0" Height="480" Width="640" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" />
     </Grid>
 </Window>

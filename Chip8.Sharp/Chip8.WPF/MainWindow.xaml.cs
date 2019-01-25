@@ -21,6 +21,7 @@ namespace Chip8.WPF
 
         private readonly CPU myChip8;
 
+        private bool pause = false;
         private bool quit = false;
         private bool debugKeys = false;
         private bool debugPixels = false;
@@ -64,13 +65,38 @@ namespace Chip8.WPF
             // Initialize the CHIP - 8 system(Clear the memory, registers and screen)
             myChip8 = new CPU();
 
-            // Load (copy) the game into the memory
-            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}demo.c8");
-
             RenderOptions.SetBitmapScalingMode(imgScreen, BitmapScalingMode.NearestNeighbor);
 
-            EventManager.RegisterClassHandler(typeof(Window), Keyboard.KeyUpEvent, new KeyEventHandler(OnKeyUp), true);
-            EventManager.RegisterClassHandler(typeof(Window), Keyboard.KeyDownEvent, new KeyEventHandler(OnKeyDown), true);
+            //EventManager.RegisterClassHandler(typeof(Window), Keyboard.KeyUpEvent, new KeyEventHandler(OnKeyUp), true);
+            //EventManager.RegisterClassHandler(typeof(Window), Keyboard.KeyDownEvent, new KeyEventHandler(OnKeyDown), true);
+
+            const string STARTUP_FILE = "demo";
+
+            var files = Directory.EnumerateFiles("progs", "*.c8");
+
+            foreach (var file in files)
+            {
+                cbPrograms.Items.Add(Path.GetFileNameWithoutExtension(file));
+            }
+
+            cbPrograms.SelectedIndex = cbPrograms.Items.IndexOf(STARTUP_FILE);
+            LoadProgram(STARTUP_FILE);
+        }
+
+        private void LoadProgram(string filename)
+        {
+            try
+            {
+                pause = true;
+                myChip8.Reset();
+
+                // Load (copy) the game into the memory
+                myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}{filename}.c8");
+            }
+            finally
+            {
+                pause = false;
+            }
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e)
@@ -350,15 +376,18 @@ namespace Chip8.WPF
 
         private void Tick60Hz()
         {
-            myChip8.EmulateCycle();
-
-            if (myChip8.DrawFlag)
+            if (!pause)
             {
-                imgScreen.Dispatcher.Invoke(() =>
+                myChip8.EmulateCycle();
+
+                if (myChip8.DrawFlag)
                 {
-                    Draw(zoom);
-                    imgScreen.InvalidateVisual();
-                });
+                    imgScreen.Dispatcher.Invoke(() =>
+                    {
+                        Draw(zoom);
+                        imgScreen.InvalidateVisual();
+                    });
+                }
             }
         }
 
@@ -383,6 +412,12 @@ namespace Chip8.WPF
 
             var screenImage = BitmapSource.Create(width, height, 96, 96, pf, null, rawImage, rawStride);
             imgScreen.Source = screenImage;
+        }
+
+        private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            LoadProgram((string)cbPrograms.SelectedItem);
+            imgScreen.Focus();
         }
     }
 }

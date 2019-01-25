@@ -19,6 +19,7 @@ namespace Chip8.WindowsForms
         private readonly CPU myChip8;
 
         private bool quit = false;
+        private bool pause = false;
         private bool debugKeys = false;
         private bool debugPixels = false;
         private float zoom = 9.5f;
@@ -57,8 +58,33 @@ namespace Chip8.WindowsForms
             // Initialize the CHIP - 8 system(Clear the memory, registers and screen)
             myChip8 = new CPU();
 
-            // Load (copy) the game into the memory
-            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}demo.c8");
+            const string STARTUP_FILE = "demo";
+
+            var files = Directory.EnumerateFiles("progs", "*.c8");
+            
+            foreach(var file in files)
+            {
+                cbPrograms.Items.Add(Path.GetFileNameWithoutExtension(file));
+            }
+
+            cbPrograms.SelectedIndex = cbPrograms.Items.IndexOf(STARTUP_FILE);
+            LoadProgram(STARTUP_FILE);
+        }
+
+        private void LoadProgram(string filename)
+        {
+            try
+            {
+                pause = true;
+                myChip8.Reset();
+
+                // Load (copy) the game into the memory
+                myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}{filename}.c8");
+            }
+            finally
+            {
+                pause = false;
+            }
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
@@ -338,20 +364,25 @@ namespace Chip8.WindowsForms
 
         private void Tick60Hz()
         {
-            myChip8.EmulateCycle();
-
-            if (myChip8.DrawFlag)
+            if (!pause)
             {
-                if (pbScreen.InvokeRequired)
+                myChip8.EmulateCycle();
+
+                if (myChip8.DrawFlag)
                 {
-                    pbScreen.Invoke((Action)(() => {
+                    if (pbScreen.InvokeRequired)
+                    {
+                        pbScreen.Invoke((Action)(() =>
+                        {
+                            Draw(zoom);
+                            pbScreen.Refresh();
+                        }));
+                    }
+                    else
+                    {
                         Draw(zoom);
                         pbScreen.Refresh();
-                    }));
-                } else
-                {
-                    Draw(zoom);
-                    pbScreen.Refresh();
+                    }
                 }
             }
         }
@@ -378,6 +409,12 @@ namespace Chip8.WindowsForms
             }
 
             screenImage.UnlockBits(bits);
+        }
+
+        private void cbPrograms_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadProgram((string)cbPrograms.SelectedItem);
+            pbScreen.Focus();
         }
     }
 }
