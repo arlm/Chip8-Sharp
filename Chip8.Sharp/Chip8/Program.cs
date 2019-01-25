@@ -316,6 +316,73 @@ namespace Chip8
                                     currentTexture = textures[(int)KeyPressSurfaces.Default];
                                     break;
 
+                                case SDL.SDL_Keycode.SDLK_1:
+                                    keys[0x0] = 0;
+                                    Console.WriteLine("1");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_2:
+                                    keys[0x1] = 0;
+                                    Console.WriteLine("2");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_3:
+                                    keys[0x2] = 0;
+                                    Console.WriteLine("3");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_4:
+                                    keys[0x3] = 0;
+                                    Console.WriteLine("4");
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_q:
+                                    keys[0x4] = 0;
+                                    Console.WriteLine("q");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_w:
+                                    keys[0x5] = 0;
+                                    Console.WriteLine("w");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_e:
+                                    keys[0x6] = 0;
+                                    Console.WriteLine("e");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_r:
+                                    keys[0x7] = 0;
+                                    Console.WriteLine("r");
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_a:
+                                    keys[0x8] = 0;
+                                    Console.WriteLine("a");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_s:
+                                    keys[0x9] = 0;
+                                    Console.WriteLine("s");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_d:
+                                    keys[0xA] = 0;
+                                    Console.WriteLine("d");
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_f:
+                                    keys[0xA] = 0;
+                                    Console.WriteLine("f");
+                                    break;
+
+                                case SDL.SDL_Keycode.SDLK_z:
+                                    keys[0xB] = 0;
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_y:
+                                    keys[0xB] = 0;
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_x:
+                                    keys[0xC] = 0;
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_c:
+                                    keys[0xD] = 0;
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_v:
+                                    keys[0xE] = 0;
+                                    break;
+
                                 default:
                                     currentTexture = textures[(int)KeyPressSurfaces.Default];
                                     break;
