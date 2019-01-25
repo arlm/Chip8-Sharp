@@ -14,14 +14,14 @@ namespace Chip8.Core
         internal ushort opcode;
 
         // The CHIP-8 has 4K memory in total
-        internal byte[] memory = new byte[0x1000];
+        internal byte[] memory;
 
         // The CHIP-8 has 16 8-bit general purpose registers named V0, V1 up to VF.
         // Usually referred to as Vx, where x is a hexadecimal digit (0 through F).
         // The 16th register is used  for the ‘carry flag’.
         // The VF register should not be used by any program, 
         // as it is used as a flag by some instructions.
-        internal readonly byte[] V = new byte[16];
+        internal byte[] V;
 
         // The Index register which can have a value from 0x000 to 0xFFF
         // This register is generally used to store memory addresses, 
@@ -43,7 +43,7 @@ namespace Chip8.Core
 
         // The graphics of the CHIP-8 are black and white and the screen has a total of 2048 pixels(64 x 32).
         // This can easily be implemented using an array that hold the pixel state(1 or 0)
-        internal byte[] gfx = new byte[WIDTH * HEIGHT];
+        internal byte[] gfx;
 
 
         // Interupts and hardware registers.
@@ -63,13 +63,13 @@ namespace Chip8.Core
         // The stack is used to remember the current location before a jump is performed.
         // So anytime you perform a jump or call a subroutine, store the program counter in the stack before proceeding.
         // The system has 16 levels of stack and in order to remember which level of the stack is used, you need to implement a stack pointer (sp).
-        internal readonly ushort[] stack = new ushort[16];
+        internal ushort[] stack;
 
         // The stack pointer (SP) can be 8-bit, it is used to point to the topmost level of the stack.
         internal ushort SP;
 
         // The CHIP-8 has a HEX based keypad(0x0 - 0xF), you can use an array to store the current state of the key.
-        internal byte[] keys = new byte[16];
+        internal byte[] keys;
 
         public bool DrawFlag { get; set; }
 
@@ -80,6 +80,11 @@ namespace Chip8.Core
         // Initialize registers and memory once
         public CPU()
         {
+            Reset();
+        }
+
+        public void Reset()
+        {
             // The system expects the application to be loaded at memory location 0x200. 
             PC = 0x200;     // Program counter starts at 0x200
 
@@ -87,15 +92,29 @@ namespace Chip8.Core
             I = 0;          // Reset index register
             SP = 0;         // Reset stack pointer
 
+            //Clear keys
+            keys = new byte[16];
+
             // Clear display  
+            gfx = new byte[WIDTH * HEIGHT];
+            DrawFlag = false;
+
             // Clear stack
+            stack = new ushort[16];
+            SP = 0;
+
             // Clear registers V0-VF
+            V = new byte[16];
+
             // Clear memory
+            memory = new byte[0x1000];
 
             // Load fontset
             Buffer.BlockCopy(CHIP8_FONTSET, 0, memory, 0, CHIP8_FONTSET.Length);
 
             // Reset timers
+            DT = 0;
+            ST = 0;
         }
 
         public void LoadGame(string fileName)
