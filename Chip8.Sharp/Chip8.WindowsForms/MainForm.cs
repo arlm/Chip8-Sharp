@@ -16,7 +16,7 @@ namespace Chip8.WindowsForms
         private const int HEIGHT = 480;
 
         private readonly Bitmap screenImage;
-        private readonly CPU myChip8;
+        private readonly ICPU myChip8;
 
         private bool quit = false;
         private bool pause = false;
@@ -57,6 +57,7 @@ namespace Chip8.WindowsForms
 
             // Initialize the CHIP - 8 system(Clear the memory, registers and screen)
             myChip8 = new CPU();
+            myChip8.OnDraw += MyChip8_OnDraw;
 
             const string STARTUP_FILE = "demo";
 
@@ -367,27 +368,28 @@ namespace Chip8.WindowsForms
             if (!pause)
             {
                 myChip8.EmulateCycle();
-
-                if (myChip8.DrawFlag)
-                {
-                    if (pbScreen.InvokeRequired)
-                    {
-                        pbScreen.Invoke((Action)(() =>
-                        {
-                            Draw(zoom);
-                            pbScreen.Refresh();
-                        }));
-                    }
-                    else
-                    {
-                        Draw(zoom);
-                        pbScreen.Refresh();
-                    }
-                }
             }
         }
 
-        void Draw(double zoom)
+        void MyChip8_OnDraw(byte[] graphics)
+        {
+            if (pbScreen.InvokeRequired)
+            {
+                pbScreen.Invoke((Action)(() =>
+                {
+                    Draw(graphics);
+                    pbScreen.Refresh();
+                }));
+            }
+            else
+            {
+                Draw(graphics);
+                pbScreen.Refresh();
+            }
+        }
+
+
+        void Draw(byte[] graphics)
         {
             var bits = screenImage.LockBits(new Rectangle(0, 0, screenImage.Width, screenImage.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
 
@@ -395,7 +397,7 @@ namespace Chip8.WindowsForms
             {
                 byte* pointer = (byte*)bits.Scan0;
 
-                foreach (byte pixel in myChip8.Graphics)
+                foreach (byte pixel in graphics)
                 {
                     var color = (pixel > 0) ? appleIIcGreen : Color.Black;
 

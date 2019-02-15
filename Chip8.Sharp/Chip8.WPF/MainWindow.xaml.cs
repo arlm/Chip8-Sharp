@@ -19,7 +19,7 @@ namespace Chip8.WPF
         private const int WIDTH = 640;
         private const int HEIGHT = 480;
 
-        private readonly CPU myChip8;
+        private readonly ICPU myChip8;
 
         private bool pause = false;
         private bool quit = false;
@@ -64,6 +64,7 @@ namespace Chip8.WPF
 
             // Initialize the CHIP - 8 system(Clear the memory, registers and screen)
             myChip8 = new CPU();
+            myChip8.OnDraw += MyChip8_OnDraw;
 
             RenderOptions.SetBitmapScalingMode(imgScreen, BitmapScalingMode.NearestNeighbor);
 
@@ -379,19 +380,19 @@ namespace Chip8.WPF
             if (!pause)
             {
                 myChip8.EmulateCycle();
-
-                if (myChip8.DrawFlag)
-                {
-                    imgScreen.Dispatcher.Invoke(() =>
-                    {
-                        Draw(zoom);
-                        imgScreen.InvalidateVisual();
-                    });
-                }
             }
         }
 
-        void Draw(double zoom)
+        void MyChip8_OnDraw(byte[] graphics)
+        {
+            imgScreen.Dispatcher.Invoke(() =>
+            {
+                Draw(graphics);
+                imgScreen.InvalidateVisual();
+            });
+        }
+
+        void Draw(byte[] graphics)
         {
             var pf = PixelFormats.Bgra32;
             int width = 64;
@@ -399,9 +400,9 @@ namespace Chip8.WPF
             int rawStride = (width * pf.BitsPerPixel + 7) / 8;
             byte[] rawImage = new byte[rawStride * height];
 
-            for (int index = 0; index < myChip8.Graphics.Length; index++)
+            for (int index = 0; index < graphics.Length; index++)
             {
-                var pixel = myChip8.Graphics[index];
+                var pixel = graphics[index];
                 var color = (pixel > 0) ? appleIIcGreen : Colors.Black;
 
                 rawImage[index * 4] = color.B;

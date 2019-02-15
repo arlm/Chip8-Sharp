@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Chip8.Core
 {
-    public partial class CPU
+    public partial class CPU : ICPU
     {
         public const int WIDTH = 64;
         public const int HEIGHT = 32;
@@ -71,7 +71,14 @@ namespace Chip8.Core
         // The CHIP-8 has a HEX based keypad(0x0 - 0xF), you can use an array to store the current state of the key.
         internal byte[] keys;
 
-        public bool DrawFlag { get; set; }
+        // If the draw flag is set, update the screen
+        // Because the system does not draw every cycle, we should set a draw flag when we need to update our screen.
+        // Only two opcodes should set this flag:
+        //    0x00E0 – Clears the screen
+        //    0xDXYN – Draws a sprite on the screen
+        public bool ShouldDraw { get; set; }
+
+        public Action<byte[]> OnDraw { get; set; }
 
         public byte[] Graphics => gfx;
 
@@ -97,7 +104,7 @@ namespace Chip8.Core
 
             // Clear display  
             gfx = new byte[WIDTH * HEIGHT];
-            DrawFlag = false;
+            ShouldDraw = false;
 
             // Clear stack
             stack = new ushort[16];
@@ -167,6 +174,7 @@ namespace Chip8.Core
                         // 0x00E0: Clears the screen
                         case 0x00E0:
                             gfx = new byte[WIDTH * HEIGHT];
+                            ShouldDraw = true;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -730,7 +738,7 @@ namespace Chip8.Core
                         }
 
                         // We changed our gfx[] array and thus need to update the screen.
-                        DrawFlag = true;
+                        ShouldDraw = true;
 
                         // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -1038,6 +1046,12 @@ namespace Chip8.Core
                 }
 
                 --ST;
+            }
+
+            if (ShouldDraw)
+            {
+                OnDraw?.Invoke(Graphics);
+                ShouldDraw = false;
             }
         }
 

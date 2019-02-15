@@ -18,7 +18,7 @@ namespace Chip8
     class Program : IDisposable
     {
         // In this example we assume you will create a separate class to handle the opcodes.
-        private static CPU myChip8;
+        private static ICPU myChip8;
 
         private const int WIDTH = 640;
         private const int HEIGHT = 480;
@@ -45,7 +45,9 @@ namespace Chip8
         private static Texture pixelTexture;
         private static bool debugKeys = false;
         private static bool debugPixels = false;
+
         private static float zoom = 9.5f;
+        private static SDL.SDL_Point screenCenter;
 
         private static readonly Timer fpsTimer = new Timer();
         private static int countedFrames;
@@ -100,13 +102,15 @@ namespace Chip8
 
             // Initialize the CHIP-8 system (Clear the memory, registers and screen)
             myChip8 = new CPU();
+            myChip8.OnDraw += DrawGraphics;
 
             // Load (copy) the game into the memory
             myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}demo.c8");
 
             //Rotation variables
             double angle = 0;
-            SDL.SDL_Point screenCenter = new SDL.SDL_Point
+
+            screenCenter = new SDL.SDL_Point
             {
                 x = WIDTH / 2,
                 y = HEIGHT / 2
@@ -123,17 +127,6 @@ namespace Chip8
                 {
                     // Emulate one cycle of the system
                     myChip8.EmulateCycle();
-
-                    // If the draw flag is set, update the screen
-                    // Because the system does not draw every cycle, we should set a draw flag when we need to update our screen.
-                    // Only two opcodes should set this flag:
-                    //    0x00E0 – Clears the screen
-                    //    0xDXYN – Draws a sprite on the screen
-
-                    if (myChip8.DrawFlag)
-                    {
-                        DrawGraphics(screenCenter, zoom);
-                    }
                 }
 
                 //Handle events on queue
@@ -401,7 +394,7 @@ namespace Chip8
 
                 if (debugPixels)
                 {
-                    angle = RotateRectangle(angle, screenCenter);
+                    angle = RotateRectangle(angle);
                 }
 
                 // Store key press state (Press and Release)
@@ -455,7 +448,7 @@ namespace Chip8
             return 0;
         }
 
-        private static double RotateRectangle(double angle, SDL.SDL_Point screenCenter)
+        private static double RotateRectangle(double angle)
         {
             //rotate
             angle += 2;
@@ -514,7 +507,9 @@ namespace Chip8
             return angle;
         }
 
-        private static void DrawGraphics(SDL.SDL_Point screenCenter, float scale)
+
+        // SDL.SDL_Point screenCenter, float scale
+        private static void DrawGraphics(byte[] graphics)
         {
             //Set self as render target
             pixelDebugTexture.SetAsRenderTarget();
@@ -523,7 +518,7 @@ namespace Chip8
 
             SDL.SDL_SetRenderDrawColor(driver.rendererPtr, color.r, color.g, color.b, color.a);
             SDL.SDL_RenderClear(driver.rendererPtr);
-            SDL.SDL_RenderSetScale(driver.rendererPtr, scale, scale);
+            SDL.SDL_RenderSetScale(driver.rendererPtr, zoom, zoom);
 
             color = gray;
 
@@ -543,9 +538,9 @@ namespace Chip8
 
             SDL.SDL_SetRenderDrawColor(driver.rendererPtr, color.r, color.g, color.b, color.a);
 
-            for(int index = 0; index < myChip8.Graphics.Length; index++)
+            for(int index = 0; index < graphics.Length; index++)
             {
-                if (myChip8.Graphics[index] == 1)
+                if (graphics[index] == 1)
                 {
                     var y = index / CPU.WIDTH;
                     var x = index % CPU.WIDTH;
