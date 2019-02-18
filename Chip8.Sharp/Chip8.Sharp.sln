@@ -9,6 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CHIP-8 Keyboard Mapping.md = CHIP-8 Keyboard Mapping.md
 		CHIP-8 OpCodes.md = CHIP-8 OpCodes.md
 		CHIP-8 Specs.md = CHIP-8 Specs.md
+		run-tests = run-tests
+		Chip8.Tests\TestResult.xml = Chip8.Tests\TestResult.xml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.Tests", "Chip8.Tests\Chip8.Tests.csproj", "{ACF18D83-5BD5-4AA9-B794-711E069719B5}"

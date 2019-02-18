@@ -1,0 +1,3 @@
+﻿#!/sin/sh
+
+ mono packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe Chip8.Tests/Chip8.Tests.csproj --work=Chip8.Tests
