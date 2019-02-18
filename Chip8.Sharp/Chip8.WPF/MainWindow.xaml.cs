@@ -64,7 +64,9 @@ namespace Chip8.WPF
 
             // Initialize the CHIP - 8 system(Clear the memory, registers and screen)
             myChip8 = new CPU();
-            myChip8.OnDraw += MyChip8_OnDraw;
+            myChip8.OnDraw += OnDraw;
+            myChip8.OnStartSound += OnStartSound;
+            myChip8.OnEndSound += OnEndSound;
 
             RenderOptions.SetBitmapScalingMode(imgScreen, BitmapScalingMode.NearestNeighbor);
 
@@ -383,7 +385,7 @@ namespace Chip8.WPF
             }
         }
 
-        void MyChip8_OnDraw(byte[] graphics)
+        void OnDraw(byte[] graphics)
         {
             imgScreen.Dispatcher.Invoke(() =>
             {
@@ -413,6 +415,16 @@ namespace Chip8.WPF
 
             var screenImage = BitmapSource.Create(width, height, 96, 96, pf, null, rawImage, rawStride);
             imgScreen.Source = screenImage;
+        }
+
+        private static void OnStartSound(int channel, int frequency, int duration)
+        {
+            Console.Beep(frequency, duration);
+        }
+
+        private static void OnEndSound(int channel)
+        {
+            Console.WriteLine("BEEP!");
         }
 
         private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

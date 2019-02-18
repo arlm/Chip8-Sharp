@@ -57,7 +57,9 @@ namespace Chip8.WindowsForms
 
             // Initialize the CHIP - 8 system(Clear the memory, registers and screen)
             myChip8 = new CPU();
-            myChip8.OnDraw += MyChip8_OnDraw;
+            myChip8.OnDraw += OnDraw;
+            myChip8.OnStartSound += OnStartSound;
+            myChip8.OnEndSound += OnEndSound;
 
             const string STARTUP_FILE = "demo";
 
@@ -71,6 +73,11 @@ namespace Chip8.WindowsForms
             cbPrograms.SelectedIndex = cbPrograms.Items.IndexOf(STARTUP_FILE);
             LoadProgram(STARTUP_FILE);
         }
+
+        void MyChip8_OnStartSound(int arg1, int arg2, int arg3)
+        {
+        }
+
 
         private void LoadProgram(string filename)
         {
@@ -371,7 +378,7 @@ namespace Chip8.WindowsForms
             }
         }
 
-        void MyChip8_OnDraw(byte[] graphics)
+        void OnDraw(byte[] graphics)
         {
             if (pbScreen.InvokeRequired)
             {
@@ -411,6 +418,17 @@ namespace Chip8.WindowsForms
             }
 
             screenImage.UnlockBits(bits);
+        }
+
+
+        private static void OnStartSound(int channel, int frequency, int duration)
+        {
+            Console.Beep(frequency, duration);
+        }
+
+        private static void OnEndSound(int channel)
+        {
+            Console.WriteLine("BEEP!");
         }
 
         private void cbPrograms_SelectedIndexChanged(object sender, EventArgs e)

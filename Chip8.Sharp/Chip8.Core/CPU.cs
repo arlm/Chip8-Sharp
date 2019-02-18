@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Chip8.Core
 {
@@ -76,11 +75,15 @@ namespace Chip8.Core
         // Only two opcodes should set this flag:
         //    0x00E0 – Clears the screen
         //    0xDXYN – Draws a sprite on the screen
-        public bool ShouldDraw { get; set; }
+        internal bool shouldDraw;
 
         public Action<byte[]> OnDraw { get; set; }
 
         public byte[] Graphics => gfx;
+
+        public Action<int, int, int> OnStartSound { get; set; }
+
+        public Action<int> OnEndSound { get; set; }
 
         Random rand = new Random();
 
@@ -104,7 +107,7 @@ namespace Chip8.Core
 
             // Clear display  
             gfx = new byte[WIDTH * HEIGHT];
-            ShouldDraw = false;
+            shouldDraw = false;
 
             // Clear stack
             stack = new ushort[16];
@@ -174,7 +177,7 @@ namespace Chip8.Core
                         // 0x00E0: Clears the screen
                         case 0x00E0:
                             gfx = new byte[WIDTH * HEIGHT];
-                            ShouldDraw = true;
+                            shouldDraw = true;
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -738,7 +741,7 @@ namespace Chip8.Core
                         }
 
                         // We changed our gfx[] array and thus need to update the screen.
-                        ShouldDraw = true;
+                        shouldDraw = true;
 
                         // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -881,6 +884,11 @@ namespace Chip8.Core
                             }
 
                             ST = vx;
+
+                            if (ST > 0)
+                            {
+                                OnStartSound?.Invoke(0, 500, ST);
+                            }
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -1041,17 +1049,16 @@ namespace Chip8.Core
             {
                 if (ST == 1)
                 {
-                    Console.WriteLine("BEEP!");
-                    //Console.Beep(500, milliseconds);
+                    OnEndSound?.Invoke(0);
                 }
 
                 --ST;
             }
 
-            if (ShouldDraw)
+            if (shouldDraw)
             {
                 OnDraw?.Invoke(Graphics);
-                ShouldDraw = false;
+                shouldDraw = false;
             }
         }
 

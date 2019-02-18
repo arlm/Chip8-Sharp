@@ -103,6 +103,8 @@ namespace Chip8
             // Initialize the CHIP-8 system (Clear the memory, registers and screen)
             myChip8 = new CPU();
             myChip8.OnDraw += DrawGraphics;
+            myChip8.OnStartSound += OnStartSound;
+            myChip8.OnEndSound += OnEndSound;
 
             // Load (copy) the game into the memory
             myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}demo.c8");
@@ -662,6 +664,16 @@ namespace Chip8
             }
 
             return success;
+        }
+
+        private static void OnStartSound(int channel, int frequency, int duration)
+        {
+            Console.Beep(frequency, duration);
+        }
+
+        private static void OnEndSound(int channel)
+        {
+            Console.WriteLine("BEEP!");
         }
 
         #region IDisposable Support
