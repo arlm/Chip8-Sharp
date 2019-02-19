@@ -249,7 +249,7 @@ namespace Chip8
             return result;
         }
 
-        public bool Render(Texture texture, int x = 0, int y = 0, SDL.SDL_Rect? clip = null)
+        public bool Render(Texture texture, int x = 0, int y = 0, in SDL.SDL_Rect? clip = null)
         {
             //Initialization flag
             bool result = true;

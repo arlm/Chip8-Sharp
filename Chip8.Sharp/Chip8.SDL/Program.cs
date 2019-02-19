@@ -5,7 +5,7 @@ using SDL2;
 
 namespace Chip8
 {
-    public enum KeyPressSurfaces
+    public enum KeyPressSurface
     {
         Default,
         Up,
@@ -23,7 +23,7 @@ namespace Chip8
         private const int WIDTH = 640;
         private const int HEIGHT = 480;
 
-        private static readonly Texture[] textures = new Texture[(int)KeyPressSurfaces.Count];
+        private static readonly Texture[] textures = new Texture[(int)KeyPressSurface.Count];
         private static Texture currentTexture;
 
         //Set text color as black
@@ -97,7 +97,7 @@ namespace Chip8
             SDL.SDL_Event evt;
 
             //Set default current surface
-            currentTexture = textures[(int)KeyPressSurfaces.Default];
+            currentTexture = textures[(int)KeyPressSurface.Default];
             Console.WriteLine("Loaded...");
 
             // Initialize the CHIP-8 system (Clear the memory, registers and screen)
@@ -153,22 +153,22 @@ namespace Chip8
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_UP:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Up];
+                                    currentTexture = textures[(int)KeyPressSurface.Up];
                                     Console.WriteLine("UP");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_DOWN:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Down];
+                                    currentTexture = textures[(int)KeyPressSurface.Down];
                                     Console.WriteLine("DOWN");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_LEFT:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Left];
+                                    currentTexture = textures[(int)KeyPressSurface.Left];
                                     Console.WriteLine("LEFT");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_RIGHT:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Right];
+                                    currentTexture = textures[(int)KeyPressSurface.Right];
                                     Console.WriteLine("RIGHT");
                                     break;
 
@@ -285,7 +285,7 @@ namespace Chip8
                                     break;
 
                                 default:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    currentTexture = textures[(int)KeyPressSurface.Default];
                                     Console.WriteLine("Default Key Press");
                                     break;
                             }
@@ -296,19 +296,19 @@ namespace Chip8
                             switch (evt.key.keysym.sym)
                             {
                                 case SDL.SDL_Keycode.SDLK_UP:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    currentTexture = textures[(int)KeyPressSurface.Default];
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_DOWN:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    currentTexture = textures[(int)KeyPressSurface.Default];
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_LEFT:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    currentTexture = textures[(int)KeyPressSurface.Default];
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_RIGHT:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    currentTexture = textures[(int)KeyPressSurface.Default];
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_1:
@@ -379,7 +379,7 @@ namespace Chip8
                                     break;
 
                                 default:
-                                    currentTexture = textures[(int)KeyPressSurfaces.Default];
+                                    currentTexture = textures[(int)KeyPressSurface.Default];
                                     break;
                             }
                             break;
@@ -567,7 +567,7 @@ namespace Chip8
             fpsTextTexture = new Texture(driver);
 
             //Load default surface
-            textures[(int)KeyPressSurfaces.Default] = new Texture(driver);
+            textures[(int)KeyPressSurface.Default] = new Texture(driver);
             surface = driver.LoadSurface("assets/press.bmp");
             if (surface == IntPtr.Zero)
             {
@@ -576,14 +576,14 @@ namespace Chip8
             }
             else
             {
-                textures[(int)KeyPressSurfaces.Default].LoadFromSurface(surface);
+                textures[(int)KeyPressSurface.Default].LoadFromSurface(surface);
 
                 SDL.SDL_FreeSurface(surface);
                 surface = IntPtr.Zero;
             }
 
             //Load up surface
-            textures[(int)KeyPressSurfaces.Up] = new Texture(driver);
+            textures[(int)KeyPressSurface.Up] = new Texture(driver);
             surface = driver.LoadSurface("assets/up.bmp");
             if (surface == IntPtr.Zero)
             {
@@ -592,14 +592,14 @@ namespace Chip8
             }
             else
             {
-                textures[(int)KeyPressSurfaces.Up].LoadFromSurface(surface);
+                textures[(int)KeyPressSurface.Up].LoadFromSurface(surface);
 
                 SDL.SDL_FreeSurface(surface);
                 surface = IntPtr.Zero;
             }
 
             //Load down surface
-            textures[(int)KeyPressSurfaces.Down] = new Texture(driver);
+            textures[(int)KeyPressSurface.Down] = new Texture(driver);
             surface = driver.LoadSurface("assets/down.bmp");
             if (surface == IntPtr.Zero)
             {
@@ -608,7 +608,7 @@ namespace Chip8
             }
             else
             {
-                textures[(int)KeyPressSurfaces.Down].LoadFromSurface(surface);
+                textures[(int)KeyPressSurface.Down].LoadFromSurface(surface);
 
                 SDL.SDL_FreeSurface(surface);
                 surface = IntPtr.Zero;
@@ -616,7 +616,7 @@ namespace Chip8
             }
 
             //Load left surface
-            textures[(int)KeyPressSurfaces.Left] = new Texture(driver);
+            textures[(int)KeyPressSurface.Left] = new Texture(driver);
             surface = driver.LoadSurface("assets/left.bmp");
             if (surface == IntPtr.Zero)
             {
@@ -625,7 +625,7 @@ namespace Chip8
             }
             else
             {
-                textures[(int)KeyPressSurfaces.Left].LoadFromSurface(surface);
+                textures[(int)KeyPressSurface.Left].LoadFromSurface(surface);
 
                 SDL.SDL_FreeSurface(surface);
                 surface = IntPtr.Zero;
@@ -633,7 +633,7 @@ namespace Chip8
             }
 
             //Load right surface
-            textures[(int)KeyPressSurfaces.Right] = new Texture(driver);
+            textures[(int)KeyPressSurface.Right] = new Texture(driver);
             surface = driver.LoadSurface("assets/right.bmp");
             if (surface == IntPtr.Zero)
             {
@@ -642,7 +642,7 @@ namespace Chip8
             }
             else
             {
-                textures[(int)KeyPressSurfaces.Right].LoadFromSurface(surface);
+                textures[(int)KeyPressSurface.Right].LoadFromSurface(surface);
 
                 SDL.SDL_FreeSurface(surface);
                 surface = IntPtr.Zero;
@@ -691,7 +691,7 @@ namespace Chip8
                     fpsTextTexture?.Dispose();
                     fpsTextTexture = null;
 
-                    for (int index = 0; index < (int)KeyPressSurfaces.Count; ++index)
+                    for (int index = 0; index < (int)KeyPressSurface.Count; ++index)
                     {
                         textures[index]?.Dispose();
                         textures[index] = null;

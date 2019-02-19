@@ -206,7 +206,7 @@ namespace Chip8
         }
 
         //Renders texture at given point
-        public void Render(int? x = null, int? y = null, SDL.SDL_Rect? clip = null, double angle = 0.0, SDL.SDL_Point? center = null, SDL.SDL_RendererFlip flip = SDL.SDL_RendererFlip.SDL_FLIP_NONE)
+        public void Render(int? x = null, int? y = null, in SDL.SDL_Rect? clip = null, double angle = 0.0, in SDL.SDL_Point? center = null, SDL.SDL_RendererFlip flip = SDL.SDL_RendererFlip.SDL_FLIP_NONE)
         {
             //Set rendering space and render to screen
             var renderQuad = new SDL.SDL_Rect
