@@ -24,7 +24,7 @@ namespace Chip8.Tests
             var emptyMemory = new byte[0x1000];
             var cpu = new CPU();
 
-            Assert.AreEqual(0x1000, cpu.memory.Length, "Memory should be exactly 4KiB long.");
+            Assert.AreEqual(0x1000, cpu.Memory.Length, "Memory should be exactly 4KiB long.");
             Assert.AreEqual(16, cpu.V.Length, "The CPU must have exactl 16 V registers.");
             CollectionAssert.AllItemsAreInstancesOfType(cpu.V, typeof(byte), "The CPU must have 8-bit registers.");
 
@@ -43,139 +43,139 @@ namespace Chip8.Tests
             Assert.IsInstanceOf<byte>(cpu.ST, $"Register ST have 8-bits.");
 
             Assert.Zero(cpu.SP, $"Register SP should be zero.");
-            Assert.AreEqual(16, cpu.stack.Length, "The stack must have exactl 16 positions.");
-            CollectionAssert.AllItemsAreInstancesOfType(cpu.stack, typeof(ushort), "The stack must have have 16-bit elements.");
+            Assert.AreEqual(16, cpu.Stack.Length, "The stack must have exactl 16 positions.");
+            CollectionAssert.AllItemsAreInstancesOfType(cpu.Stack, typeof(ushort), "The stack must have have 16-bit elements.");
 
-            for (int index = 0; index < cpu.stack.Length; index++)
+            for (int index = 0; index < cpu.Stack.Length; index++)
             {
-                Assert.Zero(cpu.stack[index], $"Stack position {index:X2} should be zero.");
+                Assert.Zero(cpu.Stack[index], $"Stack position {index:X2} should be zero.");
             }
 
-            Assert.AreEqual(16, cpu.keys.Length, "The CPU must have exactly 16 keys.");
-            CollectionAssert.AllItemsAreInstancesOfType(cpu.keys, typeof(byte), "The keys registers must be 8-bit elements.");
+            Assert.AreEqual(16, cpu.Keys.Length, "The CPU must have exactly 16 keys.");
+            CollectionAssert.AllItemsAreInstancesOfType(cpu.Keys, typeof(byte), "The keys registers must be 8-bit elements.");
 
-            for (int index = 0; index < cpu.keys.Length; index++)
+            for (int index = 0; index < cpu.Keys.Length; index++)
             {
-                Assert.Zero(cpu.keys[index], $"Key {index:X2} should be zero.");
+                Assert.Zero(cpu.Keys[index], $"Key {index:X2} should be zero.");
             }
 
             byte[] character = new byte[5];
 
-            Array.Copy(cpu.memory, 0, character, 0, 5);
+            Array.Copy(cpu.Memory, 0, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x90, 0x90, 0x90, 0xF0 }, "Problem with character 0");
 
-            Array.Copy(cpu.memory, 5, character, 0, 5);
+            Array.Copy(cpu.Memory, 5, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0x20, 0x60, 0x20, 0x20, 0x70 }, "Problem with character 1");
 
-            Array.Copy(cpu.memory, 10, character, 0, 5);
+            Array.Copy(cpu.Memory, 10, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x10, 0xF0, 0x80, 0xF0 }, "Problem with character 2");
 
-            Array.Copy(cpu.memory, 15, character, 0, 5);
+            Array.Copy(cpu.Memory, 15, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x10, 0xF0, 0x10, 0xF0 }, "Problem with character 3");
 
-            Array.Copy(cpu.memory, 20, character, 0, 5);
+            Array.Copy(cpu.Memory, 20, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0x90, 0x90, 0xF0, 0x10, 0x10 }, "Problem with character 4");
 
-            Array.Copy(cpu.memory, 25, character, 0, 5);
+            Array.Copy(cpu.Memory, 25, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0xF0, 0x10, 0xF0 }, "Problem with character 5");
 
-            Array.Copy(cpu.memory, 30, character, 0, 5);
+            Array.Copy(cpu.Memory, 30, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0xF0, 0x90, 0xF0 }, "Problem with character 6");
 
-            Array.Copy(cpu.memory, 35, character, 0, 5);
+            Array.Copy(cpu.Memory, 35, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x10, 0x20, 0x40, 0x40 }, "Problem with character 7");
 
-            Array.Copy(cpu.memory, 40, character, 0, 5);
+            Array.Copy(cpu.Memory, 40, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x90, 0xF0, 0x90, 0xF0 }, "Problem with character 8");
 
-            Array.Copy(cpu.memory, 45, character, 0, 5);
+            Array.Copy(cpu.Memory, 45, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x90, 0xF0, 0x10, 0xF0 }, "Problem with character 9");
 
-            Array.Copy(cpu.memory, 50, character, 0, 5);
+            Array.Copy(cpu.Memory, 50, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x90, 0xF0, 0x90, 0x90 }, "Problem with character A");
 
-            Array.Copy(cpu.memory, 55, character, 0, 5);
+            Array.Copy(cpu.Memory, 55, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xE0, 0x90, 0xE0, 0x90, 0xE0 }, "Problem with character B");
 
-            Array.Copy(cpu.memory, 60, character, 0, 5);
+            Array.Copy(cpu.Memory, 60, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0x80, 0x80, 0xF0 }, "Problem with character C");
 
-            Array.Copy(cpu.memory, 65, character, 0, 5);
+            Array.Copy(cpu.Memory, 65, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xE0, 0x90, 0x90, 0x90, 0xE0 }, "Problem with character D");
 
-            Array.Copy(cpu.memory, 70, character, 0, 5);
+            Array.Copy(cpu.Memory, 70, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0xF0, 0x80, 0xF0 }, "Problem with character E");
 
-            Array.Copy(cpu.memory, 75, character, 0, 5);
+            Array.Copy(cpu.Memory, 75, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0xF0, 0x80, 0x80 }, "Problem with character F");
 
-            Assert.Zero(cpu.opcode, $"Opcode should be zero.");
-            Assert.Zero(cpu.opcode, $"Register SP should be zero.");
-            Assert.IsInstanceOf<ushort>(cpu.opcode, $"Register DT have 16-bits.");
+            Assert.Zero(cpu.Opcode, $"Opcode should be zero.");
+            Assert.Zero(cpu.Opcode, $"Register SP should be zero.");
+            Assert.IsInstanceOf<ushort>(cpu.Opcode, $"Register DT have 16-bits.");
 
             Assert.AreEqual(0x200, cpu.PC, $"Register PC should be 0x200.");
             Assert.IsInstanceOf<ushort>(cpu.PC, $"Register DT have 16-bits.");
 
             cpu.LoadMemory(emptyMemory);
 
-            Array.Copy(cpu.memory, 0, character, 0, 5);
+            Array.Copy(cpu.Memory, 0, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x90, 0x90, 0x90, 0xF0 }, "Problem with character 0");
 
-            Array.Copy(cpu.memory, 5, character, 0, 5);
+            Array.Copy(cpu.Memory, 5, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0x20, 0x60, 0x20, 0x20, 0x70 }, "Problem with character 1");
 
-            Array.Copy(cpu.memory, 10, character, 0, 5);
+            Array.Copy(cpu.Memory, 10, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x10, 0xF0, 0x80, 0xF0 }, "Problem with character 2");
 
-            Array.Copy(cpu.memory, 15, character, 0, 5);
+            Array.Copy(cpu.Memory, 15, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x10, 0xF0, 0x10, 0xF0 }, "Problem with character 3");
 
-            Array.Copy(cpu.memory, 20, character, 0, 5);
+            Array.Copy(cpu.Memory, 20, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0x90, 0x90, 0xF0, 0x10, 0x10 }, "Problem with character 4");
 
-            Array.Copy(cpu.memory, 25, character, 0, 5);
+            Array.Copy(cpu.Memory, 25, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0xF0, 0x10, 0xF0 }, "Problem with character 5");
 
-            Array.Copy(cpu.memory, 30, character, 0, 5);
+            Array.Copy(cpu.Memory, 30, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0xF0, 0x90, 0xF0 }, "Problem with character 6");
 
-            Array.Copy(cpu.memory, 35, character, 0, 5);
+            Array.Copy(cpu.Memory, 35, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x10, 0x20, 0x40, 0x40 }, "Problem with character 7");
 
-            Array.Copy(cpu.memory, 40, character, 0, 5);
+            Array.Copy(cpu.Memory, 40, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x90, 0xF0, 0x90, 0xF0 }, "Problem with character 8");
 
-            Array.Copy(cpu.memory, 45, character, 0, 5);
+            Array.Copy(cpu.Memory, 45, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x90, 0xF0, 0x10, 0xF0 }, "Problem with character 9");
 
-            Array.Copy(cpu.memory, 50, character, 0, 5);
+            Array.Copy(cpu.Memory, 50, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x90, 0xF0, 0x90, 0x90 }, "Problem with character A");
 
-            Array.Copy(cpu.memory, 55, character, 0, 5);
+            Array.Copy(cpu.Memory, 55, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xE0, 0x90, 0xE0, 0x90, 0xE0 }, "Problem with character B");
 
-            Array.Copy(cpu.memory, 60, character, 0, 5);
+            Array.Copy(cpu.Memory, 60, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0x80, 0x80, 0xF0 }, "Problem with character C");
 
-            Array.Copy(cpu.memory, 65, character, 0, 5);
+            Array.Copy(cpu.Memory, 65, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xE0, 0x90, 0x90, 0x90, 0xE0 }, "Problem with character D");
 
-            Array.Copy(cpu.memory, 70, character, 0, 5);
+            Array.Copy(cpu.Memory, 70, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0xF0, 0x80, 0xF0 }, "Problem with character E");
 
-            Array.Copy(cpu.memory, 75, character, 0, 5);
+            Array.Copy(cpu.Memory, 75, character, 0, 5);
             CollectionAssert.AreEqual(character, new byte[] { 0xF0, 0x80, 0xF0, 0x80, 0x80 }, "Problem with character F");
 
             int address = 0x000;
 
             for (int index = address; index < CPU.CHIP8_FONTSET.Length; index++, address++)
             {
-                Assert.AreEqual(CPU.CHIP8_FONTSET[index], cpu.memory[index], $"Memory address {index:X2} should have the CHIP-8 Fontset.");
+                Assert.AreEqual(CPU.CHIP8_FONTSET[index], cpu.Memory[index], $"Memory address {index:X2} should have the CHIP-8 Fontset.");
             }
 
-            for (int index = address; index < cpu.memory.Length; index++)
+            for (int index = address; index < cpu.Memory.Length; index++)
             {
-                Assert.Zero(cpu.memory[index], $"Memory address {index:X2} should be zero.");
+                Assert.Zero(cpu.Memory[index], $"Memory address {index:X2} should be zero.");
             }
         }
 
@@ -293,7 +293,7 @@ namespace Chip8.Tests
 
             Assert.AreEqual(0x200, cpu.PC, "PC Register should be at 0x200");
             Assert.Zero(cpu.SP, "SP Register should be zero");
-            CollectionAssert.AreEqual(new ushort[16], cpu.stack, "Stack should be empty");
+            CollectionAssert.AreEqual(new ushort[16], cpu.Stack, "Stack should be empty");
 
             var initialStack = new ushort[]
             {
@@ -303,226 +303,226 @@ namespace Chip8.Tests
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2300, cpu.opcode, "Opcode shoud be 0x2206 - CALL 0x300");
+            Assert.AreEqual(0x2300, cpu.Opcode, "Opcode shoud be 0x2206 - CALL 0x300");
             Assert.AreEqual(0x300, cpu.PC, "PC Register should be at 0x300");
             Assert.AreEqual(1, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x200, cpu.stack[cpu.SP - 1], "Current stack should point to 0x200");
+            Assert.AreEqual(0x200, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x200");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2400, cpu.opcode, "Opcode shoud be 0x2400 - CALL 0x400");
+            Assert.AreEqual(0x2400, cpu.Opcode, "Opcode shoud be 0x2400 - CALL 0x400");
             Assert.AreEqual(0x400, cpu.PC, "PC Register should be at 0x400");
             Assert.AreEqual(2, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x300, cpu.stack[cpu.SP - 1], "Current stack should point to 0x300");
+            Assert.AreEqual(0x300, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x300");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2500, cpu.opcode, "Opcode shoud be 0x2500 - CALL 0x500");
+            Assert.AreEqual(0x2500, cpu.Opcode, "Opcode shoud be 0x2500 - CALL 0x500");
             Assert.AreEqual(0x500, cpu.PC, "PC Register should be at 0x500");
             Assert.AreEqual(3, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x400, cpu.stack[cpu.SP - 1], "Current stack should point to 0x400");
+            Assert.AreEqual(0x400, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x400");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2600, cpu.opcode, "Opcode shoud be 0x2600 - CALL 0x600");
+            Assert.AreEqual(0x2600, cpu.Opcode, "Opcode shoud be 0x2600 - CALL 0x600");
             Assert.AreEqual(0x600, cpu.PC, "PC Register should be at 0x600");
             Assert.AreEqual(4, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x500, cpu.stack[cpu.SP - 1], "Current stack should point to 0x500");
+            Assert.AreEqual(0x500, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x500");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2700, cpu.opcode, "Opcode shoud be 0x2700 - CALL 0x700");
+            Assert.AreEqual(0x2700, cpu.Opcode, "Opcode shoud be 0x2700 - CALL 0x700");
             Assert.AreEqual(0x700, cpu.PC, "PC Register should be at 0x700");
             Assert.AreEqual(5, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x600, cpu.stack[cpu.SP - 1], "Current stack should point to 0x600");
+            Assert.AreEqual(0x600, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x600");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2800, cpu.opcode, "Opcode shoud be 0x2800 - CALL 0x800");
+            Assert.AreEqual(0x2800, cpu.Opcode, "Opcode shoud be 0x2800 - CALL 0x800");
             Assert.AreEqual(0x800, cpu.PC, "PC Register should be at 0x800");
             Assert.AreEqual(6, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x700, cpu.stack[cpu.SP - 1], "Current stack should point to 0x700");
+            Assert.AreEqual(0x700, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x700");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2900, cpu.opcode, "Opcode shoud be 0x2900 - CALL 0x900");
+            Assert.AreEqual(0x2900, cpu.Opcode, "Opcode shoud be 0x2900 - CALL 0x900");
             Assert.AreEqual(0x900, cpu.PC, "PC Register should be at 0x900");
             Assert.AreEqual(7, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x800, cpu.stack[cpu.SP - 1], "Current stack should point to 0x800");
+            Assert.AreEqual(0x800, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x800");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2A00, cpu.opcode, "Opcode shoud be 0x2A00 - CALL 0xA00");
+            Assert.AreEqual(0x2A00, cpu.Opcode, "Opcode shoud be 0x2A00 - CALL 0xA00");
             Assert.AreEqual(0xA00, cpu.PC, "PC Register should be at 0xA00");
             Assert.AreEqual(8, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x900, cpu.stack[cpu.SP - 1], "Current stack should point to 0x900");
+            Assert.AreEqual(0x900, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x900");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2B00, cpu.opcode, "Opcode shoud be 0x2B00 - CALL 0xB00");
+            Assert.AreEqual(0x2B00, cpu.Opcode, "Opcode shoud be 0x2B00 - CALL 0xB00");
             Assert.AreEqual(0xB00, cpu.PC, "PC Register should be at 0xB00");
             Assert.AreEqual(9, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xA00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xA00");
+            Assert.AreEqual(0xA00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xA00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2C00, cpu.opcode, "Opcode shoud be 0x2C00 - CALL 0xC00");
+            Assert.AreEqual(0x2C00, cpu.Opcode, "Opcode shoud be 0x2C00 - CALL 0xC00");
             Assert.AreEqual(0xC00, cpu.PC, "PC Register should be at 0xC00");
             Assert.AreEqual(10, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xB00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xB00");
+            Assert.AreEqual(0xB00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xB00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2D00, cpu.opcode, "Opcode shoud be 0x2D00 - CALL 0xD00");
+            Assert.AreEqual(0x2D00, cpu.Opcode, "Opcode shoud be 0x2D00 - CALL 0xD00");
             Assert.AreEqual(0xD00, cpu.PC, "PC Register should be at 0xD00");
             Assert.AreEqual(11, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xC00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xC00");
+            Assert.AreEqual(0xC00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xC00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2E00, cpu.opcode, "Opcode shoud be 0x2E00 - CALL 0xE00");
+            Assert.AreEqual(0x2E00, cpu.Opcode, "Opcode shoud be 0x2E00 - CALL 0xE00");
             Assert.AreEqual(0xE00, cpu.PC, "PC Register should be at 0xE00");
             Assert.AreEqual(12, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xD00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xD00");
+            Assert.AreEqual(0xD00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xD00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2F10, cpu.opcode, "Opcode shoud be 0x2F10 - CALL 0xF10");
+            Assert.AreEqual(0x2F10, cpu.Opcode, "Opcode shoud be 0x2F10 - CALL 0xF10");
             Assert.AreEqual(0xF10, cpu.PC, "PC Register should be at 0xF10");
             Assert.AreEqual(13, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xE00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xE00");
+            Assert.AreEqual(0xE00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xE00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2F20, cpu.opcode, "Opcode shoud be 0x2F20 - CALL 0xF20");
+            Assert.AreEqual(0x2F20, cpu.Opcode, "Opcode shoud be 0x2F20 - CALL 0xF20");
             Assert.AreEqual(0xF20, cpu.PC, "PC Register should be at 0xF20");
             Assert.AreEqual(14, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xF10, cpu.stack[cpu.SP - 1], "Current stack should point to 0xF10");
+            Assert.AreEqual(0xF10, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xF10");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2F30, cpu.opcode, "Opcode shoud be 0x2F30 - CALL 0xF30");
+            Assert.AreEqual(0x2F30, cpu.Opcode, "Opcode shoud be 0x2F30 - CALL 0xF30");
             Assert.AreEqual(0xF30, cpu.PC, "PC Register should be at 0xF30");
             Assert.AreEqual(15, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xF20, cpu.stack[cpu.SP - 1], "Current stack should point to 0xF20");
+            Assert.AreEqual(0xF20, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xF20");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2F40, cpu.opcode, "Opcode shoud be 0x2F40 - CALL 0xF40");
+            Assert.AreEqual(0x2F40, cpu.Opcode, "Opcode shoud be 0x2F40 - CALL 0xF40");
             Assert.AreEqual(0xF40, cpu.PC, "PC Register should be at 0xF40");
             Assert.AreEqual(16, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xF30, cpu.stack[cpu.SP - 1], "Current stack should point to 0xF30");
+            Assert.AreEqual(0xF30, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xF30");
 
-            CollectionAssert.AreEqual(initialStack, cpu.stack, "Stack should be full");
+            CollectionAssert.AreEqual(initialStack, cpu.Stack, "Stack should be full");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0xF32, cpu.PC, "PC Register should be at 0xF32");
             Assert.AreEqual(15, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xF20, cpu.stack[cpu.SP - 1], "Current stack should point to 0xF20");
+            Assert.AreEqual(0xF20, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xF20");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0xF22, cpu.PC, "PC Register should be at 0xF22");
             Assert.AreEqual(14, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xF10, cpu.stack[cpu.SP - 1], "Current stack should point to 0xF10");
+            Assert.AreEqual(0xF10, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xF10");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0xF12, cpu.PC, "PC Register should be at 0xF12");
             Assert.AreEqual(13, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xE00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xE00");
+            Assert.AreEqual(0xE00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xE00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0xE02, cpu.PC, "PC Register should be at 0xE02");
             Assert.AreEqual(12, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xD00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xD00");
+            Assert.AreEqual(0xD00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xD00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0xD02, cpu.PC, "PC Register should be at 0xD02");
             Assert.AreEqual(11, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xC00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xC00");
+            Assert.AreEqual(0xC00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xC00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0xC02, cpu.PC, "PC Register should be at 0xC02");
             Assert.AreEqual(10, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xB00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xB00");
+            Assert.AreEqual(0xB00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xB00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0xB02, cpu.PC, "PC Register should be at 0xB02");
             Assert.AreEqual(9, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0xA00, cpu.stack[cpu.SP - 1], "Current stack should point to 0xA00");
+            Assert.AreEqual(0xA00, cpu.Stack[cpu.SP - 1], "Current stack should point to 0xA00");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0xA02, cpu.PC, "PC Register should be at 0xA02");
             Assert.AreEqual(8, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x900, cpu.stack[cpu.SP - 1], "Current stack should point to 0x900");
+            Assert.AreEqual(0x900, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x900");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x902, cpu.PC, "PC Register should be at 0x902");
             Assert.AreEqual(7, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x800, cpu.stack[cpu.SP - 1], "Current stack should point to 0x800");
+            Assert.AreEqual(0x800, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x800");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x802, cpu.PC, "PC Register should be at 0x802");
             Assert.AreEqual(6, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x700, cpu.stack[cpu.SP - 1], "Current stack should point to 0x700");
+            Assert.AreEqual(0x700, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x700");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x702, cpu.PC, "PC Register should be at 0x702");
             Assert.AreEqual(5, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x600, cpu.stack[cpu.SP - 1], "Current stack should point to 0x600");
+            Assert.AreEqual(0x600, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x600");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x602, cpu.PC, "PC Register should be at 0x602");
             Assert.AreEqual(4, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x500, cpu.stack[cpu.SP - 1], "Current stack should point to 0x500");
+            Assert.AreEqual(0x500, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x500");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x502, cpu.PC, "PC Register should be at 0x502");
             Assert.AreEqual(3, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x400, cpu.stack[cpu.SP - 1], "Current stack should point to 0x400");
+            Assert.AreEqual(0x400, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x400");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x402, cpu.PC, "PC Register should be at 0x402");
             Assert.AreEqual(2, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x300, cpu.stack[cpu.SP - 1], "Current stack should point to 0x300");
+            Assert.AreEqual(0x300, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x300");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x302, cpu.PC, "PC Register should be at 0x302");
             Assert.AreEqual(1, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x200, cpu.stack[cpu.SP - 1], "Current stack should point to 0x200");
+            Assert.AreEqual(0x200, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x200");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x202, cpu.PC, "PC Register should be at 0x202");
             Assert.AreEqual(0, cpu.SP, "PC Register should have incremented");
 
@@ -559,7 +559,7 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
                 cpu.PC = counter;
-                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.opcode:X4}]");
+                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.Opcode:X4}]");
             }
 
             index = 0x200;
@@ -582,7 +582,7 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
                 cpu.PC = counter;
-                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.opcode:X4}]");
+                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.Opcode:X4}]");
             }
 
             index = 0x200;
@@ -605,7 +605,7 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0x5FF; counter += 2)
             {
                 cpu.PC = counter;
-                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.opcode:X4}]");
+                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.Opcode:X4}]");
             }
         }
 
@@ -624,26 +624,26 @@ namespace Chip8.Tests
 
             Assert.AreEqual(0x200, cpu.PC, "PC Register should be at 0x200");
 
-            for (int index = 0; index < cpu.gfx.Length; index++)
+            for (int index = 0; index < cpu.Gfx.Length; index++)
             {
-                Assert.Zero(cpu.gfx[index], $"Graphic memory address {index:X2} should be zero.");
+                Assert.Zero(cpu.Gfx[index], $"Graphic memory address {index:X2} should be zero.");
             }
 
-            for (int index = 0; index < cpu.gfx.Length; index++)
+            for (int index = 0; index < cpu.Gfx.Length; index++)
             {
-                cpu.gfx[index] = unchecked((byte)rnd.Next(0, 2));
+                cpu.Gfx[index] = unchecked((byte)rnd.Next(0, 2));
             }
 
-            CollectionAssert.AreNotEqual(new byte[0x800], cpu.gfx, "Graphic memory address should not be blank.");
+            CollectionAssert.AreNotEqual(new byte[0x800], cpu.Gfx, "Graphic memory address should not be blank.");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00E0, cpu.opcode, "Opcode shoud be 0x00E0 - CLS");
+            Assert.AreEqual(0x00E0, cpu.Opcode, "Opcode shoud be 0x00E0 - CLS");
             Assert.AreEqual(0x202, cpu.PC, "PC Register should be at 0x202");
 
-            for (int index = 0; index < cpu.gfx.Length; index++)
+            for (int index = 0; index < cpu.Gfx.Length; index++)
             {
-                Assert.Zero(cpu.gfx[index], $"Graphic memory address {index:X2} should be zero.");
+                Assert.Zero(cpu.Gfx[index], $"Graphic memory address {index:X2} should be zero.");
             }
         }
 
@@ -676,7 +676,7 @@ namespace Chip8.Tests
 
             Assert.AreEqual(0x200, cpu.PC, "PC Register should be at 0x200");
             Assert.Zero(cpu.SP, "SP Register should be zero");
-            CollectionAssert.AreEqual(new ushort[16], cpu.stack, "Stack should be empty");
+            CollectionAssert.AreEqual(new ushort[16], cpu.Stack, "Stack should be empty");
 
             var initialStack = new ushort[]
             {
@@ -684,47 +684,47 @@ namespace Chip8.Tests
                 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000
             };
 
-            initialStack.CopyTo(cpu.stack, 0);
+            initialStack.CopyTo(cpu.Stack, 0);
 
             cpu.SP = 4;
 
             Assert.AreEqual(4, cpu.SP, "PC Register should be at 4");
-            CollectionAssert.AreNotEqual(new uint[16], cpu.stack, "Stack should not be empty");
+            CollectionAssert.AreNotEqual(new uint[16], cpu.Stack, "Stack should not be empty");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x502, cpu.PC, "PC Register should be at 0x500");
             Assert.AreEqual(3, cpu.SP, "PC Register should have decremented");
-            CollectionAssert.AreEqual(initialStack, cpu.stack, "Stack should stay the same");
+            CollectionAssert.AreEqual(initialStack, cpu.Stack, "Stack should stay the same");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x402, cpu.PC, "PC Register should be at 0x400");
             Assert.AreEqual(2, cpu.SP, "PC Register should have decremented");
-            CollectionAssert.AreEqual(initialStack, cpu.stack, "Stack should stay the same");
+            CollectionAssert.AreEqual(initialStack, cpu.Stack, "Stack should stay the same");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x30A, cpu.PC, "PC Register should be at 0x308");
             Assert.AreEqual(1, cpu.SP, "PC Register should have decremented");
-            CollectionAssert.AreEqual(initialStack, cpu.stack, "Stack should stay the same");
+            CollectionAssert.AreEqual(initialStack, cpu.Stack, "Stack should stay the same");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x208, cpu.PC, "PC Register should be at 0x206");
             Assert.AreEqual(0, cpu.SP, "PC Register should have decremented");
-            CollectionAssert.AreEqual(initialStack, cpu.stack, "Stack should stay the same");
+            CollectionAssert.AreEqual(initialStack, cpu.Stack, "Stack should stay the same");
 
             Assert.Throws<StackOverflowException>(cpu.EmulateCycle, "Should throw a Stack Overflow Exception");
 
-            Assert.AreEqual(0x00EE, cpu.opcode, "Opcode shoud be 0x00EE - RET");
+            Assert.AreEqual(0x00EE, cpu.Opcode, "Opcode shoud be 0x00EE - RET");
             Assert.AreEqual(0x208, cpu.PC, "PC Register should be at 0x206");
             Assert.AreEqual(0, cpu.SP, "PC Register should have not decremented");
-            CollectionAssert.AreEqual(initialStack, cpu.stack, "Stack should stay the same");
+            CollectionAssert.AreEqual(initialStack, cpu.Stack, "Stack should stay the same");
         }
 
         [Test]
@@ -755,16 +755,16 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0x5FE; counter += 2)
             {
                 cpu.PC = counter;
-                int expectedPosition = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
-                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{expectedPosition:X2} [opcode: 0x{cpu.opcode:X4}]");
+                int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
+                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{expectedPosition:X2} [opcode: 0x{cpu.Opcode:X4}]");
             }
 
             for (ushort counter = 0x600; counter <= 0xFFE; counter += 2)
             {
                 cpu.PC = counter;
-                int expectedPosition = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
             }
 
             index = 0x200;
@@ -785,9 +785,9 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
                 cpu.PC = counter;
-                int expectedPosition = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
             }
 
             index = 0x200;
@@ -808,9 +808,9 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0x5FE; counter += 2)
             {
                 cpu.PC = counter;
-                int expectedPosition = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
             }
         }
 
@@ -843,7 +843,7 @@ namespace Chip8.Tests
 
             Assert.AreEqual(0x200, cpu.PC, "PC Register should be at 0x200");
             Assert.Zero(cpu.SP, "SP Register should be zero");
-            CollectionAssert.AreEqual(new ushort[16], cpu.stack, "Stack should be empty");
+            CollectionAssert.AreEqual(new ushort[16], cpu.Stack, "Stack should be empty");
 
             var initialStack = new ushort[]
             {
@@ -853,115 +853,115 @@ namespace Chip8.Tests
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2206, cpu.opcode, "Opcode shoud be 0x2206 - CALL 0x206");
+            Assert.AreEqual(0x2206, cpu.Opcode, "Opcode shoud be 0x2206 - CALL 0x206");
             Assert.AreEqual(0x206, cpu.PC, "PC Register should be at 0x206");
             Assert.AreEqual(1, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x200, cpu.stack[cpu.SP - 1], "Current stack should point to 0x200");
+            Assert.AreEqual(0x200, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x200");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2308, cpu.opcode, "Opcode shoud be 0x2308 - CALL 0x308");
+            Assert.AreEqual(0x2308, cpu.Opcode, "Opcode shoud be 0x2308 - CALL 0x308");
             Assert.AreEqual(0x308, cpu.PC, "PC Register should be at 0x308");
             Assert.AreEqual(2, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x206, cpu.stack[cpu.SP - 1], "Current stack should point to 0x206");
+            Assert.AreEqual(0x206, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x206");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2400, cpu.opcode, "Opcode shoud be 0x2308 - CALL 0x400");
+            Assert.AreEqual(0x2400, cpu.Opcode, "Opcode shoud be 0x2308 - CALL 0x400");
             Assert.AreEqual(0x400, cpu.PC, "PC Register should be at 0x400");
             Assert.AreEqual(3, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x308, cpu.stack[cpu.SP - 1], "Current stack should point to 0x308");
+            Assert.AreEqual(0x308, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x308");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2500, cpu.opcode, "Opcode shoud be 0x2500 - CALL 0x500");
+            Assert.AreEqual(0x2500, cpu.Opcode, "Opcode shoud be 0x2500 - CALL 0x500");
             Assert.AreEqual(0x500, cpu.PC, "PC Register should be at 0x500");
             Assert.AreEqual(4, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x400, cpu.stack[cpu.SP - 1], "Current stack should point to 0x400");
+            Assert.AreEqual(0x400, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x400");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2200, cpu.opcode, "Opcode shoud be 0x2200 - CALL 0x200");
+            Assert.AreEqual(0x2200, cpu.Opcode, "Opcode shoud be 0x2200 - CALL 0x200");
             Assert.AreEqual(0x200, cpu.PC, "PC Register should be at 0x200");
             Assert.AreEqual(5, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x500, cpu.stack[cpu.SP - 1], "Current stack should point to 0x500");
+            Assert.AreEqual(0x500, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x500");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2206, cpu.opcode, "Opcode shoud be 0x2206 - CALL 0x206");
+            Assert.AreEqual(0x2206, cpu.Opcode, "Opcode shoud be 0x2206 - CALL 0x206");
             Assert.AreEqual(0x206, cpu.PC, "PC Register should be at 0x206");
             Assert.AreEqual(6, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x200, cpu.stack[cpu.SP - 1], "Current stack should point to 0x200");
+            Assert.AreEqual(0x200, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x200");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2308, cpu.opcode, "Opcode shoud be 0x2308 - CALL 0x308");
+            Assert.AreEqual(0x2308, cpu.Opcode, "Opcode shoud be 0x2308 - CALL 0x308");
             Assert.AreEqual(0x308, cpu.PC, "PC Register should be at 0x308");
             Assert.AreEqual(7, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x206, cpu.stack[cpu.SP - 1], "Current stack should point to 0x206");
+            Assert.AreEqual(0x206, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x206");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2400, cpu.opcode, "Opcode shoud be 0x2308 - JP 0x400");
+            Assert.AreEqual(0x2400, cpu.Opcode, "Opcode shoud be 0x2308 - JP 0x400");
             Assert.AreEqual(0x400, cpu.PC, "PC Register should be at 0x400");
             Assert.AreEqual(8, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x308, cpu.stack[cpu.SP - 1], "Current stack should point to 0x308");
+            Assert.AreEqual(0x308, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x308");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2500, cpu.opcode, "Opcode shoud be 0x2500 - CALL 0x500");
+            Assert.AreEqual(0x2500, cpu.Opcode, "Opcode shoud be 0x2500 - CALL 0x500");
             Assert.AreEqual(0x500, cpu.PC, "PC Register should be at 0x500");
             Assert.AreEqual(9, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x400, cpu.stack[cpu.SP - 1], "Current stack should point to 0x400");
+            Assert.AreEqual(0x400, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x400");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2200, cpu.opcode, "Opcode shoud be 0x2200 - CALL 0x200");
+            Assert.AreEqual(0x2200, cpu.Opcode, "Opcode shoud be 0x2200 - CALL 0x200");
             Assert.AreEqual(0x200, cpu.PC, "PC Register should be at 0x200");
             Assert.AreEqual(10, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x500, cpu.stack[cpu.SP - 1], "Current stack should point to 0x500");
+            Assert.AreEqual(0x500, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x500");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2206, cpu.opcode, "Opcode shoud be 0x2206 - CALL 0x206");
+            Assert.AreEqual(0x2206, cpu.Opcode, "Opcode shoud be 0x2206 - CALL 0x206");
             Assert.AreEqual(0x206, cpu.PC, "PC Register should be at 0x206");
             Assert.AreEqual(11, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x200, cpu.stack[cpu.SP - 1], "Current stack should point to 0x200");
+            Assert.AreEqual(0x200, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x200");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2308, cpu.opcode, "Opcode shoud be 0x2308 - CALL 0x308");
+            Assert.AreEqual(0x2308, cpu.Opcode, "Opcode shoud be 0x2308 - CALL 0x308");
             Assert.AreEqual(0x308, cpu.PC, "PC Register should be at 0x308");
             Assert.AreEqual(12, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x206, cpu.stack[cpu.SP - 1], "Current stack should point to 0x206");
+            Assert.AreEqual(0x206, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x206");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2400, cpu.opcode, "Opcode shoud be 0x2308 - CALL 0x400");
+            Assert.AreEqual(0x2400, cpu.Opcode, "Opcode shoud be 0x2308 - CALL 0x400");
             Assert.AreEqual(0x400, cpu.PC, "PC Register should be at 0x400");
             Assert.AreEqual(13, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x308, cpu.stack[cpu.SP - 1], "Current stack should point to 0x308");
+            Assert.AreEqual(0x308, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x308");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2500, cpu.opcode, "Opcode shoud be 0x2500 - CALL 0x500");
+            Assert.AreEqual(0x2500, cpu.Opcode, "Opcode shoud be 0x2500 - CALL 0x500");
             Assert.AreEqual(0x500, cpu.PC, "PC Register should be at 0x500");
             Assert.AreEqual(14, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x400, cpu.stack[cpu.SP - 1], "Current stack should point to 0x400");
+            Assert.AreEqual(0x400, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x400");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2200, cpu.opcode, "Opcode shoud be 0x2200 - CALL 0x200");
+            Assert.AreEqual(0x2200, cpu.Opcode, "Opcode shoud be 0x2200 - CALL 0x200");
             Assert.AreEqual(0x200, cpu.PC, "PC Register should be at 0x200");
             Assert.AreEqual(15, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x500, cpu.stack[cpu.SP - 1], "Current stack should point to 0x500");
+            Assert.AreEqual(0x500, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x500");
 
             cpu.EmulateCycle();
 
-            Assert.AreEqual(0x2206, cpu.opcode, "Opcode shoud be 0x2206 - CALL 0x206");
+            Assert.AreEqual(0x2206, cpu.Opcode, "Opcode shoud be 0x2206 - CALL 0x206");
             Assert.AreEqual(0x206, cpu.PC, "PC Register should be at 0x206");
             Assert.AreEqual(16, cpu.SP, "PC Register should have incremented");
-            Assert.AreEqual(0x200, cpu.stack[cpu.SP - 1], "Current stack should point to 0x200");
+            Assert.AreEqual(0x200, cpu.Stack[cpu.SP - 1], "Current stack should point to 0x200");
 
             Assert.Throws<StackOverflowException>(cpu.EmulateCycle, "Should throw a Stack Overflow Exception");
         }
@@ -1065,8 +1065,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
-                byte value = cpu.memory[address + 1];
+                int register = cpu.Memory[address] & 0x0F;
+                byte value = cpu.Memory[address + 1];
                 ushort opcode = unchecked((ushort)((0x30 | (register & 0x0F)) << 8 | value));
 
                 cpu.PC = address;
@@ -1078,7 +1078,7 @@ namespace Chip8.Tests
 
                 cpu.EmulateCycle();
 
-                Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
+                Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
                 Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register:X1} different from 0x{value:X2} (actual value: 0x{cpu.V[register]:X2})");
 
                 for (int index = 0; index <= 0xF; index++)
@@ -1088,7 +1088,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
 
                     if (index == register)
                     {
@@ -1109,7 +1109,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
 
                     if (testValue == value)
                     {
@@ -1223,8 +1223,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
-                byte value = cpu.memory[address + 1];
+                int register = cpu.Memory[address] & 0x0F;
+                byte value = cpu.Memory[address + 1];
                 ushort opcode = unchecked((ushort)((0x40 | (register & 0x0F)) << 8 | value));
 
                 cpu.PC = address;
@@ -1236,8 +1236,8 @@ namespace Chip8.Tests
 
                 cpu.EmulateCycle();
 
-                Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
-                Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register:X1} is 0x{value:X2} (actual value: 0x{cpu.V[register]:X2}");
+                Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
+                Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register:X1} is 0x{value:X2} (actual value: 0x{cpu.V[register]:X2})");
 
                 for (int index = 0; index <= 0xF; index++)
                 {
@@ -1246,7 +1246,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
 
                     if (index == register)
                     {
@@ -1267,7 +1267,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
 
                     if (testValue == value)
                     {
@@ -1329,8 +1329,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 byte value = unchecked((byte)rnd.Next(0x00, 0x100));
 
                 ushort opcode = unchecked((ushort)((0x50 | (registerX & 0x0F)) << 8 | (registerY << 8)));
@@ -1348,7 +1348,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{registerX:X1}, V{registerY:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{registerX:X1}, V{registerY:X1}");
                     Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} ({cpu.V[registerX]:X2}) is not the same value as V{registerY:X1} ({cpu.V[registerY]:X2})");
                 }
 
@@ -1368,7 +1368,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{registerX:X1}, V{registerY:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{registerX:X1}, V{registerY:X1}");
 
                     if (registerX == registerY)
                     {
@@ -1482,8 +1482,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
-                byte value = cpu.memory[address + 1];
+                int register = cpu.Memory[address] & 0x0F;
+                byte value = cpu.Memory[address + 1];
                 byte invertedValue = unchecked((byte)~value);
                 ushort opcode = unchecked((ushort)((0x60 | (register & 0x0F)) << 8 | value));
 
@@ -1499,7 +1499,7 @@ namespace Chip8.Tests
                     cpu.PC = address;
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, 0x{value:X2}");
 
                     if (index == register)
                     {
@@ -1616,8 +1616,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
-                byte value = cpu.memory[address + 1];
+                int register = cpu.Memory[address] & 0x0F;
+                byte value = cpu.Memory[address + 1];
                 byte invertedValue = unchecked((byte)~value);
                 ushort opcode = unchecked((ushort)((0x70 | (register & 0x0F)) << 8 | value));
 
@@ -1633,7 +1633,7 @@ namespace Chip8.Tests
                     cpu.PC = address;
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{register:X1}, 0x{value:X2}");
 
                     if (index == register)
                     {
@@ -1656,7 +1656,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{register:X1}, 0x{value:X2}");
                     byte sum = unchecked((byte)(testValue + value));
                     Assert.AreEqual(sum, cpu.V[register], $"V{register:X1} should be {sum} (0x{testValue:X2} + 0x{value:X2}) [opcode: 0x{opcode:X4}] [V{register:X1}= 0x{cpu.V[register]:X2}]");
                 }
@@ -1710,8 +1710,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 byte value = unchecked((byte)rnd.Next(0x00, 0x100));
 
                 ushort opcode = unchecked((ushort)((0x90 | (registerX & 0x0F)) << 8 | (registerY << 8)));
@@ -1729,7 +1729,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{registerX:X1}, V{registerY:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{registerX:X1}, V{registerY:X1}");
                     Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} ({cpu.V[registerX]:X2}) is not the same value as V{registerY:X1} ({cpu.V[registerY]:X2})");
                 }
 
@@ -1749,7 +1749,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{registerX:X1}, V{registerY:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{registerX:X1}, V{registerY:X1}");
 
                     if (registerX == registerY)
                     {
@@ -1811,8 +1811,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4) | 0x04));
 
                 for (int testValueX = 0x00; testValueX <= 0xFF; testValueX++)
@@ -1845,7 +1845,7 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{registerX:X1}, V{registerY:X1}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
@@ -1904,8 +1904,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4) | 0x01));
 
                 for (int testValueX = 0x00; testValueX <= 0xFF; testValueX++)
@@ -1928,7 +1928,7 @@ namespace Chip8.Tests
 
                         cpu.EmulateCycle();
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - OR V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - OR V{registerX:X1}, V{registerY:X1}");
                         Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {value} (0x{testValueX:X2} OR 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
                     }
                 }
@@ -1982,8 +1982,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4) | 0x02));
 
                 for (int testValueX = 0x00; testValueX <= 0xFF; testValueX++)
@@ -2006,7 +2006,7 @@ namespace Chip8.Tests
 
                         cpu.EmulateCycle();
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - AND V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - AND V{registerX:X1}, V{registerY:X1}");
                         Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {value} (0x{testValueX:X2} AND 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
                     }
                 }
@@ -2060,8 +2060,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4) | 0x03));
 
                 for (int testValueX = 0x00; testValueX <= 0xFF; testValueX++)
@@ -2084,7 +2084,7 @@ namespace Chip8.Tests
 
                         cpu.EmulateCycle();
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - XOR V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - XOR V{registerX:X1}, V{registerY:X1}");
                         Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {value} (0x{testValueX:X2} XOR 0x{value:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
                     }
                 }
@@ -2138,8 +2138,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4) | 0x05));
 
                 for (int testValueX = 0x00; testValueX <= 0xFF; testValueX++)
@@ -2172,7 +2172,7 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SUB V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SUB V{registerX:X1}, V{registerY:X1}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
@@ -2231,8 +2231,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 byte value = unchecked((byte)rnd.Next(0x00, 0x100));
 
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4)));
@@ -2267,7 +2267,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{registerX:X1}, V{registerY:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{registerX:X1}, V{registerY:X1}");
 
                     if (registerX == registerY)
                     {
@@ -2330,8 +2330,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4) | 0x06));
 
                 for (int testValueX = 0x00; testValueX <= 0xFF; testValueX++)
@@ -2358,7 +2358,7 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SHR V{registerX:X1}, {{V{registerY:X1}}}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SHR V{registerX:X1}, {{V{registerY:X1}}}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
@@ -2417,8 +2417,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4) | 0x07));
 
                 for (int testValueX = 0x00; testValueX <= 0xFF; testValueX++)
@@ -2451,7 +2451,7 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SUBN V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SUBN V{registerX:X1}, V{registerY:X1}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
@@ -2510,8 +2510,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
-                int registerY = (cpu.memory[address + 1] & 0xF0) >> 4;
+                int registerX = cpu.Memory[address] & 0x0F;
+                int registerY = (cpu.Memory[address + 1] & 0xF0) >> 4;
                 ushort opcode = unchecked((ushort)((0x80 | (registerX & 0x0F)) << 8 | ((registerY & 0x0F) << 4) | 0x0E));
 
                 for (int testValueX = 0x00; testValueX <= 0xFF; testValueX++)
@@ -2538,7 +2538,7 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SHL V{registerX:X1}, {{V{registerY:X1}}}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SHL V{registerX:X1}, {{V{registerY:X1}}}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
@@ -2578,9 +2578,9 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
                 cpu.PC = counter;
-                int expectedPosition = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
             }
 
             index = 0x200;
@@ -2601,9 +2601,9 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
                 cpu.PC = counter;
-                int expectedPosition = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
             }
 
             index = 0x200;
@@ -2624,9 +2624,9 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0x5FE; counter += 2)
             {
                 cpu.PC = counter;
-                int expectedPosition = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
             }
         }
 
@@ -2657,7 +2657,7 @@ namespace Chip8.Tests
 
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
-                int nnn = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int nnn = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
 
                 for (int value = 0x00; value <= 0xFF; value++)
                 {
@@ -2668,12 +2668,12 @@ namespace Chip8.Tests
 
                     if (dest < 0x200 || dest > 0xFFF)
                     {
-                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
                     }
                     else
                     {
                         cpu.EmulateCycle();
-                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
                     }
                 }
             }
@@ -2695,7 +2695,7 @@ namespace Chip8.Tests
 
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
-                int nnn = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int nnn = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
 
                 for (int value = 0x00; value <= 0xFF; value++)
                 {
@@ -2706,12 +2706,12 @@ namespace Chip8.Tests
 
                     if (dest < 0x200 || dest > 0xFFF)
                     {
-                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
                     }
                     else
                     {
                         cpu.EmulateCycle();
-                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
                     }
                 }
             }
@@ -2733,7 +2733,7 @@ namespace Chip8.Tests
 
             for (ushort counter = 0x200; counter <= 0x5FE; counter += 2)
             {
-                int nnn = (cpu.memory[counter] << 8 | cpu.memory[counter + 1]) & 0x0FFF;
+                int nnn = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
 
                 for (int value = 0x00; value <= 0xFF; value++)
                 {
@@ -2744,12 +2744,12 @@ namespace Chip8.Tests
 
                     if (dest < 0x200 || dest > 0xFFF)
                     {
-                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
                     }
                     else
                     {
                         cpu.EmulateCycle();
-                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
                     }
                 }
             }
@@ -2810,8 +2810,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
-                byte value = cpu.memory[address + 1];
+                int register = cpu.Memory[address] & 0x0F;
+                byte value = cpu.Memory[address + 1];
                 byte invertedValue = unchecked((byte)~value);
                 ushort opcode = unchecked((ushort)((0xC0 | (register & 0x0F)) << 8 | value));
 
@@ -2827,7 +2827,7 @@ namespace Chip8.Tests
                     cpu.PC = address;
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - RND V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - RND V{register:X1}, 0x{value:X2}");
 
                     if (index == register)
                     {
@@ -2890,8 +2890,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
-                byte value = cpu.memory[address + 1];
+                int register = cpu.Memory[address] & 0x0F;
+                byte value = cpu.Memory[address + 1];
                 byte invertedValue = unchecked((byte)~value);
                 ushort opcode = unchecked((ushort)((0xC0 | (register & 0x0F)) << 8 | value));
 
@@ -2912,7 +2912,7 @@ namespace Chip8.Tests
                     cpu.PC = address;
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - RND V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - RND V{register:X1}, 0x{value:X2}");
 
                     for (int index = 0; index <= 0xF; index++)
                     {
@@ -3466,7 +3466,7 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
+                int registerX = cpu.Memory[address] & 0x0F;
                 ushort opcode = unchecked((ushort)((0xE0 | (registerX & 0x0F)) << 8 | 0x9E));
 
                 for (int testKey = 0x00; testKey <= 0xFF; testKey++)
@@ -3481,7 +3481,7 @@ namespace Chip8.Tests
 
                         for (int key = 0; key <= 0xF; key++)
                         {
-                            cpu.keys[key] = unchecked((byte)((key == testKeyValue) ? 1 : 0));
+                            cpu.Keys[key] = unchecked((byte)((key == testKeyValue) ? 1 : 0));
                         }
 
                         if (cpu.V[registerX] > 0x0F)
@@ -3494,15 +3494,15 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SKNP V{registerX:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SKNP V{registerX:X1}");
 
                         if (testKey == testKeyValue)
                         {
-                            Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} key is pressed (Key 0x{testKey:X2}= 0x{cpu.keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
+                            Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} key is pressed (Key 0x{testKey:X2}= 0x{cpu.Keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
                         }
                         else
                         {
-                            Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} key is not pressed (Key 0x{testKey:X2}= 0x{cpu.keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
+                            Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} key is not pressed (Key 0x{testKey:X2}= 0x{cpu.Keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
                         }
                     }
                 }
@@ -3547,7 +3547,7 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
+                int registerX = cpu.Memory[address] & 0x0F;
                 ushort opcode = unchecked((ushort)((0xE0 | (registerX & 0x0F)) << 8 | 0xA1));
 
                 for (int testKey = 0x00; testKey <= 0xFF; testKey++)
@@ -3562,7 +3562,7 @@ namespace Chip8.Tests
 
                         for (int key = 0; key < 0x10; key++)
                         {
-                            cpu.keys[key] = unchecked((byte)((key == testKeyValue) ? 1 : 0));
+                            cpu.Keys[key] = unchecked((byte)((key == testKeyValue) ? 1 : 0));
                         }
 
                         if (cpu.V[registerX] > 0x0F)
@@ -3575,15 +3575,15 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - SKNP V{registerX:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SKNP V{registerX:X1}");
 
                         if (testKey != testKeyValue)
                         {
-                            Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} key is not pressed (Key 0x{testKey:X2}= 0x{cpu.keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
+                            Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} key is not pressed (Key 0x{testKey:X2}= 0x{cpu.Keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
                         }
                         else
                         {
-                            Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} key is pressed (Key 0x{testKey:X2}= 0x{cpu.keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
+                            Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} key is pressed (Key 0x{testKey:X2}= 0x{cpu.Keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
                         }
                     }
                 }
@@ -3628,7 +3628,7 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
+                int registerX = cpu.Memory[address] & 0x0F;
 
                 ushort opcode = unchecked((ushort)((0xF0 | (registerX & 0x0F)) << 8 | 0x07));
 
@@ -3641,7 +3641,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{registerX:X1}, DT");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{registerX:X1}, DT");
 
                     for (int index = 0; index <= 0xF; index++)
                     {
@@ -3699,7 +3699,7 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
+                int registerX = cpu.Memory[address] & 0x0F;
 
                 ushort opcode = unchecked((ushort)((0xF0 | (registerX & 0x0F)) << 8 | 0x15));
 
@@ -3712,7 +3712,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD DT, V{registerX:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD DT, V{registerX:X1}");
 
                     if (testValue != 0x80)
                     {
@@ -3771,7 +3771,7 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int registerX = cpu.memory[address] & 0x0F;
+                int registerX = cpu.Memory[address] & 0x0F;
 
                 ushort opcode = unchecked((ushort)((0xF0 | (registerX & 0x0F)) << 8 | 0x18));
 
@@ -3784,7 +3784,7 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD ST, V{registerX:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD ST, V{registerX:X1}");
 
                     if (testValue != 0x80)
                     {
@@ -3843,7 +3843,7 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
+                int register = cpu.Memory[address] & 0x0F;
                 ushort opcode = unchecked((ushort)((0xF0 | (register & 0x0F)) << 8 | 0x0A));
 
                 for (byte testKeyValue = 0x00; testKeyValue < 0x10; testKeyValue++)
@@ -3853,13 +3853,13 @@ namespace Chip8.Tests
 
                     for (int key = 0; key <= 0xF; key++)
                     {
-                        cpu.keys[key] = unchecked((byte)((key == testKeyValue) ? 1 : 0));
+                        cpu.Keys[key] = unchecked((byte)((key == testKeyValue) ? 1 : 0));
                     }
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, K");
-                    Assert.AreEqual(testKeyValue, cpu.V[register], $"V{register:X1} should be the index of the pressed key (Key 0x{testKeyValue:X2}=0x{cpu.keys[testKeyValue]:X2}) [opcode: 0x{opcode:X4}] [V{register:X1}= 0x{cpu.V[register]:X2}]");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, K");
+                    Assert.AreEqual(testKeyValue, cpu.V[register], $"V{register:X1} should be the index of the pressed key (Key 0x{testKeyValue:X2}=0x{cpu.Keys[testKeyValue]:X2}) [opcode: 0x{opcode:X4}] [V{register:X1}= 0x{cpu.V[register]:X2}]");
                 }
             }
         }
@@ -3902,8 +3902,8 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
-                byte value = cpu.memory[address + 1];
+                int register = cpu.Memory[address] & 0x0F;
+                byte value = cpu.Memory[address + 1];
                 byte invertedValue = unchecked((byte)~value);
                 ushort opcode = unchecked((ushort)((0xF0 | (register & 0x0F)) << 8 | 0x1E));
 
@@ -3918,7 +3918,7 @@ namespace Chip8.Tests
 
                 for (int index = 0; index <= 0xF; index++)
                 {
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - ADD I, V{register:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD I, V{register:X1}");
 
                     Assert.AreNotEqual(value, cpu.V[index], $"V{index:X1} should not be 0x{value:X2}");
                     Assert.AreEqual(invertedValue, cpu.V[index], $"V{index:X1} should be 0x{invertedValue:X2}");
@@ -3948,7 +3948,7 @@ namespace Chip8.Tests
                             Assert.AreEqual(destAddr, cpu.I, $"Register I should be {destAddr} (0x{baseAddr:X3} + 0x{testValue:X2}) [opcode: 0x{opcode:X4}] [V{register:X1}= 0x{cpu.V[register]:X2}]");
                         }
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - ADD I, V{register:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD I, V{register:X1}");
                     }
                 }
             }
@@ -3992,7 +3992,7 @@ namespace Chip8.Tests
 
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
-                int register = cpu.memory[address] & 0x0F;
+                int register = cpu.Memory[address] & 0x0F;
                 ushort opcode = unchecked((ushort)((0xF0 | (register & 0x0F)) << 8 | 0x29));
 
                 for (int testValue = 0x00; testValue <= 0xFF; testValue++)
@@ -4009,7 +4009,7 @@ namespace Chip8.Tests
                     {
                         cpu.EmulateCycle();
 
-                        Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD F, V{register:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD F, V{register:X1}");
 
                         for (int index = 0; index <= 0xF; index++)
                         {
@@ -4021,116 +4021,116 @@ namespace Chip8.Tests
                                 switch (testValue)
                                 {
                                     case 0x0:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x1:
-                                        Assert.AreEqual(0x20, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x60, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x20, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x20, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x70, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x60, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x70, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x2:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x3:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x4:
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x5:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x6:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x7:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x20, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x40, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x40, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x40, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x40, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x8:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0x9:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0xA:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0xB:
-                                        Assert.AreEqual(0xE0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xE0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xE0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0xC:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0xD:
-                                        Assert.AreEqual(0xE0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xE0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0xE:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                     case 0xF:
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
                                         break;
                                 }
                             }
@@ -4184,7 +4184,7 @@ namespace Chip8.Tests
             for (ushort address = 0x200; address < testAddress; address += 2)
             {
 
-                int register = cpu.memory[address] & 0x0F;
+                int register = cpu.Memory[address] & 0x0F;
 
                 ushort opcode = unchecked((ushort)((0xF0 | (register & 0x0F)) << 8 | 0x33));
 
@@ -4212,7 +4212,7 @@ namespace Chip8.Tests
                         {
                             cpu.EmulateCycle();
 
-                            Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD B, V{register:X1} at 0x{cpu.PC:X3} [I=0x{cpu.I:X3}]");
+                            Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD B, V{register:X1} at 0x{cpu.PC:X3} [I=0x{cpu.I:X3}]");
 
                             for (int index = 0; index <= 0xF; index++)
                             {
@@ -4223,9 +4223,9 @@ namespace Chip8.Tests
                                     int units = (value % 100) % 10;
 
                                     Assert.AreEqual(value, cpu.V[register], $"V{register:X1} should not change");
-                                    Assert.AreEqual(cents, cpu.memory[cpu.I], $"memory address 0x{cpu.I:X3} should be 0x{cents:X2}");
-                                    Assert.AreEqual(tens, cpu.memory[cpu.I + 1], $"memory address 0x{cpu.I + 1:X1} should be 0x{tens:X2}");
-                                    Assert.AreEqual(units, cpu.memory[cpu.I + 2], $"memory address 0x{cpu.I + 2:X1} should be 0x{units:X2}");
+                                    Assert.AreEqual(cents, cpu.Memory[cpu.I], $"memory address 0x{cpu.I:X3} should be 0x{cents:X2}");
+                                    Assert.AreEqual(tens, cpu.Memory[cpu.I + 1], $"memory address 0x{cpu.I + 1:X1} should be 0x{tens:X2}");
+                                    Assert.AreEqual(units, cpu.Memory[cpu.I + 2], $"memory address 0x{cpu.I + 2:X1} should be 0x{units:X2}");
                                 }
                                 else
                                 {
@@ -4280,7 +4280,7 @@ namespace Chip8.Tests
             {
                 cpu.LoadMemory(emptyMemory);
 
-                int register = cpu.memory[address] & 0x0F;
+                int register = cpu.Memory[address] & 0x0F;
                 byte value = unchecked((byte)rnd.Next(0x00, 0x100));
                 byte invertedValue = unchecked((byte)~value);
                 ushort opcode = unchecked((ushort)((0xF0 | (register & 0x0F)) << 8 | 0x55));
@@ -4312,14 +4312,14 @@ namespace Chip8.Tests
                     {
                         for (byte index = 0; index <= register; index++)
                         {
-                            cpu.memory[cpu.I + index] = invertedValue;
+                            cpu.Memory[cpu.I + index] = invertedValue;
                         }
 
                         cpu.EmulateCycle();
 
                         for (byte index = 0; index <= register; index++)
                         {
-                            Assert.AreEqual(cpu.V[index], cpu.memory[cpu.I + index], $"Memory position at address 0x{cpu.I:X3} should be 0x{cpu.V[index]:X2} [opcode: 0x{opcode:X4}]");
+                            Assert.AreEqual(cpu.V[index], cpu.Memory[cpu.I + index], $"Memory position at address 0x{cpu.I:X3} should be 0x{cpu.V[index]:X2} [opcode: 0x{opcode:X4}]");
                         }
 
                         for (int index = 0; index <= 0xF; index++)
@@ -4328,7 +4328,7 @@ namespace Chip8.Tests
                         }
                     }
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD [I], V{register:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD [I], V{register:X1}");
                 }
             }
         }
@@ -4373,7 +4373,7 @@ namespace Chip8.Tests
             {
                 cpu.LoadMemory(emptyMemory);
 
-                int register = cpu.memory[address] & 0x0F;
+                int register = cpu.Memory[address] & 0x0F;
                 byte value = unchecked((byte)rnd.Next(0x00, 0x100));
                 byte invertedValue = unchecked((byte)~value);
                 ushort opcode = unchecked((ushort)((0xF0 | (register & 0x0F)) << 8 | 0x65));
@@ -4400,7 +4400,7 @@ namespace Chip8.Tests
                     {
                         for (ushort index = 0; index <= register; index++)
                         {
-                            cpu.memory[cpu.I + index] = unchecked((byte)(value + index));
+                            cpu.Memory[cpu.I + index] = unchecked((byte)(value + index));
                         }
 
                         for (int index = 0; index <= 0xF; index++)
@@ -4412,16 +4412,16 @@ namespace Chip8.Tests
 
                         for (byte index = 0; index <= register; index++)
                         {
-                            Assert.AreEqual((byte)(value + index), cpu.V[index], $"V{index:X1} should be 0x{cpu.memory[cpu.I + index]:X2} [opcode: 0x{opcode:X4}] [I=0x{cpu.I:X3}] [PC=0x{cpu.PC:X3}]");
+                            Assert.AreEqual((byte)(value + index), cpu.V[index], $"V{index:X1} should be 0x{cpu.Memory[cpu.I + index]:X2} [opcode: 0x{opcode:X4}] [I=0x{cpu.I:X3}] [PC=0x{cpu.PC:X3}]");
                         }
 
                         for (byte index = 0; index <= register; index++)
                         {
-                            Assert.AreEqual((byte)(value + index), cpu.memory[cpu.I + index], $"Memory position 0x{cpu.I + index:X3} should not change");
+                            Assert.AreEqual((byte)(value + index), cpu.Memory[cpu.I + index], $"Memory position 0x{cpu.I + index:X3} should not change");
                         }
                     }
 
-                    Assert.AreEqual(opcode, cpu.opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, [I]");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, [I]");
                 }
             }
         }

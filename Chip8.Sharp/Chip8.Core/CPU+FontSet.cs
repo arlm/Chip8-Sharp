@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Chip8.Core
 {
     public partial class CPU
