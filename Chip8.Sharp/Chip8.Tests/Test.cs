@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
-using Chip8.Core;
-using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Chip8.Core;
 using Chip8.Tests.Utils;
-using System.Threading.Tasks;
+using NUnit.Framework;
 
 namespace Chip8.Tests
 {
@@ -19,6 +18,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Functional Tests")]
+        [Category("Long-running")]
         public void InitialState()
         {
             var emptyMemory = new byte[0x1000];
@@ -182,6 +182,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Functional Tests")]
+        [Category("Long-running")]
         public void SubRoutineStack()
         {
             var emptyMemory = new byte[0x1000];
@@ -531,6 +532,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_SYS_addr()
         {
             var emptyMemory = new byte[0x1000];
@@ -610,6 +612,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_CLS()
         {
             var emptyMemory = new byte[0x1000];
@@ -647,6 +650,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_RET()
         {
             var emptyMemory = new byte[0x1000];
@@ -726,6 +730,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_JP_addr()
         {
             var emptyMemory = new byte[0x1000];
@@ -812,6 +817,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_CALL_addr()
         {
             var emptyMemory = new byte[0x1000];
@@ -963,6 +969,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_SE_Vx_byte()
         {
             var emptyMemory = new byte[0x1000];
@@ -1120,6 +1127,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_SNE_Vx_byte()
         {
             var emptyMemory = new byte[0x1000];
@@ -1277,6 +1285,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_SE_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -1377,6 +1386,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_Vx_byte()
         {
             var emptyMemory = new byte[0x1000];
@@ -1510,6 +1520,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_ADD_Vx_byte()
         {
             var emptyMemory = new byte[0x1000];
@@ -1655,6 +1666,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_SNE_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -1755,6 +1767,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_ADD_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -1847,6 +1860,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_OR_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -1924,6 +1938,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_AND_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -2001,6 +2016,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_XOR_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -2078,6 +2094,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_SUB_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -2170,6 +2187,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -2268,6 +2286,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_SHR_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -2354,6 +2373,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_SUBN_Vx_Vy()
         {
             var emptyMemory = new byte[0x1000];
@@ -2446,6 +2466,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_SHL_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -2532,6 +2553,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_I_addr()
         {
             var emptyMemory = new byte[0x1000];
@@ -2611,6 +2633,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_JP_V0_addr()
         {
             var emptyMemory = new byte[0x1000];
@@ -2735,6 +2758,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_RND_Vx_byte()
         {
             var emptyMemory = new byte[0x1000];
@@ -2934,6 +2958,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Support Tests")]
+        [Category("Quick")]
         public void MakeBitArrayTest()
         {
             const string bitString1 = "1100 1001 0000 1111 1101 1010 1010 0010 0010 0001 0110 1000 1100 0010 0011 0100 1100 0100 1100 0110 0110 0010 1000 1011 1000"; // page 2-5
@@ -2985,6 +3010,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Support Tests")]
+        [Category("Quick")]
         public void NistRandomnessTests()
         {
             const string bitString1 = "1100 1001 0000 1111 1101 1010 1010 0010 0010 0001 0110 1000 1100 0010 0011 0100 1100 0100 1100 0110 0110 0010 1000 1011 1000"; // page 2-5
@@ -3183,6 +3209,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Support Tests")]
+        [Category("Quick")]
         public void RandomGeneratorChiSquareTest()
         {
             const int COUNT = 4096;
@@ -3395,6 +3422,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_DRW_Vx_Vy_nibble()
         {
             Assert.Inconclusive();
@@ -3403,6 +3431,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_SKP_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -3483,6 +3512,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_SKNP_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -3563,6 +3593,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_Vx_DT()
         {
             var emptyMemory = new byte[0x1000];
@@ -3633,6 +3664,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_DT_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -3704,6 +3736,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_ST_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -3775,6 +3808,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_LD_Vx_K()
         {
             var emptyMemory = new byte[0x1000];
@@ -3833,6 +3867,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_ADD_I_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -3922,6 +3957,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_F_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -4113,6 +4149,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Long-running")]
         public void Opcode_LD_B_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -4206,6 +4243,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_IPtr_Vx()
         {
             var emptyMemory = new byte[0x1000];
@@ -4298,6 +4336,7 @@ namespace Chip8.Tests
         [Test]
         [Parallelizable]
         [Category("Opcode Tests")]
+        [Category("Quick")]
         public void Opcode_LD_Vx_IPtr()
         {
             var emptyMemory = new byte[0x1000];

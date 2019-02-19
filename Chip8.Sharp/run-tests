@@ -1,3 +1,18 @@
-﻿#!/sin/sh
+#!/bin/sh
 
- mono packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe Chip8.Tests/Chip8.Tests.csproj --work=Chip8.Tests
+DATE=$(date +"%Y%m%d%H%M")
+
+# mono packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe Chip8.Tests/Chip8.Tests.csproj  --where="cat==Quick" \
+# mono packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe Chip8.Tests/Chip8.Tests.csproj  --where="cat==Long-running" \
+mono packages/NUnit.ConsoleRunner.3.9.0/tools/nunit3-console.exe Chip8.Tests/Chip8.Tests.csproj  \
+    --work=Chip8.Tests \
+    --result="TestResult-$DATE.xml;format=nunit3" \
+    --result="TestResult-$DATE-summary.txt;transform=../nunit3-xslt/text-summary.xslt" \
+    --result="TestResult-$DATE.txt;transform=../nunit3-xslt/text-report.xslt" \
+    --result="TestResult-$DATE-summary.html;transform=../nunit3-xslt/html-summary.xslt" \
+    --result="TestResult-$DATE.html;transform=../nunit3-xslt/html-report.xslt" \
+    --result="TestResult-$DATE-profile.txt;transform=../nunit3-xslt/text-profile.xslt"    
+ 
+ echo ""   
+          
+ cat Chip8.Tests/TestResult-$DATE-profile.txt
