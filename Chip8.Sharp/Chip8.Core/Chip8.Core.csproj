@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <CodeAnalysisRuleSet>.\NetStandard.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -21,5 +22,25 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="2.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.10.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.3" />
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="2.6.3" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="2.6.3" />
+    <PackageReference Include="Microsoft.NetFramework.Analyzers" Version="2.6.3" />
+    <PackageReference Include="Text.Analyzers" Version="2.6.3" />
+    <PackageReference Include="ClrHeapAllocationAnalyzer" Version="1.0.0.9" />
+    <PackageReference Include="IDisposableAnalyzers" Version="2.1.2" />
+    <PackageReference Include="WpfAnalyzers" Version="2.2.0.2" />
+    <PackageReference Include="ReflectionAnalyzers" Version="0.1.20-dev" />
+    <PackageReference Include="PropertyChangedAnalyzers" Version="2.7.1" />
+    <PackageReference Include="DotNetAnalyzers.PublicApiAnalyzer" Version="1.0.0-beta.12" />
+    <PackageReference Include="Microsoft.DotNet.Analyzers.Compatibility" Version="0.2.12-alpha" />
+    <PackageReference Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" />
+    <PackageReference Include="System.Runtime.Analyzers" Version="1.1.0" />
+    <PackageReference Include="System.Runtime.InteropServices.Analyzers" Version="1.1.0" />
+    <PackageReference Include="System.Security.Cryptography.Hashing.Algorithms.Analyzers" Version="1.1.0" />
+    <PackageReference Include="ConstructorNullAnalyzer" Version="0.4.1" />
+    <PackageReference Include="SwitchAnalyzer" Version="0.6.8" />
+    <PackageReference Include="Roslynator.Analyzers" Version="2.0.0" />
+    <PackageReference Include="AsyncFixer" Version="1.1.6" />
+    <PackageReference Include="codecracker.CSharp" Version="1.1.0" />
 </ItemGroup>
 </Project>
