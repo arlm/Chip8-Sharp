@@ -93,7 +93,7 @@ namespace Chip8
             }
 
             //Main loop flag
-            bool quit = false;
+            var quit = false;
 
             //Event handler
             SDL.SDL_Event evt;
@@ -422,7 +422,7 @@ namespace Chip8
                 //Set text to be rendered
                 timerText = $"Average {avgFPS.ToString("0.00", NumberFormatInfo.CurrentInfo)} Frames Per Second";
 
-                SDL.SDL_Color color = white;
+                var color = white;
 
                 if (debugKeys) { color = black; }
                 if (debugPixels) { color = green1; }
@@ -469,7 +469,7 @@ namespace Chip8
             SDL.SDL_RenderClear(driver.rendererPtr);
 
             //Render red filled quad
-            SDL.SDL_Rect fillRect = new SDL.SDL_Rect
+            var fillRect = new SDL.SDL_Rect
             {
                 x = WIDTH / 4,
                 y = HEIGHT / 4,
@@ -481,7 +481,7 @@ namespace Chip8
             SDL.SDL_RenderFillRect(driver.rendererPtr, ref fillRect);
 
             //Render green outlined quad
-            SDL.SDL_Rect outlineRect = new SDL.SDL_Rect
+            var outlineRect = new SDL.SDL_Rect
             {
                 x = WIDTH / 6,
                 y = HEIGHT / 6,
@@ -518,7 +518,7 @@ namespace Chip8
             //Set self as render target
             pixelDebugTexture.SetAsRenderTarget();
 
-            SDL.SDL_Color color = black;
+            var color = black;
 
             SDL.SDL_SetRenderDrawColor(driver.rendererPtr, color.r, color.g, color.b, color.a);
             SDL.SDL_RenderClear(driver.rendererPtr);
@@ -527,7 +527,7 @@ namespace Chip8
             color = gray;
 
             //Render red filled quad
-            SDL.SDL_Rect fillRect = new SDL.SDL_Rect
+            var fillRect = new SDL.SDL_Rect
             {
                 x = 0,
                 y = 0,
@@ -563,8 +563,9 @@ namespace Chip8
         static bool LoadMedia()
         {
             //Loading success flag
-            bool success = true;
+            var success = true;
             IntPtr surface;
+
 
             fpsTextTexture = new Texture(driver);
 

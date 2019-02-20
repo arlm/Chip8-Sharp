@@ -20,7 +20,7 @@ namespace Chip8
         public bool Init(int width, int height)
         {
             //Initialization flag
-            bool result = true;
+            var result = true;
 
             this.width = width;
             this.height = height;
@@ -97,9 +97,9 @@ namespace Chip8
         public bool SetupGraphics(string fileName)
         {
             //Initialization flag
-            bool result = true;
+            var result = true;
 
-            IntPtr splashSurfacePtr = IntPtr.Zero;
+            var splashSurfacePtr = IntPtr.Zero;
 
             try
             {
@@ -110,7 +110,7 @@ namespace Chip8
                 if (result)
                 {
                     const int INTERVAL = 250;
-                    int counter = 2500;
+                    var counter = 2500;
                     SDL.SDL_Event evt;
 
                     //While application is running
@@ -155,7 +155,7 @@ namespace Chip8
         public bool SetupInput()
         {
             //Initialization flag
-            bool result = true;
+            var result = true;
 
             while (SDL.SDL_PollEvent(out var evt) > 0)
             {
@@ -241,7 +241,7 @@ namespace Chip8
         public bool ClearScreen(byte r, byte g, byte b)
         {
             //Initialization flag
-            bool result = true;
+            var result = true;
 
             SDL.SDL_SetRenderDrawColor(rendererPtr, r, g, b, 0xFF);
             SDL.SDL_RenderClear(rendererPtr);
@@ -252,7 +252,7 @@ namespace Chip8
         public static bool Render(Texture texture, int x = 0, int y = 0, in SDL.SDL_Rect? clip = null)
         {
             //Initialization flag
-            bool result = true;
+            var result = true;
 
             //result &= ClearScreen(0xFF, 0xFF, 0xFF);
 
@@ -265,7 +265,7 @@ namespace Chip8
         public bool Present()
         {
             //Initialization flag
-            bool result = true;
+            var result = true;
 
             //Update screen
             SDL.SDL_RenderPresent(rendererPtr);

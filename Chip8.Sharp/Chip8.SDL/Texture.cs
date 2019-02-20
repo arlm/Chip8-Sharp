@@ -45,7 +45,7 @@ namespace Chip8
             }
 
             //The final texture
-            IntPtr newTexturePtr = IntPtr.Zero;
+            var newTexturePtr = IntPtr.Zero;
 
             if (loadedSurfacePtr == IntPtr.Zero)
             {
@@ -87,7 +87,7 @@ namespace Chip8
             }
 
             //The final texture
-            IntPtr newTexturePtr = IntPtr.Zero;
+            var newTexturePtr = IntPtr.Zero;
 
             //Render text surface
             var loadedSurfacePtr = SDL_image.IMG_Load(path);
@@ -264,7 +264,7 @@ namespace Chip8
 
         public bool Lock()
         {
-            bool success = true;
+            var success = true;
 
             //Texture is already locked
             if (pixelsPtr != IntPtr.Zero)
@@ -292,7 +292,7 @@ namespace Chip8
 
         public bool Unlock()
         {
-            bool success = true;
+            var success = true;
 
             //Texture is not locked
             if (pixelsPtr == IntPtr.Zero)
@@ -331,7 +331,7 @@ namespace Chip8
         //Get the pixel requested
         public uint GetPixel32(uint x, uint y)
         {
-            uint[] pixels32 = new uint[pitch * Height];
+            var pixels32 = new uint[pitch * Height];
             Buffer.BlockCopy(pixels, 0, pixels32, 0, pitch * Height * 4);
 
             return pixels32[(y * (pitch / 4)) + x];

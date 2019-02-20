@@ -185,7 +185,7 @@ namespace Chip8.Core
                         case 0xEE:
                             if (this.SP == 0)
                             {
-                                string message = "Illegal return operation, stack is empty.";
+                                var message = "Illegal return operation, stack is empty.";
                                 Console.WriteLine(message);
                                 throw new StackOverflowException(message);
                             }
@@ -203,7 +203,7 @@ namespace Chip8.Core
 
                         default:
                             {
-                                string message = $"Illegal call to RCA 1802 program: 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}";
+                                var message = $"Illegal call to RCA 1802 program: 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}";
                                 Console.WriteLine(message);
                                 throw new InvalidOperationException(message);
                             }
@@ -218,7 +218,7 @@ namespace Chip8.Core
 
                     if (op.NNN < 0x200)
                     {
-                        string message = $"Illegal jump target: 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}";
+                        var message = $"Illegal jump target: 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}";
                         Console.WriteLine(message);
                         throw new InvalidOperationException(message);
                     }
@@ -230,7 +230,7 @@ namespace Chip8.Core
                 case 0x2:
                     if (this.SP > 0xF)
                     {
-                        string message = "Illegal call operation, stack is full.";
+                        var message = "Illegal call operation, stack is full.";
                         Console.WriteLine(message);
                         throw new StackOverflowException(message);
                     }
@@ -659,18 +659,18 @@ namespace Chip8.Core
                     // Now that we have stored the program counter, we can set it to the address NNN.
                     // Remember, because we’re calling a subroutine at a specific address, 
                     // you should not increase the program counter by two.
-                    int dest = this.V[0] + op.NNN;
+                    var dest = this.V[0] + op.NNN;
 
                     if (dest < 0x200)
                     {
-                        string message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + this.V[0] (0x{this.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})";
+                        var message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + this.V[0] (0x{this.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})";
                         Console.WriteLine(message);
                         throw new InvalidOperationException(message);
                     }
 
                     if (dest > 0xFFF)
                     {
-                        string message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + this.V[0] (0x{this.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})";
+                        var message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + this.V[0] (0x{this.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})";
                         Console.WriteLine(message);
                         throw new InvalidOperationException(message);
                     }
@@ -828,13 +828,13 @@ namespace Chip8.Core
                         // 0xFX0A: A key press is awaited, and then stored in VX.
                         // (Blocking Operation. All instruction halted until next key event)
                         case 0x0A:
-                            bool keyPressed = false;
+                            var keyPressed = false;
 
                             while (!keyPressed)
                             {
                                 for (int index = 0; index < this.Keys.Length; index++)
                                 {
-                                    byte keyValue = this.Keys[index];
+                                    var keyValue = this.Keys[index];
                                     keyPressed |= keyValue > 0;
 
                                     if (keyPressed)
@@ -971,7 +971,7 @@ namespace Chip8.Core
                                 throw new InvalidOperationException("LD [this.I], Vx operation should not use X bigger than 0xF");
                             }
 
-                            int destAddr = this.I + op.X;
+                            var destAddr = this.I + op.X;
 
                             if (destAddr > 0xFFF)
                             {
