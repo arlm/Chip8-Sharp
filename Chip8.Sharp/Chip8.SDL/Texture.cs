@@ -32,6 +32,11 @@ namespace Chip8
 
         public Texture(SDLDriver driver)
         {
+            if (driver == null)
+            {
+                throw new ArgumentNullException(nameof(driver));
+            }
+
             this.rendererPtr = driver.rendererPtr;
             this.fontPtr = driver.fontPtr;
         }
