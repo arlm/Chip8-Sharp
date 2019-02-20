@@ -225,7 +225,7 @@ namespace Chip8
             return result;
         }
 
-        public IntPtr LoadSurface(string fileName)
+        public static IntPtr LoadSurface(string fileName)
         {
             //Load splash image
             var loadedSurface = SDL.SDL_LoadBMP(fileName);
@@ -249,7 +249,7 @@ namespace Chip8
             return result;
         }
 
-        public bool Render(Texture texture, int x = 0, int y = 0, in SDL.SDL_Rect? clip = null)
+        public static bool Render(Texture texture, int x = 0, int y = 0, in SDL.SDL_Rect? clip = null)
         {
             //Initialization flag
             bool result = true;

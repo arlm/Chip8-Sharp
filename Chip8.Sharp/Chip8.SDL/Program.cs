@@ -388,7 +388,7 @@ namespace Chip8
 
                 if (debugKeys)
                 {
-                    if (!driver.Render(currentTexture))
+                    if (!SDLDriver.Render(currentTexture))
                     {
                         Console.WriteLine("Failed to render texture!");
                     }
@@ -568,7 +568,7 @@ namespace Chip8
 
             //Load default surface
             textures[(int)KeyPressSurface.Default] = new Texture(driver);
-            surface = driver.LoadSurface("assets/press.bmp");
+            surface = SDLDriver.LoadSurface("assets/press.bmp");
             if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load default image!");
@@ -584,7 +584,7 @@ namespace Chip8
 
             //Load up surface
             textures[(int)KeyPressSurface.Up] = new Texture(driver);
-            surface = driver.LoadSurface("assets/up.bmp");
+            surface = SDLDriver.LoadSurface("assets/up.bmp");
             if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load up image!");
@@ -600,7 +600,7 @@ namespace Chip8
 
             //Load down surface
             textures[(int)KeyPressSurface.Down] = new Texture(driver);
-            surface = driver.LoadSurface("assets/down.bmp");
+            surface = SDLDriver.LoadSurface("assets/down.bmp");
             if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load down image!");
@@ -617,7 +617,7 @@ namespace Chip8
 
             //Load left surface
             textures[(int)KeyPressSurface.Left] = new Texture(driver);
-            surface = driver.LoadSurface("assets/left.bmp");
+            surface = SDLDriver.LoadSurface("assets/left.bmp");
             if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load left image!");
@@ -634,7 +634,7 @@ namespace Chip8
 
             //Load right surface
             textures[(int)KeyPressSurface.Right] = new Texture(driver);
-            surface = driver.LoadSurface("assets/right.bmp");
+            surface = SDLDriver.LoadSurface("assets/right.bmp");
             if (surface == IntPtr.Zero)
             {
                 Console.WriteLine("Failed to load right image!");

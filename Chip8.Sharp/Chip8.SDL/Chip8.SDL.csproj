@@ -3,6 +3,8 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp2.1</TargetFramework>
+        <CodeAnalysisRuleSet>.\NetStandard.ruleset</CodeAnalysisRuleSet>
+        <NoWarn>NU1701</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
       <LangVersion>7.3</LangVersion>
