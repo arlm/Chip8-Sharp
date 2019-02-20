@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
@@ -78,27 +79,27 @@ namespace Chip8
         {
             if (!driver.Init(WIDTH, HEIGHT))
             {
-                Console.WriteLine("Failed to initialize!");
+                Debug.Print("Failed to initialize!");
                 return -1;
             }
 
             // Setup the graphics (window size, display mode, etc) 
             if (!driver.SetupGraphics($"assets{Path.DirectorySeparatorChar.ToString(CultureInfo.CurrentCulture)}CHIP-8.logo.bmp"))
             {
-                Console.WriteLine("Failed to setup graphics!");
+                Debug.Print("Failed to setup graphics!");
                 return -2;
             }
 
             // Setup the input system (register input callbacks)
             if (!driver.SetupInput())
             {
-                Console.WriteLine("Failed to setup input!");
+                Debug.Print("Failed to setup input!");
                 return -3;
             }
 
             if (!LoadMedia())
             {
-                Console.WriteLine("Failed to load media!");
+                Debug.Print("Failed to load media!");
                 return -4;
             }
 
@@ -110,7 +111,7 @@ namespace Chip8
 
             //Set default current surface
             currentTexture = textures[(int)KeyPressSurface.Default];
-            Console.WriteLine("Loaded...");
+            Debug.Print("Loaded...");
 
             // Initialize the CHIP-8 system (Clear the memory, registers and screen)
             myChip8 = new CPU();
@@ -150,7 +151,7 @@ namespace Chip8
                     switch (evt.type)
                     {
                         case SDL.SDL_EventType.SDL_QUIT:
-                            Console.WriteLine("Quitting...");
+                            Debug.Print("Quitting...");
                             quit = true;
                             break;
 
@@ -159,101 +160,101 @@ namespace Chip8
                             switch (evt.key.keysym.sym)
                             {
                                 case SDL.SDL_Keycode.SDLK_ESCAPE:
-                                    Console.WriteLine("ESCAPE");
-                                    Console.WriteLine("Quitting...");
+                                    Debug.Print("ESCAPE");
+                                    Debug.Print("Quitting...");
                                     quit = true;
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_UP:
                                     currentTexture = textures[(int)KeyPressSurface.Up];
-                                    Console.WriteLine("UP");
+                                    Debug.Print("UP");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_DOWN:
                                     currentTexture = textures[(int)KeyPressSurface.Down];
-                                    Console.WriteLine("DOWN");
+                                    Debug.Print("DOWN");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_LEFT:
                                     currentTexture = textures[(int)KeyPressSurface.Left];
-                                    Console.WriteLine("LEFT");
+                                    Debug.Print("LEFT");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_RIGHT:
                                     currentTexture = textures[(int)KeyPressSurface.Right];
-                                    Console.WriteLine("RIGHT");
+                                    Debug.Print("RIGHT");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_1:
                                     keys[0x0] = 1;
-                                    Console.WriteLine("1");
+                                    Debug.Print("1");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_2:
                                     keys[0x1] = 1;
-                                    Console.WriteLine("2");
+                                    Debug.Print("2");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_3:
                                     keys[0x2] = 1;
-                                    Console.WriteLine("3");
+                                    Debug.Print("3");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_4:
                                     keys[0x3] = 1;
-                                    Console.WriteLine("4");
+                                    Debug.Print("4");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_q:
                                     keys[0x4] = 1;
-                                    Console.WriteLine("q");
+                                    Debug.Print("q");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_w:
                                     keys[0x5] = 1;
-                                    Console.WriteLine("w");
+                                    Debug.Print("w");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_e:
                                     keys[0x6] = 1;
-                                    Console.WriteLine("e");
+                                    Debug.Print("e");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_r:
                                     keys[0x7] = 1;
-                                    Console.WriteLine("r");
+                                    Debug.Print("r");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_a:
                                     keys[0x8] = 1;
-                                    Console.WriteLine("a");
+                                    Debug.Print("a");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_s:
                                     keys[0x9] = 1;
-                                    Console.WriteLine("s");
+                                    Debug.Print("s");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_d:
                                     keys[0xA] = 1;
-                                    Console.WriteLine("d");
+                                    Debug.Print("d");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_f:
                                     keys[0xA] = 1;
-                                    Console.WriteLine("f");
+                                    Debug.Print("f");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_z:
                                     keys[0xB] = 1;
-                                    Console.WriteLine("z");
+                                    Debug.Print("z");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_y:
                                     keys[0xB] = 1;
-                                    Console.WriteLine("y");
+                                    Debug.Print("y");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_x:
                                     keys[0xC] = 1;
-                                    Console.WriteLine("x");
+                                    Debug.Print("x");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_c:
                                     keys[0xD] = 1;
-                                    Console.WriteLine("c");
+                                    Debug.Print("c");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_v:
                                     keys[0xE] = 1;
-                                    Console.WriteLine("v");
+                                    Debug.Print("v");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_BACKSPACE:
@@ -262,11 +263,11 @@ namespace Chip8
 
                                     if (debugPixels)
                                     {
-                                        Console.WriteLine("Entering debug pixel mode");
+                                        Debug.Print("Entering debug pixel mode");
                                     }
                                     else
                                     {
-                                        Console.WriteLine("Leaving debug pixel mode");
+                                        Debug.Print("Leaving debug pixel mode");
                                     }
                                     break;
                                 case SDL.SDL_Keycode.SDLK_RETURN:
@@ -275,30 +276,30 @@ namespace Chip8
 
                                     if (debugKeys)
                                     {
-                                        Console.WriteLine("Entering debug keys mode");
+                                        Debug.Print("Entering debug keys mode");
                                     }
                                     else
                                     {
-                                        Console.WriteLine("Leaving debug keys mode");
+                                        Debug.Print("Leaving debug keys mode");
                                     }
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_PLUS:
                                     zoom += 0.5f;
-                                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_MINUS:
                                     zoom -= 0.5f;
-                                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_0:
                                     zoom = 1.0f;
-                                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                                     break;
 
                                 default:
                                     currentTexture = textures[(int)KeyPressSurface.Default];
-                                    Console.WriteLine("Default Key Press");
+                                    Debug.Print("Default Key Press");
                                     break;
                             }
                             break;
@@ -325,53 +326,53 @@ namespace Chip8
 
                                 case SDL.SDL_Keycode.SDLK_1:
                                     keys[0x0] = 0;
-                                    Console.WriteLine("1");
+                                    Debug.Print("1");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_2:
                                     keys[0x1] = 0;
-                                    Console.WriteLine("2");
+                                    Debug.Print("2");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_3:
                                     keys[0x2] = 0;
-                                    Console.WriteLine("3");
+                                    Debug.Print("3");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_4:
                                     keys[0x3] = 0;
-                                    Console.WriteLine("4");
+                                    Debug.Print("4");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_q:
                                     keys[0x4] = 0;
-                                    Console.WriteLine("q");
+                                    Debug.Print("q");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_w:
                                     keys[0x5] = 0;
-                                    Console.WriteLine("w");
+                                    Debug.Print("w");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_e:
                                     keys[0x6] = 0;
-                                    Console.WriteLine("e");
+                                    Debug.Print("e");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_r:
                                     keys[0x7] = 0;
-                                    Console.WriteLine("r");
+                                    Debug.Print("r");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_a:
                                     keys[0x8] = 0;
-                                    Console.WriteLine("a");
+                                    Debug.Print("a");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_s:
                                     keys[0x9] = 0;
-                                    Console.WriteLine("s");
+                                    Debug.Print("s");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_d:
                                     keys[0xA] = 0;
-                                    Console.WriteLine("d");
+                                    Debug.Print("d");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_f:
                                     keys[0xA] = 0;
-                                    Console.WriteLine("f");
+                                    Debug.Print("f");
                                     break;
 
                                 case SDL.SDL_Keycode.SDLK_z:
@@ -402,7 +403,7 @@ namespace Chip8
                 {
                     if (!SDLDriver.Render(currentTexture))
                     {
-                        Console.WriteLine("Failed to render texture!");
+                        Debug.Print("Failed to render texture!");
                     }
                 }
 
@@ -440,7 +441,7 @@ namespace Chip8
                 //Render text
                 if (!fpsTextTexture.LoadFromRenderedText(timerText, color))
                 {
-                    Console.WriteLine("Unable to render FPS texture!");
+                    Debug.Print("Unable to render FPS texture!");
                 }
 
                 //Clear screen
@@ -453,7 +454,7 @@ namespace Chip8
                 //Update screen
                 if (!driver.Present())
                 {
-                    Console.WriteLine("Failed to present render!");
+                    Debug.Print("Failed to present render!");
                 }
 
                 ++countedFrames;
@@ -587,7 +588,7 @@ namespace Chip8
             surface = SDLDriver.LoadSurface("assets/press.bmp");
             if (surface == IntPtr.Zero)
             {
-                Console.WriteLine("Failed to load default image!");
+                Debug.Print("Failed to load default image!");
                 success = false;
             }
             else
@@ -603,7 +604,7 @@ namespace Chip8
             surface = SDLDriver.LoadSurface("assets/up.bmp");
             if (surface == IntPtr.Zero)
             {
-                Console.WriteLine("Failed to load up image!");
+                Debug.Print("Failed to load up image!");
                 success = false;
             }
             else
@@ -619,7 +620,7 @@ namespace Chip8
             surface = SDLDriver.LoadSurface("assets/down.bmp");
             if (surface == IntPtr.Zero)
             {
-                Console.WriteLine("Failed to load down image!");
+                Debug.Print("Failed to load down image!");
                 success = false;
             }
             else
@@ -636,7 +637,7 @@ namespace Chip8
             surface = SDLDriver.LoadSurface("assets/left.bmp");
             if (surface == IntPtr.Zero)
             {
-                Console.WriteLine("Failed to load left image!");
+                Debug.Print("Failed to load left image!");
                 success = false;
             }
             else
@@ -653,7 +654,7 @@ namespace Chip8
             surface = SDLDriver.LoadSurface("assets/right.bmp");
             if (surface == IntPtr.Zero)
             {
-                Console.WriteLine("Failed to load right image!");
+                Debug.Print("Failed to load right image!");
                 success = false;
             }
             else
@@ -672,7 +673,7 @@ namespace Chip8
             pixelDebugTexture = new Texture(driver);
             if (!pixelDebugTexture.CreateBlank(WIDTH, HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
             {
-                Console.WriteLine("Failed to create target debug texture!");
+                Debug.Print("Failed to create target debug texture!");
                 success = false;
             }
 
@@ -683,7 +684,7 @@ namespace Chip8
             pixelTexture = new Texture(driver);
             if (!pixelTexture.CreateBlank(WIDTH, HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
             {
-                Console.WriteLine("Failed to create target texture!");
+                Debug.Print("Failed to create target texture!");
                 success = false;
             }
 
@@ -697,7 +698,7 @@ namespace Chip8
 
         private static void OnEndSound(int channel)
         {
-            Console.WriteLine("BEEP!");
+            Debug.Print("BEEP!");
         }
 
         #region IDisposable Support

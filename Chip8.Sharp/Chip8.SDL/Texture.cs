@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using SDL2;
@@ -55,7 +56,7 @@ namespace Chip8
 
             if (loadedSurfacePtr == IntPtr.Zero)
             {
-                Console.WriteLine($"Unable to load surface! SDL_image Error: {SDL.SDL_GetError()}");
+                Debug.Print($"Unable to load surface! SDL_image Error: {SDL.SDL_GetError()}");
             }
             else
             {
@@ -68,7 +69,7 @@ namespace Chip8
                 newTexturePtr = SDL.SDL_CreateTextureFromSurface(rendererPtr, loadedSurfacePtr);
                 if (newTexturePtr == IntPtr.Zero)
                 {
-                    Console.WriteLine($"Unable to create texture from surface! SDL Error: {SDL.SDL_GetError()}");
+                    Debug.Print($"Unable to create texture from surface! SDL Error: {SDL.SDL_GetError()}");
                 }
                 else
                 {
@@ -100,7 +101,7 @@ namespace Chip8
 
             if (loadedSurfacePtr == IntPtr.Zero)
             {
-                Console.WriteLine($"Unable to load image {path}! SDL_image Error: {SDL.SDL_GetError()}"); //  SDL_image.IMG_GetError()
+                Debug.Print($"Unable to load image {path}! SDL_image Error: {SDL.SDL_GetError()}"); //  SDL_image.IMG_GetError()
             }
             else
             {
@@ -113,7 +114,7 @@ namespace Chip8
                 newTexturePtr = SDL.SDL_CreateTextureFromSurface(rendererPtr, loadedSurfacePtr);
                 if (newTexturePtr == IntPtr.Zero)
                 {
-                    Console.WriteLine($"Unable to create texture from  {path}! SDL Error: {SDL.SDL_GetError()}");
+                    Debug.Print($"Unable to create texture from  {path}! SDL Error: {SDL.SDL_GetError()}");
                 }
                 else
                 {
@@ -145,7 +146,7 @@ namespace Chip8
 
             if (textSurfacePtr == IntPtr.Zero)
             {
-                Console.WriteLine($"Unable to render text surface! SDL_ttf Error: {SDL.SDL_GetError()}"); //  SDL_ttf.TTF_GetError()
+                Debug.Print($"Unable to render text surface! SDL_ttf Error: {SDL.SDL_GetError()}"); //  SDL_ttf.TTF_GetError()
             }
             else
             {
@@ -155,7 +156,7 @@ namespace Chip8
                 texturePtr = SDL.SDL_CreateTextureFromSurface(rendererPtr, textSurfacePtr);
                 if (texturePtr == IntPtr.Zero)
                 {
-                    Console.WriteLine($"Unable to create texture from rendered text! SDL Error: {SDL.SDL_GetError()}");
+                    Debug.Print($"Unable to create texture from rendered text! SDL Error: {SDL.SDL_GetError()}");
                 }
                 else
                 {
@@ -179,7 +180,7 @@ namespace Chip8
 
             if (texturePtr == IntPtr.Zero)
             {
-                Console.WriteLine($"Unable to create blank texture! SDL Error: {SDL.SDL_GetError()}\n");
+                Debug.Print($"Unable to create blank texture! SDL Error: {SDL.SDL_GetError()}\n");
             }
             else
             {
@@ -275,7 +276,7 @@ namespace Chip8
             //Texture is already locked
             if (pixelsPtr != IntPtr.Zero)
             {
-                Console.WriteLine("Texture is already locked!\n");
+                Debug.Print("Texture is already locked!\n");
                 success = false;
             }
             //Lock texture
@@ -283,7 +284,7 @@ namespace Chip8
             {
                 if (SDL.SDL_LockTexture(texturePtr, IntPtr.Zero, out pixelsPtr, out pitch) != 0)
                 {
-                    Console.WriteLine($"Unable to lock texture! {SDL.SDL_GetError()}\n");
+                    Debug.Print($"Unable to lock texture! {SDL.SDL_GetError()}\n");
                     success = false;
                 }
                 else
@@ -303,7 +304,7 @@ namespace Chip8
             //Texture is not locked
             if (pixelsPtr == IntPtr.Zero)
             {
-                Console.WriteLine("Texture is not locked!\n");
+                Debug.Print("Texture is not locked!\n");
                 success = false;
             }
             //Unlock texture

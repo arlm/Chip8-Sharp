@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using SDL2;
 
@@ -30,7 +31,7 @@ namespace Chip8
             //Initialize SDL
             if (SDL.SDL_Init(SDL.SDL_INIT_VIDEO) < 0)
             {
-                Console.WriteLine($"SDL could not initialize! SDL_Error: {SDL.SDL_GetError()}");
+                Debug.Print($"SDL could not initialize! SDL_Error: {SDL.SDL_GetError()}");
 
                 result = false;
             }
@@ -39,7 +40,7 @@ namespace Chip8
                 //Set texture filtering to linear
                 if (SDL.SDL_SetHint(SDL.SDL_HINT_RENDER_SCALE_QUALITY, "1") == SDL.SDL_bool.SDL_FALSE)
                 {
-                    Console.WriteLine("Warning: Linear texture filtering not enabled!");
+                    Debug.Print("Warning: Linear texture filtering not enabled!");
                 }
 
                 //Create window
@@ -47,7 +48,7 @@ namespace Chip8
 
                 if (windowPtr == IntPtr.Zero)
                 {
-                    Console.WriteLine($"Window could not be created! SDL_Error: {SDL.SDL_GetError()}");
+                    Debug.Print($"Window could not be created! SDL_Error: {SDL.SDL_GetError()}");
                     result = false;
                 }
                 else
@@ -57,7 +58,7 @@ namespace Chip8
 
                     if (rendererPtr == IntPtr.Zero)
                     {
-                        Console.WriteLine($"Renderer could not be created! SDL_Error: {SDL.SDL_GetError()}");
+                        Debug.Print($"Renderer could not be created! SDL_Error: {SDL.SDL_GetError()}");
                         result = false;
                     }
                     else
@@ -74,14 +75,14 @@ namespace Chip8
             //Initialize PNG loading
             if ((((SDL_image.IMG_InitFlags)SDL_image.IMG_Init(SDL_image.IMG_InitFlags.IMG_INIT_PNG)) & SDL_image.IMG_InitFlags.IMG_INIT_PNG) == 0)
             {
-                Console.WriteLine($"SDL_image could not initialize! SDL_image Error: {SDL.SDL_GetError()}");
+                Debug.Print($"SDL_image could not initialize! SDL_image Error: {SDL.SDL_GetError()}");
                 result = false;
             }
 
             //Initialize SDL_ttf
             if (SDL_ttf.TTF_Init() == -1)
             {
-                Console.WriteLine($"SDL_ttf could not initialize! SDL_ttf Error: {SDL.SDL_GetError()}");
+                Debug.Print($"SDL_ttf could not initialize! SDL_ttf Error: {SDL.SDL_GetError()}");
                 result = false;
             }
 
@@ -90,7 +91,7 @@ namespace Chip8
 
             if (fontPtr == IntPtr.Zero)
             {
-                Console.WriteLine($"Failed to load lazy font! SDL_ttf Error: {SDL.SDL_GetError()}");
+                Debug.Print($"Failed to load lazy font! SDL_ttf Error: {SDL.SDL_GetError()}");
                 result = false;
             }
 
@@ -238,7 +239,7 @@ namespace Chip8
 
             if (loadedSurface == IntPtr.Zero)
             {
-                Console.WriteLine($"Unable to load image {fileName}! SDL Error: {SDL.SDL_GetError()}");
+                Debug.Print($"Unable to load image {fileName}! SDL Error: {SDL.SDL_GetError()}");
             }
 
             return loadedSurface;

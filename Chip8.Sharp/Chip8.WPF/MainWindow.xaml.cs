@@ -118,74 +118,74 @@ namespace Chip8.WPF
 
                 case Key.D1:
                     keys[0x0] = 0;
-                    Console.WriteLine("1");
+                    Debug.Print("1");
                     break;
                 case Key.D2:
                     keys[0x1] = 0;
-                    Console.WriteLine("2");
+                    Debug.Print("2");
                     break;
                 case Key.D3:
                     keys[0x2] = 0;
-                    Console.WriteLine("3");
+                    Debug.Print("3");
                     break;
                 case Key.D4:
                     keys[0x3] = 0;
-                    Console.WriteLine("4");
+                    Debug.Print("4");
                     break;
 
                 case Key.Q:
                     keys[0x4] = 0;
-                    Console.WriteLine("q");
+                    Debug.Print("q");
                     break;
                 case Key.W:
                     keys[0x5] = 0;
-                    Console.WriteLine("w");
+                    Debug.Print("w");
                     break;
                 case Key.E:
                     keys[0x6] = 0;
-                    Console.WriteLine("e");
+                    Debug.Print("e");
                     break;
                 case Key.R:
                     keys[0x7] = 0;
-                    Console.WriteLine("r");
+                    Debug.Print("r");
                     break;
 
                 case Key.A:
                     keys[0x8] = 0;
-                    Console.WriteLine("a");
+                    Debug.Print("a");
                     break;
                 case Key.S:
                     keys[0x9] = 0;
-                    Console.WriteLine("s");
+                    Debug.Print("s");
                     break;
                 case Key.D:
                     keys[0xA] = 0;
-                    Console.WriteLine("d");
+                    Debug.Print("d");
                     break;
                 case Key.F:
                     keys[0xA] = 0;
-                    Console.WriteLine("f");
+                    Debug.Print("f");
                     break;
 
                 case Key.Z:
                     keys[0xB] = 0;
-                    Console.WriteLine("z");
+                    Debug.Print("z");
                     break;
                 case Key.Y:
                     keys[0xB] = 0;
-                    Console.WriteLine("y");
+                    Debug.Print("y");
                     break;
                 case Key.X:
                     keys[0xC] = 0;
-                    Console.WriteLine("x");
+                    Debug.Print("x");
                     break;
                 case Key.C:
                     keys[0xD] = 0;
-                    Console.WriteLine("c");
+                    Debug.Print("c");
                     break;
                 case Key.V:
                     keys[0xE] = 0;
-                    Console.WriteLine("v");
+                    Debug.Print("v");
                     break;
 
                 default:
@@ -202,95 +202,95 @@ namespace Chip8.WPF
             switch (e.Key)
             {
                 case Key.Escape:
-                    Console.WriteLine("ESCAPE");
-                    Console.WriteLine("Quitting...");
+                    Debug.Print("ESCAPE");
+                    Debug.Print("Quitting...");
                     quit = true;
                     Close();
                     break;
 
                 case Key.Up:
-                    Console.WriteLine("UP");
+                    Debug.Print("UP");
                     break;
                 case Key.Down:
-                    Console.WriteLine("DOWN");
+                    Debug.Print("DOWN");
                     break;
                 case Key.Left:
-                    Console.WriteLine("LEFT");
+                    Debug.Print("LEFT");
                     break;
                 case Key.Right:
-                    Console.WriteLine("RIGHT");
+                    Debug.Print("RIGHT");
                     break;
 
                 case Key.D1:
                     keys[0x0] = 1;
-                    Console.WriteLine("1");
+                    Debug.Print("1");
                     break;
                 case Key.D2:
                     keys[0x1] = 1;
-                    Console.WriteLine("2");
+                    Debug.Print("2");
                     break;
                 case Key.D3:
                     keys[0x2] = 1;
-                    Console.WriteLine("3");
+                    Debug.Print("3");
                     break;
                 case Key.D4:
                     keys[0x3] = 1;
-                    Console.WriteLine("4");
+                    Debug.Print("4");
                     break;
 
                 case Key.Q:
                     keys[0x4] = 1;
-                    Console.WriteLine("q");
+                    Debug.Print("q");
                     break;
                 case Key.W:
                     keys[0x5] = 1;
-                    Console.WriteLine("w");
+                    Debug.Print("w");
                     break;
                 case Key.E:
                     keys[0x6] = 1;
-                    Console.WriteLine("e");
+                    Debug.Print("e");
                     break;
                 case Key.R:
                     keys[0x7] = 1;
-                    Console.WriteLine("r");
+                    Debug.Print("r");
                     break;
 
                 case Key.A:
                     keys[0x8] = 1;
-                    Console.WriteLine("a");
+                    Debug.Print("a");
                     break;
                 case Key.S:
                     keys[0x9] = 1;
-                    Console.WriteLine("s");
+                    Debug.Print("s");
                     break;
                 case Key.D:
                     keys[0xA] = 1;
-                    Console.WriteLine("d");
+                    Debug.Print("d");
                     break;
                 case Key.F:
                     keys[0xA] = 1;
-                    Console.WriteLine("f");
+                    Debug.Print("f");
                     break;
 
                 case Key.Z:
                     keys[0xB] = 1;
-                    Console.WriteLine("z");
+                    Debug.Print("z");
                     break;
                 case Key.Y:
                     keys[0xB] = 1;
-                    Console.WriteLine("y");
+                    Debug.Print("y");
                     break;
                 case Key.X:
                     keys[0xC] = 1;
-                    Console.WriteLine("x");
+                    Debug.Print("x");
                     break;
                 case Key.C:
                     keys[0xD] = 1;
-                    Console.WriteLine("c");
+                    Debug.Print("c");
                     break;
                 case Key.V:
                     keys[0xE] = 1;
-                    Console.WriteLine("v");
+                    Debug.Print("v");
                     break;
 
                 case Key.Back:
@@ -299,11 +299,11 @@ namespace Chip8.WPF
 
                     if (debugPixels)
                     {
-                        Console.WriteLine("Entering debug pixel mode");
+                        Debug.Print("Entering debug pixel mode");
                     }
                     else
                     {
-                        Console.WriteLine("Leaving debug pixel mode");
+                        Debug.Print("Leaving debug pixel mode");
                     }
                     break;
                 case Key.Enter:
@@ -312,30 +312,30 @@ namespace Chip8.WPF
 
                     if (debugKeys)
                     {
-                        Console.WriteLine("Entering debug keys mode");
+                        Debug.Print("Entering debug keys mode");
                     }
                     else
                     {
-                        Console.WriteLine("Leaving debug keys mode");
+                        Debug.Print("Leaving debug keys mode");
                     }
                     break;
 
                 case Key.OemPlus:
                 case Key.Add:
                     zoom += 0.5f;
-                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 case Key.OemMinus:
                 case Key.Subtract:
                     zoom -= 0.5f;
-                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 case Key.D0:
                     zoom = 1.0f;
-                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 default:
-                    Console.WriteLine("Default Key Press");
+                    Debug.Print("Default Key Press");
                     break;
             }
 
@@ -425,7 +425,7 @@ namespace Chip8.WPF
 
         private static void OnEndSound(int channel)
         {
-            Console.WriteLine("BEEP!");
+            Debug.Print("BEEP!");
         }
 
         private void ComboBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

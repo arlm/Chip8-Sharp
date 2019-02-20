@@ -101,95 +101,95 @@ namespace Chip8.WindowsForms
             switch (e.KeyCode)
             {
                 case Keys.Escape:
-                    Console.WriteLine("ESCAPE");
-                    Console.WriteLine("Quitting...");
+                    Debug.Print("ESCAPE");
+                    Debug.Print("Quitting...");
                     quit = true;
                     Close();
                     break;
 
                 case Keys.Up:
-                    Console.WriteLine("UP");
+                    Debug.Print("UP");
                     break;
                 case Keys.Down:
-                    Console.WriteLine("DOWN");
+                    Debug.Print("DOWN");
                     break;
                 case Keys.Left:
-                    Console.WriteLine("LEFT");
+                    Debug.Print("LEFT");
                     break;
                 case Keys.Right:
-                    Console.WriteLine("RIGHT");
+                    Debug.Print("RIGHT");
                     break;
 
                 case Keys.D1:
                     keys[0x0] = 1;
-                    Console.WriteLine("1");
+                    Debug.Print("1");
                     break;
                 case Keys.D2:
                     keys[0x1] = 1;
-                    Console.WriteLine("2");
+                    Debug.Print("2");
                     break;
                 case Keys.D3:
                     keys[0x2] = 1;
-                    Console.WriteLine("3");
+                    Debug.Print("3");
                     break;
                 case Keys.D4:
                     keys[0x3] = 1;
-                    Console.WriteLine("4");
+                    Debug.Print("4");
                     break;
 
                 case Keys.Q:
                     keys[0x4] = 1;
-                    Console.WriteLine("q");
+                    Debug.Print("q");
                     break;
                 case Keys.W:
                     keys[0x5] = 1;
-                    Console.WriteLine("w");
+                    Debug.Print("w");
                     break;
                 case Keys.E:
                     keys[0x6] = 1;
-                    Console.WriteLine("e");
+                    Debug.Print("e");
                     break;
                 case Keys.R:
                     keys[0x7] = 1;
-                    Console.WriteLine("r");
+                    Debug.Print("r");
                     break;
 
                 case Keys.A:
                     keys[0x8] = 1;
-                    Console.WriteLine("a");
+                    Debug.Print("a");
                     break;
                 case Keys.S:
                     keys[0x9] = 1;
-                    Console.WriteLine("s");
+                    Debug.Print("s");
                     break;
                 case Keys.D:
                     keys[0xA] = 1;
-                    Console.WriteLine("d");
+                    Debug.Print("d");
                     break;
                 case Keys.F:
                     keys[0xA] = 1;
-                    Console.WriteLine("f");
+                    Debug.Print("f");
                     break;
 
                 case Keys.Z:
                     keys[0xB] = 1;
-                    Console.WriteLine("z");
+                    Debug.Print("z");
                     break;
                 case Keys.Y:
                     keys[0xB] = 1;
-                    Console.WriteLine("y");
+                    Debug.Print("y");
                     break;
                 case Keys.X:
                     keys[0xC] = 1;
-                    Console.WriteLine("x");
+                    Debug.Print("x");
                     break;
                 case Keys.C:
                     keys[0xD] = 1;
-                    Console.WriteLine("c");
+                    Debug.Print("c");
                     break;
                 case Keys.V:
                     keys[0xE] = 1;
-                    Console.WriteLine("v");
+                    Debug.Print("v");
                     break;
 
                 case Keys.Back:
@@ -198,11 +198,11 @@ namespace Chip8.WindowsForms
 
                     if (debugPixels)
                     {
-                        Console.WriteLine("Entering debug pixel mode");
+                        Debug.Print("Entering debug pixel mode");
                     }
                     else
                     {
-                        Console.WriteLine("Leaving debug pixel mode");
+                        Debug.Print("Leaving debug pixel mode");
                     }
                     break;
                 case Keys.Enter:
@@ -211,30 +211,30 @@ namespace Chip8.WindowsForms
 
                     if (debugKeys)
                     {
-                        Console.WriteLine("Entering debug keys mode");
+                        Debug.Print("Entering debug keys mode");
                     }
                     else
                     {
-                        Console.WriteLine("Leaving debug keys mode");
+                        Debug.Print("Leaving debug keys mode");
                     }
                     break;
 
                 case Keys.Oemplus:
                 case Keys.Add:
                     zoom += 0.5f;
-                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 case Keys.OemMinus:
                 case Keys.Subtract:
                     zoom -= 0.5f;
-                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 case Keys.D0:
                     zoom = 1.0f;
-                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
+                    Debug.Print($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 default:
-                    Console.WriteLine("Default Key Press");
+                    Debug.Print("Default Key Press");
                     break;
             }
 
@@ -258,74 +258,74 @@ namespace Chip8.WindowsForms
 
                 case Keys.D1:
                     keys[0x0] = 0;
-                    Console.WriteLine("1");
+                    Debug.Print("1");
                     break;
                 case Keys.D2:
                     keys[0x1] = 0;
-                    Console.WriteLine("2");
+                    Debug.Print("2");
                     break;
                 case Keys.D3:
                     keys[0x2] = 0;
-                    Console.WriteLine("3");
+                    Debug.Print("3");
                     break;
                 case Keys.D4:
                     keys[0x3] = 0;
-                    Console.WriteLine("4");
+                    Debug.Print("4");
                     break;
 
                 case Keys.Q:
                     keys[0x4] = 0;
-                    Console.WriteLine("q");
+                    Debug.Print("q");
                     break;
                 case Keys.W:
                     keys[0x5] = 0;
-                    Console.WriteLine("w");
+                    Debug.Print("w");
                     break;
                 case Keys.E:
                     keys[0x6] = 0;
-                    Console.WriteLine("e");
+                    Debug.Print("e");
                     break;
                 case Keys.R:
                     keys[0x7] = 0;
-                    Console.WriteLine("r");
+                    Debug.Print("r");
                     break;
 
                 case Keys.A:
                     keys[0x8] = 0;
-                    Console.WriteLine("a");
+                    Debug.Print("a");
                     break;
                 case Keys.S:
                     keys[0x9] = 0;
-                    Console.WriteLine("s");
+                    Debug.Print("s");
                     break;
                 case Keys.D:
                     keys[0xA] = 0;
-                    Console.WriteLine("d");
+                    Debug.Print("d");
                     break;
                 case Keys.F:
                     keys[0xA] = 0;
-                    Console.WriteLine("f");
+                    Debug.Print("f");
                     break;
 
                 case Keys.Z:
                     keys[0xB] = 0;
-                    Console.WriteLine("z");
+                    Debug.Print("z");
                     break;
                 case Keys.Y:
                     keys[0xB] = 0;
-                    Console.WriteLine("y");
+                    Debug.Print("y");
                     break;
                 case Keys.X:
                     keys[0xC] = 0;
-                    Console.WriteLine("x");
+                    Debug.Print("x");
                     break;
                 case Keys.C:
                     keys[0xD] = 0;
-                    Console.WriteLine("c");
+                    Debug.Print("c");
                     break;
                 case Keys.V:
                     keys[0xE] = 0;
-                    Console.WriteLine("v");
+                    Debug.Print("v");
                     break;
 
                 default:
@@ -429,7 +429,7 @@ namespace Chip8.WindowsForms
 
         private static void OnEndSound(int channel)
         {
-            Console.WriteLine("BEEP!");
+            Debug.Print("BEEP!");
         }
 
         private void cbPrograms_SelectedIndexChanged(object sender, EventArgs e)
