@@ -26,6 +26,8 @@ namespace Chip8
         private const int HEIGHT = 480;
 
         private static readonly Texture[] textures = new Texture[(int)KeyPressSurface.Count];
+
+        [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private static Texture currentTexture;
 
         //Set text color as black
@@ -42,9 +44,16 @@ namespace Chip8
         private static readonly SDL.SDL_Color gray = new SDL.SDL_Color { r = 0x28, g = 0x28, b = 0x28, a = 0xFF };
 
         private static string timerText;
+
+        [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private static Texture fpsTextTexture;
+
+        [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private static Texture pixelDebugTexture;
+
+        [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private static Texture pixelTexture;
+
         private static bool debugKeys = false;
         private static bool debugPixels = false;
 
@@ -62,6 +71,7 @@ namespace Chip8
              0x00, 0x00, 0x00, 0x00
          };
 
+        [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private static SDLDriver driver = new SDLDriver();
 
         static int Main(string[] args)
@@ -566,6 +576,9 @@ namespace Chip8
             var success = true;
             IntPtr surface;
 
+#pragma warning disable IDISP007 // Don't dispose injected.
+            fpsTextTexture?.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected.
 
             fpsTextTexture = new Texture(driver);
 
@@ -652,12 +665,20 @@ namespace Chip8
 
             }
 
+#pragma warning disable IDISP007 // Don't dispose injected.
+            pixelDebugTexture?.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected.
+
             pixelDebugTexture = new Texture(driver);
             if (!pixelDebugTexture.CreateBlank(WIDTH, HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
             {
                 Console.WriteLine("Failed to create target debug texture!");
                 success = false;
             }
+
+#pragma warning disable IDISP007 // Don't dispose injected.
+            pixelTexture?.Dispose();
+#pragma warning restore IDISP007 // Don't dispose injected.
 
             pixelTexture = new Texture(driver);
             if (!pixelTexture.CreateBlank(WIDTH, HEIGHT, SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_TARGET))
@@ -682,6 +703,8 @@ namespace Chip8
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
+        [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP023:Don't use reference types in finalizer context.", Justification = "SDL classes and methods are static.")]
+        [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP007:Don't dispose injected.", Justification = "Should dispose all disposables on finishing the Program")]
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
@@ -705,6 +728,9 @@ namespace Chip8
 
                     pixelDebugTexture?.Dispose();
                     pixelDebugTexture = null;
+
+                    driver?.Dispose();
+                    driver = null;
                 }
 
                 // free unmanaged resources (unmanaged objects) and override a finalizer below.

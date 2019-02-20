@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using SDL2;
 
@@ -340,6 +341,7 @@ namespace Chip8
         #region IDisposable Support
         private bool disposedValue; // To detect redundant calls
 
+        [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP023:Don't use reference types in finalizer context.", Justification = "SDL classes and methods are static.")]
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)

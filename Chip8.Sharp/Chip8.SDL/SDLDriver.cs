@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using SDL2;
 
 namespace Chip8
 {
     public class SDLDriver : IDisposable
     {
+        [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private Texture videoTexture;
 
         internal IntPtr windowPtr;
@@ -63,6 +65,7 @@ namespace Chip8
                         // Initialize renderer color
                         SDL.SDL_SetRenderDrawColor(rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
 
+                        videoTexture?.Dispose();
                         videoTexture = new Texture(rendererPtr, fontPtr);
                     }
                 }
@@ -219,6 +222,9 @@ namespace Chip8
                         break;
                     case SDL.SDL_EventType.SDL_CONTROLLERAXISMOTION:
                         break;
+
+                    default:
+                        break;
                 }
             }
 
@@ -276,6 +282,7 @@ namespace Chip8
         #region IDisposable Support
         private bool disposedValue; // To detect redundant calls
 
+        [SuppressMessage("IDisposableAnalyzers.Correctness", "IDISP023:Don't use reference types in finalizer context.", Justification = "SDL classes and methods are static.")]
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
