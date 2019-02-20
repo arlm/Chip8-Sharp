@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Threading;
@@ -79,7 +80,8 @@ namespace Chip8.Core
 
         public Action<byte[]> OnDraw { get; set; }
 
-        public byte[] Graphics => this.Gfx;
+        [SuppressMessage("Microsoft.Performance", "CA1819: Properties should not return arrays", Justification = "Need to return a clone of the array so that consumers  of this library cannot change its contents")]
+        public byte[] Graphics => (byte[])this.Gfx.Clone();
 
         public Action<int, int, int> OnStartSound { get; set; }
 

@@ -320,7 +320,8 @@ namespace Chip8
             return success;
         }
 
-        public byte[] Pixels => pixels;
+        [SuppressMessage("Microsoft.Performance", "CA1819: Properties should not return arrays", Justification = "Need to return a clone of the array so that consumers  of this library cannot change its contents")]
+        public byte[] Pixels => (byte[])pixels.Clone();
 
         public void CopyPixels(byte[] pixels)
         {
