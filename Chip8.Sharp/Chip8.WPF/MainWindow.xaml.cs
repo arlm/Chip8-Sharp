@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Globalization;
 
 namespace Chip8.WPF
 {
@@ -94,7 +95,7 @@ namespace Chip8.WPF
                 myChip8.Reset();
 
                 // Load (copy) the game into the memory
-                myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}{filename}.c8");
+                myChip8.LoadGame($"progs{Path.DirectorySeparatorChar.ToString(CultureInfo.CurrentCulture)}{filename}.c8");
             }
             finally
             {
@@ -322,16 +323,16 @@ namespace Chip8.WPF
                 case Key.OemPlus:
                 case Key.Add:
                     zoom += 0.5f;
-                    Console.WriteLine($"Zoom level: {zoom}x");
+                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 case Key.OemMinus:
                 case Key.Subtract:
                     zoom -= 0.5f;
-                    Console.WriteLine($"Zoom level: {zoom}x");
+                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 case Key.D0:
                     zoom = 1.0f;
-                    Console.WriteLine($"Zoom level: {zoom}x");
+                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                     break;
                 default:
                     Console.WriteLine("Default Key Press");

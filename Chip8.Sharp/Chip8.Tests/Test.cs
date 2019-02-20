@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using Chip8.Core;
@@ -30,7 +31,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             Assert.Zero(cpu.I, $"Register I should be zero.");
@@ -48,7 +49,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index < cpu.Stack.Length; index++)
             {
-                Assert.Zero(cpu.Stack[index], $"Stack position {index:X2} should be zero.");
+                Assert.Zero(cpu.Stack[index], $"Stack position {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             Assert.AreEqual(16, cpu.Keys.Length, "The CPU must have exactly 16 keys.");
@@ -56,7 +57,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index < cpu.Keys.Length; index++)
             {
-                Assert.Zero(cpu.Keys[index], $"Key {index:X2} should be zero.");
+                Assert.Zero(cpu.Keys[index], $"Key {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             byte[] character = new byte[5];
@@ -170,12 +171,12 @@ namespace Chip8.Tests
 
             for (int index = address; index < CPU.CHIP8_FONTSET.Length; index++, address++)
             {
-                Assert.AreEqual(CPU.CHIP8_FONTSET[index], cpu.Memory[index], $"Memory address {index:X2} should have the CHIP-8 Fontset.");
+                Assert.AreEqual(CPU.CHIP8_FONTSET[index], cpu.Memory[index], $"Memory address {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should have the CHIP-8 Fontset.");
             }
 
             for (int index = address; index < cpu.Memory.Length; index++)
             {
-                Assert.Zero(cpu.Memory[index], $"Memory address {index:X2} should be zero.");
+                Assert.Zero(cpu.Memory[index], $"Memory address {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
         }
 
@@ -559,7 +560,7 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
                 cpu.PC = counter;
-                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.Opcode:X4}]");
+                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: {cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
 
             index = 0x200;
@@ -582,7 +583,7 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0xFFE; counter += 2)
             {
                 cpu.PC = counter;
-                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.Opcode:X4}]");
+                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: {cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
 
             index = 0x200;
@@ -605,7 +606,7 @@ namespace Chip8.Tests
             for (ushort counter = 0x200; counter <= 0x5FF; counter += 2)
             {
                 cpu.PC = counter;
-                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC:X2} [opcode: {cpu.Opcode:X4}]");
+                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should throw a Invalid Operation Exception at 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: {cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
         }
 
@@ -626,7 +627,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index < cpu.Gfx.Length; index++)
             {
-                Assert.Zero(cpu.Gfx[index], $"Graphic memory address {index:X2} should be zero.");
+                Assert.Zero(cpu.Gfx[index], $"Graphic memory address {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (int index = 0; index < cpu.Gfx.Length; index++)
@@ -643,7 +644,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index < cpu.Gfx.Length; index++)
             {
-                Assert.Zero(cpu.Gfx[index], $"Graphic memory address {index:X2} should be zero.");
+                Assert.Zero(cpu.Gfx[index], $"Graphic memory address {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
         }
 
@@ -756,7 +757,7 @@ namespace Chip8.Tests
             {
                 cpu.PC = counter;
                 int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
-                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{expectedPosition:X2} [opcode: 0x{cpu.Opcode:X4}]");
+                Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{expectedPosition.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
 
             for (ushort counter = 0x600; counter <= 0xFFE; counter += 2)
@@ -764,7 +765,7 @@ namespace Chip8.Tests
                 cpu.PC = counter;
                 int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition.ToString("X2", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
 
             index = 0x200;
@@ -787,7 +788,7 @@ namespace Chip8.Tests
                 cpu.PC = counter;
                 int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition.ToString("X2", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
 
             index = 0x200;
@@ -810,7 +811,7 @@ namespace Chip8.Tests
                 cpu.PC = counter;
                 int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.PC, $"Should jump to position 0x{expectedPosition.ToString("X2", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
         }
 
@@ -979,7 +980,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -987,7 +988,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1005,7 +1006,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1013,7 +1014,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1031,7 +1032,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1039,7 +1040,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1060,7 +1061,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -1078,8 +1079,8 @@ namespace Chip8.Tests
 
                 cpu.EmulateCycle();
 
-                Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
-                Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register:X1} different from 0x{value:X2} (actual value: 0x{cpu.V[register]:X2})");
+                Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SE V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} different from 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)} (actual value: 0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)})");
 
                 for (int index = 0; index <= 0xF; index++)
                 {
@@ -1088,15 +1089,15 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SE V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     if (index == register)
                     {
-                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{index:X1}=0x{cpu.V[index]:X2}");
+                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
                     else
                     {
-                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register:X1}=0x{cpu.V[register]:X2} and V{index:X1}=0x{cpu.V[index]:X2}");
+                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)} and V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
 
                     cpu.V[index] = unchecked((byte)~value);
@@ -1109,15 +1110,15 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SE V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     if (testValue == value)
                     {
-                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{register:X1}=0x{testValue:X2}");
+                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
                     else
                     {
-                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register:X1}=0x{testValue:X2} (should skip only with 0x{value})");
+                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)} (should skip only with 0x{value})");
                     }
 
                 }
@@ -1137,7 +1138,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1145,7 +1146,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1163,7 +1164,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1171,7 +1172,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1189,7 +1190,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1197,7 +1198,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1218,7 +1219,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -1236,8 +1237,8 @@ namespace Chip8.Tests
 
                 cpu.EmulateCycle();
 
-                Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
-                Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register:X1} is 0x{value:X2} (actual value: 0x{cpu.V[register]:X2})");
+                Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SNE V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} is 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)} (actual value: 0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)})");
 
                 for (int index = 0; index <= 0xF; index++)
                 {
@@ -1246,15 +1247,15 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SNE V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     if (index == register)
                     {
-                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when when V{register:X1}=0x{cpu.V[register]:X2}");
+                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when when V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
                     else
                     {
-                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction V{index:X1}=0x{cpu.V[index]:X2} and V{index:X1}=0x{cpu.V[index]:X2}");
+                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)} and V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
 
                     cpu.V[index] = value;
@@ -1267,15 +1268,15 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SNE V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     if (testValue == value)
                     {
-                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register:X1}=0x{testValue:X2}");
+                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
                     else
                     {
-                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{register:X1}=0x{testValue:X2} (should skip only with 0x{value})");
+                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)} (should skip only with 0x{value})");
                     }
 
                 }
@@ -1295,7 +1296,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1303,7 +1304,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX:X1} : V{registerY:X1}");
+                        Assert.Fail($"[{testAddress}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} : V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1324,7 +1325,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -1348,8 +1349,8 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{registerX:X1}, V{registerY:X1}");
-                    Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} ({cpu.V[registerX]:X2}) is not the same value as V{registerY:X1} ({cpu.V[registerY]:X2})");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SE V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
+                    Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}) is not the same value as V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                 }
 
                 cpu.PC = address;
@@ -1358,7 +1359,7 @@ namespace Chip8.Tests
 
                 cpu.EmulateCycle();
 
-                Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} ({cpu.V[registerX]:X2}) is the same value as V{registerY:X1} ({cpu.V[registerY]:X2})");
+                Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}) is the same value as V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)})");
 
                 for (int testValue = 0x00; testValue <= 0xFF; testValue++)
                 {
@@ -1368,15 +1369,15 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SE V{registerX:X1}, V{registerY:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SE V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                     if (registerX == registerY)
                     {
-                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when comparing V{registerX:X1} to itself");
+                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when comparing V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} to itself");
                     }
                     else
                     {
-                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} ({cpu.V[registerX]:X2}) is not the same value as V{registerY:X1} ({cpu.V[registerY]:X2})");
+                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}) is not the same value as V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
 
                 }
@@ -1396,7 +1397,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1404,7 +1405,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1422,7 +1423,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1430,7 +1431,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1448,7 +1449,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1456,7 +1457,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1477,7 +1478,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -1499,16 +1500,16 @@ namespace Chip8.Tests
                     cpu.PC = address;
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     if (index == register)
                     {
-                        Assert.AreEqual(value, cpu.V[index], $"V{index:X1} should be 0x{value:X2}");
+                        Assert.AreEqual(value, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
                     else
                     {
-                        Assert.AreNotEqual(value, cpu.V[index], $"V{index:X1} should not be 0x{value:X2}");
-                        Assert.AreEqual(invertedValue, cpu.V[index], $"V{index:X1} should be 0x{invertedValue:X2}");
+                        Assert.AreNotEqual(value, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should not be 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                        Assert.AreEqual(invertedValue, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
 
                     cpu.V[index] = invertedValue;
@@ -1530,7 +1531,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1538,7 +1539,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1556,7 +1557,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1564,7 +1565,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1582,7 +1583,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1590,7 +1591,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{register}: {value}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1611,7 +1612,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -1633,16 +1634,16 @@ namespace Chip8.Tests
                     cpu.PC = address;
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - ADD V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     if (index == register)
                     {
-                        Assert.AreEqual(0xFF, cpu.V[index], $"V{index:X1} should be 0xFF (0x{invertedValue:X2} + 0x{value:X2}) [opcode: 0x{opcode:X4}] [V{index:X1}= 0x{cpu.V[index]:X2}]");
+                        Assert.AreEqual(0xFF, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0xFF (0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)} + 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                     }
                     else
                     {
-                        Assert.AreNotEqual(value, cpu.V[index], $"V{index:X1} should not be 0x{value:X2}");
-                        Assert.AreEqual(invertedValue, cpu.V[index], $"V{index:X1} should be 0x{invertedValue:X2}");
+                        Assert.AreNotEqual(value, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should not be 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                        Assert.AreEqual(invertedValue, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
 
                     cpu.V[index] = invertedValue;
@@ -1656,9 +1657,9 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - ADD V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     byte sum = unchecked((byte)(testValue + value));
-                    Assert.AreEqual(sum, cpu.V[register], $"V{register:X1} should be {sum} (0x{testValue:X2} + 0x{value:X2}) [opcode: 0x{opcode:X4}] [V{register:X1}= 0x{cpu.V[register]:X2}]");
+                    Assert.AreEqual(sum, cpu.V[register], $"V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {sum} (0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)} + 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                 }
             }
         }
@@ -1676,7 +1677,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1684,7 +1685,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX:X1} : V{registerY:X1}");
+                        Assert.Fail($"[{testAddress}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} : V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1705,7 +1706,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -1729,8 +1730,8 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{registerX:X1}, V{registerY:X1}");
-                    Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} ({cpu.V[registerX]:X2}) is not the same value as V{registerY:X1} ({cpu.V[registerY]:X2})");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SNE V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
+                    Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}) is not the same value as V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                 }
 
                 cpu.PC = address;
@@ -1739,7 +1740,7 @@ namespace Chip8.Tests
 
                 cpu.EmulateCycle();
 
-                Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} ({cpu.V[registerX]:X2}) is the same value as V{registerY:X1} ({cpu.V[registerY]:X2})");
+                Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}) is the same value as V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)})");
 
                 for (int testValue = 0x00; testValue <= 0xFF; testValue++)
                 {
@@ -1749,15 +1750,15 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SNE V{registerX:X1}, V{registerY:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SNE V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                     if (registerX == registerY)
                     {
-                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when comparing V{registerX:X1} to itself");
+                        Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when comparing V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} to itself");
                     }
                     else
                     {
-                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} ({cpu.V[registerX]:X2}) is not the same value as V{registerY:X1} ({cpu.V[registerY]:X2})");
+                        Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}) is not the same value as V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)} ({cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
 
                 }
@@ -1777,7 +1778,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1785,7 +1786,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX}: V{registerY}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}: V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1806,7 +1807,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -1845,12 +1846,12 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - ADD V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
-                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {sum} (0x{testValueX:X2} + 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
-                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX:X2} + 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
+                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {sum} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} + 0x{testValueY.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} + 0x{testValueY.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                     }
                 }
@@ -1870,7 +1871,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1878,7 +1879,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX}: V{registerY}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}: V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1899,7 +1900,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -1928,8 +1929,8 @@ namespace Chip8.Tests
 
                         cpu.EmulateCycle();
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - OR V{registerX:X1}, V{registerY:X1}");
-                        Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {value} (0x{testValueX:X2} OR 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - OR V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
+                        Assert.AreEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {value} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} OR 0x{testValueY.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                     }
                 }
             }
@@ -1948,7 +1949,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -1956,7 +1957,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX}: V{registerY}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}: V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -1977,7 +1978,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2006,8 +2007,8 @@ namespace Chip8.Tests
 
                         cpu.EmulateCycle();
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - AND V{registerX:X1}, V{registerY:X1}");
-                        Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {value} (0x{testValueX:X2} AND 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - AND V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
+                        Assert.AreEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {value} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} AND 0x{testValueY.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                     }
                 }
             }
@@ -2026,7 +2027,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -2034,7 +2035,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX}: V{registerY}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}: V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -2055,7 +2056,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2084,8 +2085,8 @@ namespace Chip8.Tests
 
                         cpu.EmulateCycle();
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - XOR V{registerX:X1}, V{registerY:X1}");
-                        Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {value} (0x{testValueX:X2} XOR 0x{value:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - XOR V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
+                        Assert.AreEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {value} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} XOR 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                     }
                 }
             }
@@ -2104,7 +2105,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -2112,7 +2113,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX}: V{registerY}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}: V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -2133,7 +2134,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2172,12 +2173,12 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SUB V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SUB V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
-                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {sub} (0x{testValueX:X2} - 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
-                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX:X2} - 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
+                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {sub} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} - 0x{testValueY.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} - 0x{testValueY.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                     }
                 }
@@ -2197,7 +2198,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -2205,7 +2206,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX:X1} : V{registerY:X1}");
+                        Assert.Fail($"[{testAddress}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} : V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -2226,7 +2227,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2267,17 +2268,17 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{registerX:X1}, V{registerY:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                     if (registerX == registerY)
                     {
-                        Assert.AreNotEqual(value, cpu.V[registerX], $"V{registerX:X1} should not be 0x{value:X2}");
-                        Assert.AreEqual(testValue, cpu.V[registerX], $"V{registerX:X1} should be 0x{testValue:X2}");
+                        Assert.AreNotEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should not be 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                        Assert.AreEqual(testValue, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
                     else
                     {
-                        Assert.AreNotEqual(value, cpu.V[registerX], $"V{registerX:X1} should not be 0x{value:X2}");
-                        Assert.AreEqual(invertedValue, cpu.V[registerX], $"V{registerX:X1} should be 0x{invertedValue:X2}");
+                        Assert.AreNotEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should not be 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                        Assert.AreEqual(invertedValue, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
                 }
             }
@@ -2296,7 +2297,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -2304,7 +2305,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX}: V{registerY}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}: V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -2325,7 +2326,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2358,12 +2359,12 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SHR V{registerX:X1}, {{V{registerY:X1}}}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SHR V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, {{V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}}}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
-                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {value} (0x{testValueX:X2} >> 1) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
-                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX:X2} >> 1) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
+                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {value} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} >> 1) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} >> 1) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                     }
                 }
@@ -2383,7 +2384,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -2391,7 +2392,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX}: V{registerY}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}: V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -2412,7 +2413,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2451,12 +2452,12 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SUBN V{registerX:X1}, V{registerY:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SUBN V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
-                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {sub} (0x{testValueX:X2} - 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
-                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX:X2} - 0x{testValueY:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
+                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {sub} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} - 0x{testValueY.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} - 0x{testValueY.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                     }
                 }
@@ -2476,7 +2477,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -2484,7 +2485,7 @@ namespace Chip8.Tests
                 {
                     if (testAddress >= 0x1000)
                     {
-                        Assert.Fail($"[{testAddress}]: V{registerX}: V{registerY}");
+                        Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}: V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                         break;
                     }
 
@@ -2505,7 +2506,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2538,12 +2539,12 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SHL V{registerX:X1}, {{V{registerY:X1}}}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SHL V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, {{V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}}}");
 
                         if (registerX != 0xF && registerY != 0xF)
                         {
-                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX:X1} should be {value} (0x{testValueX:X2} << 1) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
-                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX:X2} >> 1) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}] [V{registerY:X1}= 0x{cpu.V[registerY]:X2}]");
+                            Assert.AreEqual(value, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be {value} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} << 1) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                            Assert.AreEqual(carryFlag, cpu.V[0xF], $"VF should be {carryFlag} (0x{testValueX.ToString("X2", NumberFormatInfo.CurrentInfo)} >> 1) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}] [V{registerY.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerY].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                     }
                 }
@@ -2580,7 +2581,7 @@ namespace Chip8.Tests
                 cpu.PC = counter;
                 int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition.ToString("X2", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
 
             index = 0x200;
@@ -2603,7 +2604,7 @@ namespace Chip8.Tests
                 cpu.PC = counter;
                 int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition.ToString("X2", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
 
             index = 0x200;
@@ -2626,7 +2627,7 @@ namespace Chip8.Tests
                 cpu.PC = counter;
                 int expectedPosition = (cpu.Memory[counter] << 8 | cpu.Memory[counter + 1]) & 0x0FFF;
                 cpu.EmulateCycle();
-                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition:X2} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}]");
+                Assert.AreEqual(expectedPosition, cpu.I, $"Register I should point to position 0x{expectedPosition.ToString("X2", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
             }
         }
 
@@ -2668,12 +2669,12 @@ namespace Chip8.Tests
 
                     if (dest < 0x200 || dest > 0xFFF)
                     {
-                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{dest.ToString("X3", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] (V[0]={cpu.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
                     else
                     {
                         cpu.EmulateCycle();
-                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{dest.ToString("X3", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] (V[0]={cpu.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
                 }
             }
@@ -2706,12 +2707,12 @@ namespace Chip8.Tests
 
                     if (dest < 0x200 || dest > 0xFFF)
                     {
-                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{dest.ToString("X3", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] (V[0]={cpu.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
                     else
                     {
                         cpu.EmulateCycle();
-                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{dest.ToString("X3", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] (V[0]={cpu.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
                 }
             }
@@ -2744,12 +2745,12 @@ namespace Chip8.Tests
 
                     if (dest < 0x200 || dest > 0xFFF)
                     {
-                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{(ushort)dest:X3} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.Throws<InvalidOperationException>(cpu.EmulateCycle, $"Should not jump to position 0x{dest.ToString("X3", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] (V[0]={cpu.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
                     else
                     {
                         cpu.EmulateCycle();
-                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{(ushort)dest:X3} instead of 0x{cpu.PC:X2} [opcode: 0x{cpu.Opcode:X4}] (V[0]={cpu.V[0]:X2})");
+                        Assert.AreEqual((ushort)dest, cpu.PC, $"Should jump to position 0x{dest.ToString("X3", NumberFormatInfo.CurrentInfo)} instead of 0x{cpu.PC.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{cpu.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] (V[0]={cpu.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
                 }
             }
@@ -2768,7 +2769,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -2785,7 +2786,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V0: {value}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V0: {value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -2805,7 +2806,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2827,15 +2828,15 @@ namespace Chip8.Tests
                     cpu.PC = address;
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - RND V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - RND V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     if (index == register)
                     {
-                        Assert.AreNotEqual(invertedValue, cpu.V[index], $"V{index:X1} should not be 0x{invertedValue:X2} [opcode: 0x{opcode:X4}] [V{index:X1}= 0x{cpu.V[index]:X2}]");
+                        Assert.AreNotEqual(invertedValue, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should not be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                     }
                     else
                     {
-                        Assert.AreEqual(invertedValue, cpu.V[index], $"V{index:X1} should be 0x{invertedValue:X2}");
+                        Assert.AreEqual(invertedValue, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
 
                     cpu.V[index] = invertedValue;
@@ -2845,7 +2846,7 @@ namespace Chip8.Tests
                 const int COUNT = 4096;
 
                 var randomNums = new List<uint>(COUNT);
-                Assert.IsFalse(IsRandom(randomNums.ToArray(), 0xFF), $"RND V{register:X1}, 0x{value:X2} seems to be random: {{string.Join(", ", randomNums)}}");
+                Assert.IsFalse(IsRandom(randomNums.ToArray(), 0xFF), $"RND V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)} seems to be random: {{string.Join(", ", randomNums)}}");
 
                 for (int counter = 0; counter < COUNT; counter++)
                 {
@@ -2871,7 +2872,7 @@ namespace Chip8.Tests
 
                 for (int number = 0x00; number <= 0xFF; number++)
                 {
-                    Assert.IsTrue(randomNums.Any(n => n == number), $"RND V{register:X1}, 0x{value:X2} cannot find any value 0x{number:X2}: {{string.Join(", " , randomNums)}}");
+                    Assert.IsTrue(randomNums.Any(n => n == number), $"RND V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)} cannot find any value 0x{number.ToString("X2", NumberFormatInfo.CurrentInfo)}: {{string.Join(", " , randomNums)}}");
                 }
             }
         }
@@ -2885,7 +2886,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -2912,7 +2913,7 @@ namespace Chip8.Tests
                     cpu.PC = address;
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - RND V{register:X1}, 0x{value:X2}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - RND V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     for (int index = 0; index <= 0xF; index++)
                     {
@@ -2921,10 +2922,10 @@ namespace Chip8.Tests
                             continue;
                         }
 
-                        Assert.AreEqual(invertedValue, cpu.V[index], $"V{index:X1} should be 0x{value:X2}");
+                        Assert.AreEqual(invertedValue, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
 
-                    Assert.Zero(cpu.V[register] & invertedValue, $"V{register:X1} AND 0x{invertedValue:X2} should be 0x00");
+                    Assert.Zero(cpu.V[register] & invertedValue, $"V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} AND 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)} should be 0x00");
 
                     randomNums.Add(cpu.V[register]);
 
@@ -2937,20 +2938,20 @@ namespace Chip8.Tests
                     var bitArray = MakeBitArray(randomNums.ToArray());
 
                     double pFreq = FrequencyTest(bitArray);
-                    Assert.GreaterOrEqual(pFreq, 0.01, $"There is evidence that sequence is NOT random for Frequency test = {pFreq:F4} RND V{register:X1}, 0x{value:X2}: {string.Join(", ", randomNums)}");
+                    Assert.GreaterOrEqual(pFreq, 0.01, $"There is evidence that sequence is NOT random for Frequency test = {pFreq:F4} RND V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}: {string.Join(", ", randomNums)}");
 
                     int blockLength = 8;
                     double pBlock = BlockTest(bitArray, blockLength);
-                    Assert.GreaterOrEqual(pBlock, 0.01, $"There is evidence that sequence is NOT random for Block test = {pBlock:F4} RND V{register:X1}, 0x{value:X2}: {string.Join(", ", randomNums)}");
+                    Assert.GreaterOrEqual(pBlock, 0.01, $"There is evidence that sequence is NOT random for Block test = {pBlock:F4} RND V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}: {string.Join(", ", randomNums)}");
 
                     double pRuns = RunsTest(bitArray);
-                    Assert.GreaterOrEqual(pRuns, 0.01, $"There is evidence that sequence is NOT random for Runs test = {pRuns:F4} RND V{register:X1}, 0x{value:X2}: {string.Join(", ", randomNums)}");
+                    Assert.GreaterOrEqual(pRuns, 0.01, $"There is evidence that sequence is NOT random for Runs test = {pRuns:F4} RND V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}: {string.Join(", ", randomNums)}");
                 }
                 */
 
                 for (int number = 0x00; number <= 0xFF; number++)
                 {
-                    Assert.IsTrue(randomNums.Any(n => n == (number & value)), $"RND V{register:X1}, 0x{value:X2} cannot find any value 0x{(number & value):X2}: {{string.Join(", " , randomNums)}}");
+                    Assert.IsTrue(randomNums.Any(n => n == (number & value)), $"RND V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)} cannot find any value 0x{(number & value).ToString("X2", NumberFormatInfo.CurrentInfo)}: {{string.Join(", " , randomNums)}}");
                 }
             }
         }
@@ -3441,7 +3442,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -3461,7 +3462,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -3494,15 +3495,15 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SKNP V{registerX:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SKNP V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                         if (testKey == testKeyValue)
                         {
-                            Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} key is pressed (Key 0x{testKey:X2}= 0x{cpu.Keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
+                            Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} key is pressed (Key 0x{testKey.ToString("X2", NumberFormatInfo.CurrentInfo)}= 0x{cpu.Keys[testKey].ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                         else
                         {
-                            Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} key is not pressed (Key 0x{testKey:X2}= 0x{cpu.Keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
+                            Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} key is not pressed (Key 0x{testKey.ToString("X2", NumberFormatInfo.CurrentInfo)}= 0x{cpu.Keys[testKey].ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                     }
                 }
@@ -3522,7 +3523,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -3542,7 +3543,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -3575,15 +3576,15 @@ namespace Chip8.Tests
                             cpu.EmulateCycle();
                         }
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - SKNP V{registerX:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SKNP V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                         if (testKey != testKeyValue)
                         {
-                            Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX:X1} key is not pressed (Key 0x{testKey:X2}= 0x{cpu.Keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
+                            Assert.AreEqual(address + 4, cpu.PC, $"Should skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} key is not pressed (Key 0x{testKey.ToString("X2", NumberFormatInfo.CurrentInfo)}= 0x{cpu.Keys[testKey].ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                         else
                         {
-                            Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX:X1} key is pressed (Key 0x{testKey:X2}= 0x{cpu.Keys[testKey]:X2}) [opcode: 0x{opcode:X4}] [V{registerX:X1}= 0x{cpu.V[registerX]:X2}]");
+                            Assert.AreEqual(address + 2, cpu.PC, $"Should not skip the next instruction when V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} key is pressed (Key 0x{testKey.ToString("X2", NumberFormatInfo.CurrentInfo)}= 0x{cpu.Keys[testKey].ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                     }
                 }
@@ -3603,7 +3604,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -3623,7 +3624,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -3641,18 +3642,18 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{registerX:X1}, DT");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}, DT");
 
                     for (int index = 0; index <= 0xF; index++)
                     {
                         if (index == registerX)
                         {
-                            Assert.AreNotEqual(invertedValue, cpu.V[registerX], $"V{registerX:X1} should not be 0x{invertedValue:X2}");
-                            Assert.AreEqual(testValue, cpu.V[registerX], $"V{registerX:X1} should be equal DT (0x{testValue:X2}) [V{registerX:X1}=0x{cpu.V[registerX]:X2}]");
+                            Assert.AreNotEqual(invertedValue, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should not be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                            Assert.AreEqual(testValue, cpu.V[registerX], $"V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} should be equal DT (0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)}) [V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[registerX].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                         else
                         {
-                            Assert.AreEqual(0x00, cpu.V[index], $"V{index:X1} should be equal 0x00 while testing register V{registerX:X1} for 0x{testValue:X2} [V{index:X1}=0x{cpu.V[index]:X2}]");
+                            Assert.AreEqual(0x00, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be equal 0x00 while testing register V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} for 0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)} [V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
                     }
 
@@ -3674,7 +3675,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -3694,7 +3695,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -3712,20 +3713,20 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD DT, V{registerX:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD DT, V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                     if (testValue != 0x80)
                     {
-                        Assert.AreNotEqual(invertedValue, cpu.DT, $"DT should not be 0x{invertedValue:X2}");
+                        Assert.AreNotEqual(invertedValue, cpu.DT, $"DT should not be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
 
                     if (testValue == 0)
                     {
-                        Assert.AreEqual(0x00, cpu.DT, $"DT should be equal V{registerX:X1} - 1 (0x{testValue:X2})");
+                        Assert.AreEqual(0x00, cpu.DT, $"DT should be equal V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} - 1 (0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
                     else
                     {
-                        Assert.AreEqual(testValue - 1, cpu.DT, $"DT should be equal V{registerX:X1} - 1 (0x{testValue:X2})");
+                        Assert.AreEqual(testValue - 1, cpu.DT, $"DT should be equal V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} - 1 (0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
 
                     cpu.V[registerX] = 0x00;
@@ -3746,7 +3747,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -3766,7 +3767,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -3784,20 +3785,20 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD ST, V{registerX:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD ST, V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                     if (testValue != 0x80)
                     {
-                        Assert.AreNotEqual(invertedValue, cpu.ST, $"ST should not be 0x{invertedValue:X2}");
+                        Assert.AreNotEqual(invertedValue, cpu.ST, $"ST should not be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                     }
 
                     if (testValue == 0)
                     {
-                        Assert.AreEqual(0x00, cpu.ST, $"ST should be equal V{registerX:X1} - 1 (0x{testValue:X2})");
+                        Assert.AreEqual(0x00, cpu.ST, $"ST should be equal V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} - 1 (0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
                     else
                     {
-                        Assert.AreEqual(testValue - 1, cpu.ST, $"ST should be equal V{registerX:X1} - 1 (0x{testValue:X2})");
+                        Assert.AreEqual(testValue - 1, cpu.ST, $"ST should be equal V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)} - 1 (0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)})");
                     }
 
                     cpu.V[registerX] = 0x00;
@@ -3818,7 +3819,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -3838,7 +3839,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -3858,8 +3859,8 @@ namespace Chip8.Tests
 
                     cpu.EmulateCycle();
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, K");
-                    Assert.AreEqual(testKeyValue, cpu.V[register], $"V{register:X1} should be the index of the pressed key (Key 0x{testKeyValue:X2}=0x{cpu.Keys[testKeyValue]:X2}) [opcode: 0x{opcode:X4}] [V{register:X1}= 0x{cpu.V[register]:X2}]");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, K");
+                    Assert.AreEqual(testKeyValue, cpu.V[register], $"V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} should be the index of the pressed key (Key 0x{testKeyValue.ToString("X2", NumberFormatInfo.CurrentInfo)}=0x{cpu.Keys[testKeyValue].ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                 }
             }
         }
@@ -3877,7 +3878,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{register}");
+                    Assert.Fail($"[{testAddress.ToString("X4",NumberFormatInfo.CurrentInfo)}]: V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -3897,7 +3898,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -3918,10 +3919,10 @@ namespace Chip8.Tests
 
                 for (int index = 0; index <= 0xF; index++)
                 {
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD I, V{register:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - ADD I, V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
-                    Assert.AreNotEqual(value, cpu.V[index], $"V{index:X1} should not be 0x{value:X2}");
-                    Assert.AreEqual(invertedValue, cpu.V[index], $"V{index:X1} should be 0x{invertedValue:X2}");
+                    Assert.AreNotEqual(value, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should not be 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                    Assert.AreEqual(invertedValue, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
 
                     cpu.V[index] = invertedValue;
                 }
@@ -3945,10 +3946,10 @@ namespace Chip8.Tests
                         {
                             cpu.EmulateCycle();
 
-                            Assert.AreEqual(destAddr, cpu.I, $"Register I should be {destAddr} (0x{baseAddr:X3} + 0x{testValue:X2}) [opcode: 0x{opcode:X4}] [V{register:X1}= 0x{cpu.V[register]:X2}]");
+                            Assert.AreEqual(destAddr, cpu.I, $"Register I should be {destAddr} (0x{baseAddr.ToString("X3", NumberFormatInfo.CurrentInfo)} + 0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)}) [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}= 0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                         }
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - ADD I, V{register:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - ADD I, V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     }
                 }
             }
@@ -3967,7 +3968,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -3987,7 +3988,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -4009,134 +4010,134 @@ namespace Chip8.Tests
                     {
                         cpu.EmulateCycle();
 
-                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD F, V{register:X1}");
+                        Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD F, V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
                         for (int index = 0; index <= 0xF; index++)
                         {
                             if (index == register)
                             {
-                                Assert.AreEqual(testValue, cpu.V[register], $"V{register:X1} should be 0x{invertedValue:X2}");
-                                Assert.AreEqual(testValue * 5, cpu.I, $"I should point to address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                Assert.AreEqual(testValue, cpu.V[register], $"V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{invertedValue.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                                Assert.AreEqual(testValue * 5, cpu.I, $"I should point to address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
 
                                 switch (testValue)
                                 {
                                     case 0x0:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x1:
-                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x60, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x70, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x60, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x70, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x2:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x3:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x4:
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x5:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x6:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x7:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x40, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x40, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x20, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x40, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x40, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x8:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0x9:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x10, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0xA:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0xB:
-                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0xC:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0xD:
-                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x90, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xE0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0xE:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                     case 0xF:
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 1:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 2:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X3} [V{register:X1}=0x{cpu.V[register]:X2}]");
-                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue:X1} at address 0x{testValue * 5 + 3:X4} [V{register:X1}=0x{cpu.V[register]:X2}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 1], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 1).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0xF0, cpu.Memory[cpu.I + 2], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 2).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 3], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 3).ToString("X3", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
+                                        Assert.AreEqual(0x80, cpu.Memory[cpu.I + 4], $"Problem on character 0x{testValue.ToString("X1", NumberFormatInfo.CurrentInfo)} at address 0x{(testValue * 5 + 4).ToString("X4", NumberFormatInfo.CurrentInfo)} [V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[register].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                         break;
                                 }
                             }
                             else
                             {
-                                Assert.AreEqual(0x00, cpu.V[index], $"V{index:X1} should be equal 0x00 while testing register V{register:X1} for 0x{testValue:X2} [V{index:X1}=0x{cpu.V[index]:X2}]");
+                                Assert.AreEqual(0x00, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be equal 0x00 while testing register V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} for 0x{testValue.ToString("X2", NumberFormatInfo.CurrentInfo)} [V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                             }
                         }
                     }
@@ -4159,7 +4160,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -4178,7 +4179,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -4212,7 +4213,7 @@ namespace Chip8.Tests
                         {
                             cpu.EmulateCycle();
 
-                            Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD B, V{register:X1} at 0x{cpu.PC:X3} [I=0x{cpu.I:X3}]");
+                            Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD B, V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} at 0x{cpu.PC.ToString("X3", NumberFormatInfo.CurrentInfo)} [I=0x{cpu.I.ToString("X3", NumberFormatInfo.CurrentInfo)}]");
 
                             for (int index = 0; index <= 0xF; index++)
                             {
@@ -4222,14 +4223,14 @@ namespace Chip8.Tests
                                     int tens = (value % 100) / 10;
                                     int units = (value % 100) % 10;
 
-                                    Assert.AreEqual(value, cpu.V[register], $"V{register:X1} should not change");
-                                    Assert.AreEqual(cents, cpu.Memory[cpu.I], $"memory address 0x{cpu.I:X3} should be 0x{cents:X2}");
-                                    Assert.AreEqual(tens, cpu.Memory[cpu.I + 1], $"memory address 0x{cpu.I + 1:X1} should be 0x{tens:X2}");
-                                    Assert.AreEqual(units, cpu.Memory[cpu.I + 2], $"memory address 0x{cpu.I + 2:X1} should be 0x{units:X2}");
+                                    Assert.AreEqual(value, cpu.V[register], $"V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} should not change");
+                                    Assert.AreEqual(cents, cpu.Memory[cpu.I], $"memory address 0x{cpu.I.ToString("X3", NumberFormatInfo.CurrentInfo)} should be 0x{cents.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                                    Assert.AreEqual(tens, cpu.Memory[cpu.I + 1], $"memory address 0x{cpu.I + 1.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{tens.ToString("X2", NumberFormatInfo.CurrentInfo)}");
+                                    Assert.AreEqual(units, cpu.Memory[cpu.I + 2], $"memory address 0x{cpu.I + 2.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{units.ToString("X2", NumberFormatInfo.CurrentInfo)}");
                                 }
                                 else
                                 {
-                                    Assert.AreEqual(0x00, cpu.V[index], $"V{index:X1} should be equal 0x00 while testing register V{register:X1} for 0x{value:X2} [V{index:X1}=0x{cpu.V[index]:X2}]");
+                                    Assert.AreEqual(0x00, cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be equal 0x00 while testing register V{register.ToString("X1", NumberFormatInfo.CurrentInfo)} for 0x{value.ToString("X2", NumberFormatInfo.CurrentInfo)} [V{index.ToString("X1", NumberFormatInfo.CurrentInfo)}=0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)}]");
                                 }
                             }
                         }
@@ -4253,7 +4254,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -4273,7 +4274,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -4319,16 +4320,16 @@ namespace Chip8.Tests
 
                         for (byte index = 0; index <= register; index++)
                         {
-                            Assert.AreEqual(cpu.V[index], cpu.Memory[cpu.I + index], $"Memory position at address 0x{cpu.I:X3} should be 0x{cpu.V[index]:X2} [opcode: 0x{opcode:X4}]");
+                            Assert.AreEqual(cpu.V[index], cpu.Memory[cpu.I + index], $"Memory position at address 0x{cpu.I.ToString("X3", NumberFormatInfo.CurrentInfo)} should be 0x{cpu.V[index].ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}]");
                         }
 
                         for (int index = 0; index <= 0xF; index++)
                         {
-                            Assert.AreEqual((byte)(value + index), cpu.V[index], $"V{index:X1} should not change");
+                            Assert.AreEqual((byte)(value + index), cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should not change");
                         }
                     }
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD [I], V{register:X1}");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD [I], V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                 }
             }
         }
@@ -4346,7 +4347,7 @@ namespace Chip8.Tests
             {
                 if (testAddress >= 0x1000)
                 {
-                    Assert.Fail($"[{testAddress}]: V{registerX}");
+                    Assert.Fail($"[{testAddress.ToString("X4", NumberFormatInfo.CurrentInfo)}]: V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
                     break;
                 }
 
@@ -4366,7 +4367,7 @@ namespace Chip8.Tests
 
             for (int index = 0; index <= 0xF; index++)
             {
-                Assert.Zero(cpu.V[index], $"Register V{index:X1} should be zero.");
+                Assert.Zero(cpu.V[index], $"Register V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
 
             for (ushort address = 0x200; address < testAddress; address += 2)
@@ -4412,16 +4413,16 @@ namespace Chip8.Tests
 
                         for (byte index = 0; index <= register; index++)
                         {
-                            Assert.AreEqual((byte)(value + index), cpu.V[index], $"V{index:X1} should be 0x{cpu.Memory[cpu.I + index]:X2} [opcode: 0x{opcode:X4}] [I=0x{cpu.I:X3}] [PC=0x{cpu.PC:X3}]");
+                            Assert.AreEqual((byte)(value + index), cpu.V[index], $"V{index.ToString("X1", NumberFormatInfo.CurrentInfo)} should be 0x{cpu.Memory[cpu.I + index].ToString("X2", NumberFormatInfo.CurrentInfo)} [opcode: 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}] [I=0x{cpu.I.ToString("X3", NumberFormatInfo.CurrentInfo)}] [PC=0x{cpu.PC.ToString("X3", NumberFormatInfo.CurrentInfo)}]");
                         }
 
                         for (byte index = 0; index <= register; index++)
                         {
-                            Assert.AreEqual((byte)(value + index), cpu.Memory[cpu.I + index], $"Memory position 0x{cpu.I + index:X3} should not change");
+                            Assert.AreEqual((byte)(value + index), cpu.Memory[cpu.I + index], $"Memory position 0x{(cpu.I + index).ToString("X3", NumberFormatInfo.CurrentInfo)} should not change");
                         }
                     }
 
-                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode:X4} - LD V{register:X1}, [I]");
+                    Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - LD V{register.ToString("X1", NumberFormatInfo.CurrentInfo)}, [I]");
                 }
             }
         }

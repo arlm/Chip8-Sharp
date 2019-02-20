@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace Chip8.Core
@@ -41,7 +42,7 @@ namespace Chip8.Core
 
         public override string ToString()
         {
-            return $"0x{Word:X4} (Low-Byte: 0x{Lo:X2}, High-byte: 0x{Hi:X2})";
+            return $"0x{Word.ToString("X4", NumberFormatInfo.CurrentInfo)} (Low-Byte: 0x{Lo.ToString("X2", NumberFormatInfo.CurrentInfo)}, High-byte: 0x{Hi.ToString("X2", NumberFormatInfo.CurrentInfo)})";
         }
     }
 }

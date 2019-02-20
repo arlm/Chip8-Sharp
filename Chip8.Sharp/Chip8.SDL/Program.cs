@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using Chip8.Core;
 using SDL2;
@@ -71,7 +73,7 @@ namespace Chip8
             }
 
             // Setup the graphics (window size, display mode, etc) 
-            if (!driver.SetupGraphics($"assets{Path.DirectorySeparatorChar}CHIP-8.logo.bmp"))
+            if (!driver.SetupGraphics($"assets{Path.DirectorySeparatorChar.ToString(CultureInfo.CurrentCulture)}CHIP-8.logo.bmp"))
             {
                 Console.WriteLine("Failed to setup graphics!");
                 return -2;
@@ -107,7 +109,7 @@ namespace Chip8
             myChip8.OnEndSound += OnEndSound;
 
             // Load (copy) the game into the memory
-            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar}demo.c8");
+            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar.ToString(CultureInfo.CurrentCulture)}demo.c8");
 
             //Rotation variables
             double angle = 0;
@@ -273,15 +275,15 @@ namespace Chip8
 
                                 case SDL.SDL_Keycode.SDLK_PLUS:
                                     zoom += 0.5f;
-                                    Console.WriteLine($"Zoom level: {zoom}x");
+                                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_MINUS:
                                     zoom -= 0.5f;
-                                    Console.WriteLine($"Zoom level: {zoom}x");
+                                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                                     break;
                                 case SDL.SDL_Keycode.SDLK_0:
                                     zoom = 1.0f;
-                                    Console.WriteLine($"Zoom level: {zoom}x");
+                                    Console.WriteLine($"Zoom level: {zoom.ToString(NumberFormatInfo.CurrentInfo)}x");
                                     break;
 
                                 default:
@@ -418,7 +420,7 @@ namespace Chip8
                 }
 
                 //Set text to be rendered
-                timerText = $"Average {avgFPS:0.00} Frames Per Second";
+                timerText = $"Average {avgFPS.ToString("0.00", NumberFormatInfo.CurrentInfo)} Frames Per Second";
 
                 SDL.SDL_Color color = white;
 

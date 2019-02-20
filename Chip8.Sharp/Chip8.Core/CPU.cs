@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 
@@ -135,7 +136,7 @@ namespace Chip8.Core
             {
                 var buffer = new byte[MAX_BUFFER_SIZE];
                 var bufferSize = stream.Read(this.Memory, 0x200, MAX_BUFFER_SIZE);
-                Console.WriteLine($"Loaded {bufferSize} bytes");
+                Console.WriteLine($"Loaded {bufferSize.ToString(NumberFormatInfo.CurrentInfo)} bytes");
             }
         }
 
@@ -157,8 +158,8 @@ namespace Chip8.Core
 
             var op = new Opcode(this.Opcode);
 
-            byte vx = this.V[op.X];
-            byte vy = this.V[op.Y];
+            var vx = this.V[op.X];
+            var vy = this.V[op.Y];
 
             switch (op.Type)
             {
@@ -202,7 +203,7 @@ namespace Chip8.Core
 
                         default:
                             {
-                                string message = $"Illegal call to RCA 1802 program: 0x{this.Opcode:X4}";
+                                string message = $"Illegal call to RCA 1802 program: 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}";
                                 Console.WriteLine(message);
                                 throw new InvalidOperationException(message);
                             }
@@ -217,7 +218,7 @@ namespace Chip8.Core
 
                     if (op.NNN < 0x200)
                     {
-                        string message = $"Illegal jump target: 0x{this.Opcode:X4}";
+                        string message = $"Illegal jump target: 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}";
                         Console.WriteLine(message);
                         throw new InvalidOperationException(message);
                     }
@@ -605,7 +606,7 @@ namespace Chip8.Core
                                 break;
 
                             default:
-                                Console.WriteLine($"Unknown opcode: {this.Opcode:X4}");
+                                Console.WriteLine($"Unknown opcode: {this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}");
                                 break;
                         }
                         break;
@@ -662,14 +663,14 @@ namespace Chip8.Core
 
                     if (dest < 0x200)
                     {
-                        string message = $"Illegal jump target: 0x{dest:X4} => 0x{this.Opcode:X4} + this.V[0] (0x{this.V[0]:X2})";
+                        string message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + this.V[0] (0x{this.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})";
                         Console.WriteLine(message);
                         throw new InvalidOperationException(message);
                     }
 
                     if (dest > 0xFFF)
                     {
-                        string message = $"Illegal jump target: 0x{dest:X4} => 0x{this.Opcode:X4} + this.V[0] (0x{this.V[0]:X2})";
+                        string message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + this.V[0] (0x{this.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})";
                         Console.WriteLine(message);
                         throw new InvalidOperationException(message);
                     }
@@ -800,7 +801,7 @@ namespace Chip8.Core
                             break;
 
                         default:
-                            Console.WriteLine($"Unknown opcode: {this.Opcode:X4}");
+                            Console.WriteLine($"Unknown opcode: {this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}");
                             break;
                     }
                     break;
@@ -1020,13 +1021,13 @@ namespace Chip8.Core
                             break;
 
                         default:
-                            Console.WriteLine($"Unknown opcode: {this.Opcode:X4}");
+                            Console.WriteLine($"Unknown opcode: {this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}");
                             break;
                     }
                     break;
 
                 default:
-                    Console.WriteLine($"Unknown opcode: {this.Opcode:X4}");
+                    Console.WriteLine($"Unknown opcode: {this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}");
                     break;
             }
 
@@ -1059,7 +1060,7 @@ namespace Chip8.Core
         {
             if (keys.Length != this.Keys.Length)
             {
-                throw new InvalidOperationException($"this.keys should be exactly {this.Keys.Length} bytes long.");
+                throw new InvalidOperationException($"this.keys should be exactly {this.Keys.Length.ToString(NumberFormatInfo.CurrentInfo)} bytes long.");
             }
 
             keys.CopyTo(this.Keys, 0);
