@@ -6,15 +6,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chip8.Core", "Chip8.Core\Ch
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{05D2CF24-E03F-4D32-906B-641573A16429}"
 	ProjectSection(SolutionItems) = preProject
-		CHIP-8 Keyboard Mapping.md = CHIP-8 Keyboard Mapping.md
-		CHIP-8 OpCodes.md = CHIP-8 OpCodes.md
-		CHIP-8 Specs.md = CHIP-8 Specs.md
-		run-tests = run-tests
 		..\nunit3-xslt\html-report.xslt = ..\nunit3-xslt\html-report.xslt
 		..\nunit3-xslt\html-summary.xslt = ..\nunit3-xslt\html-summary.xslt
+		..\nunit3-xslt\README.md = ..\nunit3-xslt\README.md
+		run-tests = run-tests
+		..\nunit3-xslt\text-profile.xslt = ..\nunit3-xslt\text-profile.xslt
 		..\nunit3-xslt\text-report.xslt = ..\nunit3-xslt\text-report.xslt
 		..\nunit3-xslt\text-summary.xslt = ..\nunit3-xslt\text-summary.xslt
-        ..\nunit3-xslt\text-profile.xslt = ..\nunit3-xslt\text-profile.xslt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.Tests", "Chip8.Tests\Chip8.Tests.csproj", "{ACF18D83-5BD5-4AA9-B794-711E069719B5}"
@@ -25,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.WindowsForms", "Chip8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.WPF", "Chip8.WPF\Chip8.WPF.csproj", "{415A9C97-30EA-49D5-AA8E-B50D472D18CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chip8.SDL", "Chip8.SDL\Chip8.SDL.csproj", "{A4862065-B576-49B3-89DC-A501AA17B905}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chip8.SDL", "Chip8.SDL\Chip8.SDL.csproj", "{A4862065-B576-49B3-89DC-A501AA17B905}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution
@@ -65,6 +63,7 @@ Global
 		{ACF18D83-5BD5-4AA9-B794-711E069719B5}.Release|x86.ActiveCfg = Debug|Any CPU
 		{ACF18D83-5BD5-4AA9-B794-711E069719B5}.Release|x86.Build.0 = Debug|Any CPU
 		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Debug|Any CPU.Build.0 = Debug|x86
 		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Debug|x64.ActiveCfg = Debug|x64
 		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Debug|x64.Build.0 = Debug|x64
 		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Debug|x86.ActiveCfg = Debug|x86
@@ -73,7 +72,6 @@ Global
 		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Release|x64.ActiveCfg = Debug|x64
 		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Release|x64.Build.0 = Debug|x64
 		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Release|x86.ActiveCfg = Debug|x64
-		{CB188B88-CBFF-4D27-B5B2-335D7029C322}.Debug|Any CPU.Build.0 = Debug|x86
 		{AB9198E1-E2E9-4B1F-9FC3-8B7F32C986F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB9198E1-E2E9-4B1F-9FC3-8B7F32C986F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB9198E1-E2E9-4B1F-9FC3-8B7F32C986F6}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -116,5 +114,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {85F0FA54-6A6D-4D08-86A4-5BC480BF3DED}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

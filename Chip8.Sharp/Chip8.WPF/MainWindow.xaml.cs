@@ -34,6 +34,10 @@ namespace Chip8.WPF
         readonly TimeSpan targetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 1000);
         TimeSpan lastTime;
 
+        // frame rate handling
+        private DateTime frameDateTime;
+        private double averageDeltaTime;
+
         private static readonly Color ambar = Color.FromArgb(0xFF, 0xFF, 0xB0, 0x00);
         private static readonly Color lightAmbar = Color.FromArgb(0xFF, 0xFF, 0xCC, 0x00);
         private static readonly Color green1 = Color.FromArgb(0xFF, 0x33, 0xFF, 0x00);
@@ -392,6 +396,14 @@ namespace Chip8.WPF
             {
                 Draw(graphics);
                 imgScreen.InvalidateVisual();
+
+                // frame rate
+                DateTime currentDateTime = DateTime.Now;
+                double currentDeltaTime = (currentDateTime - frameDateTime).TotalSeconds;
+                frameDateTime = currentDateTime;
+                averageDeltaTime = averageDeltaTime * 0.9 + currentDeltaTime * 0.1;
+                int frameRate = (int)(1.0 / averageDeltaTime);
+                frameRateStatusLabel.Content = frameRate + " FPS";
             });
         }
 

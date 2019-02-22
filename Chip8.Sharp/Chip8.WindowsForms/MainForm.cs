@@ -31,6 +31,10 @@ namespace Chip8.WindowsForms
         readonly TimeSpan targetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 1000);
         TimeSpan lastTime;
 
+        // frame rate
+        private DateTime frameDateTime;
+        private double averageDeltaTime;
+
         private static readonly Color ambar =  Color.FromArgb(0xFF, 0xFF, 0xB0, 0x00);
         private static readonly Color lightAmbar = Color.FromArgb(0xFF, 0xFF, 0xCC, 0x00);
         private static readonly Color green1 = Color.FromArgb(0xFF, 0x33, 0xFF, 0x00);
@@ -387,12 +391,28 @@ namespace Chip8.WindowsForms
                 {
                     Draw(graphics);
                     pbScreen.Refresh();
+
+                    // frame rate
+                    DateTime currentDateTime = DateTime.Now;
+                    double currentDeltaTime = (currentDateTime - frameDateTime).TotalSeconds;
+                    frameDateTime = currentDateTime;
+                    averageDeltaTime = averageDeltaTime * 0.9 + currentDeltaTime * 0.1;
+                    int frameRate = (int)(1.0 / averageDeltaTime);
+                    frameRateStatusLabel.Text = frameRate + " FPS";
                 }));
             }
             else
             {
                 Draw(graphics);
                 pbScreen.Refresh();
+
+                // frame rate
+                DateTime currentDateTime = DateTime.Now;
+                double currentDeltaTime = (currentDateTime - frameDateTime).TotalSeconds;
+                frameDateTime = currentDateTime;
+                averageDeltaTime = averageDeltaTime * 0.9 + currentDeltaTime * 0.1;
+                int frameRate = (int)(1.0 / averageDeltaTime);
+                frameRateStatusLabel.Text = frameRate + " FPS";
             }
         }
 
@@ -403,18 +423,15 @@ namespace Chip8.WindowsForms
 
             unsafe
             {
-                byte* pointer = (byte*)bits.Scan0;
+                int* pointer = (int*)bits.Scan0;
 
-                foreach (byte pixel in graphics)
+                for (int i = 0; i < graphics.Length; i++)
                 {
+                    byte pixel = graphics[i];
                     var color = (pixel > 0) ? appleIIcGreen : Color.Black;
 
-                    pointer[0] = color.B;
-                    pointer[1] = color.G;
-                    pointer[2] = color.R;
-                    pointer[3] = 255; // Alpha
-
-                    pointer += 4; // 4 bytes per pixel
+                    *pointer = color.ToArgb();
+                    pointer++; // 4 bytes (1 int) per pixel
                 }
             }
 

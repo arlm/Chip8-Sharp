@@ -9,5 +9,6 @@
     <Grid Margin="0,0,0,0">
         <ComboBox Name="cbPrograms" HorizontalAlignment="Left" Height="25" Width="640" VerticalAlignment="Top" Margin="0,0,0,0" SelectionChanged="ComboBox_SelectionChanged" />
         <Image Name="imgScreen" Margin="0,33,0,0" Height="480" Width="640" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" />
+        <Label x:Name="frameRateStatusLabel" Content="0 FPS" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" Foreground="Red"/>
     </Grid>
 </Window>
