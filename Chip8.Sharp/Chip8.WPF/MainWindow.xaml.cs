@@ -68,7 +68,7 @@ namespace Chip8.WPF
             imgScreen.Source = screenImage;
 
             // Initialize the CHIP - 8 system(Clear the memory, registers and screen)
-            myChip8 = new CPU();
+            myChip8 = new CPU((uint)((appleIIcGreen.A << 24) | (appleIIcGreen.R << 16) | (appleIIcGreen.G << 8) | appleIIcGreen.B));
             myChip8.OnDraw += OnDraw;
             myChip8.OnStartSound += OnStartSound;
             myChip8.OnEndSound += OnEndSound;

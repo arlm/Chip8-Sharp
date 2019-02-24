@@ -88,8 +88,10 @@ namespace Chip8.Core
         private Random rand = new Random();
 
         // Initialize registers and memory once
-        public CPU()
+        public CPU(uint foregroundColor = 0xFF_FF_FF_FF, uint backgroundColor = 0xFF_00_00_00)
         {
+            this.VideoBuffer = new MonoChromaticVideoBuffer(HEIGHT, WIDTH, foregroundColor, backgroundColor);
+
             this.Reset();
         }
 
@@ -106,8 +108,7 @@ namespace Chip8.Core
             this.Keys = new byte[16];
 
             // Clear display  
-            this.VideoBuffer = new MonoChromaticVideoBuffer(HEIGHT, WIDTH);
-            this.ShouldDraw = false;
+            this.VideoBuffer.Clear();
 
             // Clear stack
             this.Stack = new ushort[16];
@@ -731,9 +732,6 @@ namespace Chip8.Core
                             }
                         }
 
-                        // We changed our gfx[] array and thus need to update the screen.
-                        this.ShouldDraw = true;
-
                         // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                         // This is true unless you jump to a certain address in the memory or if you call a subroutine
                         // (in which case you need to store the program counter in the stack).
@@ -1046,10 +1044,9 @@ namespace Chip8.Core
                 --this.ST;
             }
 
-            if (this.ShouldDraw)
+            if (this.VideoBuffer.IsDirty)
             {
                 this.OnDraw?.Invoke(this.VideoBuffer.ToByteArray());
-                this.ShouldDraw = false;
             }
         }
 

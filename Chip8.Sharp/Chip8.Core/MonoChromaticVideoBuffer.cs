@@ -1,14 +1,15 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Chip8.Core
 {
     public class MonoChromaticVideoBuffer
     {
-        private readonly int[] memory;
+        private readonly uint[] memory;
 
-        private int ForegroundColor { get; set; }
+        private uint ForegroundColor { get; set; }
 
-        private int BackgroundColor { get; set; }
+        private uint BackgroundColor { get; set; }
 
         public int Width { get; }
 
@@ -18,13 +19,16 @@ namespace Chip8.Core
 
         public bool IsDirty { get; private set; } = false;
 
-        public MonoChromaticVideoBuffer(int height, int width)
+        public MonoChromaticVideoBuffer(int height, int width, uint foregroundColor = 0xFF_FF_FF_FF, uint backgroundColor = 0xFF_00_00_00)
         {
             this.Width = width;
             this.Height = height;
 
+            this.ForegroundColor = foregroundColor;
+            this.BackgroundColor = backgroundColor;
+
             var length = width * height;
-            this.memory = new int[length];
+            this.memory = new uint[length];
 
             this.Clear();
         }

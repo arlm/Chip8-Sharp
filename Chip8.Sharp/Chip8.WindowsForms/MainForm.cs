@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -61,7 +62,7 @@ namespace Chip8.WindowsForms
             pbScreen.Image = screenImage;
 
             // Initialize the CHIP - 8 system(Clear the memory, registers and screen)
-            myChip8 = new CPU();
+            myChip8 = new CPU((uint)appleIIcGreen.ToArgb());
             myChip8.OnDraw += OnDraw;
             myChip8.OnStartSound += OnStartSound;
             myChip8.OnEndSound += OnEndSound;
@@ -416,21 +417,11 @@ namespace Chip8.WindowsForms
             }
         }
 
-
         void Draw(byte[] graphics)
         {
             var bits = screenImage.LockBits(new Rectangle(0, 0, screenImage.Width, screenImage.Height), ImageLockMode.WriteOnly, PixelFormat.Format32bppArgb);
 
-            unsafe
-            {
-                int* pointer = (int*)bits.Scan0;
-
-                for (int i = 0; i < graphics.Length; i++)
-                {
-                    *pointer = graphics[i];
-                    pointer++;
-                }
-            }
+            Marshal.Copy(graphics, 0, bits.Scan0, graphics.Length);
 
             screenImage.UnlockBits(bits);
         }
