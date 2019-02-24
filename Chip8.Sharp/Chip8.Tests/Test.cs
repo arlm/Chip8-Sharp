@@ -625,26 +625,26 @@ namespace Chip8.Tests
 
             Assert.AreEqual(0x200, cpu.PC, "PC Register should be at 0x200");
 
-            for (int index = 0; index < cpu.Gfx.Length; index++)
+            for (int index = 0; index < cpu.VideoBuffer.Length; index++)
             {
-                Assert.Zero(cpu.Gfx[index], $"Graphic memory address {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be zero.");
+                Assert.False(cpu.VideoBuffer[index], $"Graphic memory address {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be false.");
             }
 
-            for (int index = 0; index < cpu.Gfx.Length; index++)
+            for (int index = 0; index < cpu.VideoBuffer.Length; index++)
             {
-                cpu.Gfx[index] = unchecked((byte)rnd.Next(0, 2));
+                cpu.VideoBuffer[index] = unchecked((byte)rnd.Next(0, 2) == 1);
             }
 
-            CollectionAssert.AreNotEqual(new byte[0x800], cpu.Gfx, "Graphic memory address should not be blank.");
+            CollectionAssert.AreNotEqual(new byte[0x800 * 4], cpu.VideoBuffer.ToByteArray(), "Graphic memory address should not be blank.");
 
             cpu.EmulateCycle();
 
             Assert.AreEqual(0x00E0, cpu.Opcode, "Opcode shoud be 0x00E0 - CLS");
             Assert.AreEqual(0x202, cpu.PC, "PC Register should be at 0x202");
 
-            for (int index = 0; index < cpu.Gfx.Length; index++)
+            for (int index = 0; index < cpu.VideoBuffer.Length; index++)
             {
-                Assert.Zero(cpu.Gfx[index], $"Graphic memory address {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be zero.");
+                Assert.False(cpu.VideoBuffer[index], $"Graphic memory address {index.ToString("X2", NumberFormatInfo.CurrentInfo)} should be zero.");
             }
         }
 

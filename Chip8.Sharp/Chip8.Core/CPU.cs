@@ -45,7 +45,7 @@ namespace Chip8.Core
 
         // The graphics of the CHIP-8 are black and white and the screen has a total of 2048 pixels(64 x 32).
         // This can easily be implemented using an array that hold the pixel state(1 or 0)
-        internal byte[] Gfx;
+        internal MonoChromaticVideoBuffer VideoBuffer;
 
         // Interupts and hardware registers.
         // The CHIP-8  has none, but there are two timer registers that count at 60 Hz.
@@ -81,9 +81,6 @@ namespace Chip8.Core
 
         public Action<byte[]> OnDraw { get; set; }
 
-        [SuppressMessage("Microsoft.Performance", "CA1819: Properties should not return arrays", Justification = "Need to return a clone of the array so that consumers  of this library cannot change its contents")]
-        public byte[] Graphics => (byte[])this.Gfx.Clone();
-
         public Action<int, int, int> OnStartSound { get; set; }
 
         public Action<int> OnEndSound { get; set; }
@@ -109,7 +106,7 @@ namespace Chip8.Core
             this.Keys = new byte[16];
 
             // Clear display  
-            this.Gfx = new byte[WIDTH * HEIGHT];
+            this.VideoBuffer = new MonoChromaticVideoBuffer(HEIGHT, WIDTH);
             this.ShouldDraw = false;
 
             // Clear stack
@@ -174,8 +171,7 @@ namespace Chip8.Core
                     {
                         // 0x00E0: Clears the screen
                         case 0xE0:
-                            this.Gfx = new byte[WIDTH * HEIGHT];
-                            this.ShouldDraw = true;
+                            this.VideoBuffer.Clear();
 
                             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
                             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -722,17 +718,15 @@ namespace Chip8.Core
                                 // Note that (0x80 >> column) scan through the byte, one bit at the time
                                 if ((pixel & (0x80 >> column)) != 0)
                                 {
-                                    var currentPixel = vx + column + ((vy + row) * WIDTH);
-
                                     // Check if the pixel on the display is set to 1.
                                     //  If it is set, we need to register the collision by setting the VF register
-                                    if (this.Gfx[currentPixel] == 1)
+                                    if (this.VideoBuffer[vx + column, vy + row])
                                     {
                                         this.V[0xF] = 1;
                                     }
 
                                     // Set the pixel value by using XOR
-                                    this.Gfx[currentPixel] ^= 1;
+                                    this.VideoBuffer[vx + column, vy + row] ^= true;
                                 }
                             }
                         }
@@ -1054,7 +1048,7 @@ namespace Chip8.Core
 
             if (this.ShouldDraw)
             {
-                this.OnDraw?.Invoke(this.Graphics);
+                this.OnDraw?.Invoke(this.VideoBuffer.ToByteArray());
                 this.ShouldDraw = false;
             }
         }

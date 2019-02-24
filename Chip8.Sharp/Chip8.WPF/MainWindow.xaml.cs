@@ -413,20 +413,8 @@ namespace Chip8.WPF
             int width = 64;
             int height = 32;
             int rawStride = (width * pf.BitsPerPixel + 7) / 8;
-            byte[] rawImage = new byte[rawStride * height];
 
-            for (int index = 0; index < graphics.Length; index++)
-            {
-                var pixel = graphics[index];
-                var color = (pixel > 0) ? appleIIcGreen : Colors.Black;
-
-                rawImage[index * 4] = color.B;
-                rawImage[index * 4 + 1] = color.G;
-                rawImage[index * 4 + 2] = color.R;
-                rawImage[index * 4 + 3] = 255; // Alpha
-            }
-
-            var screenImage = BitmapSource.Create(width, height, 96, 96, pf, null, rawImage, rawStride);
+            var screenImage = BitmapSource.Create(width, height, 96, 96, pf, null, graphics, rawStride);
             imgScreen.Source = screenImage;
         }
 

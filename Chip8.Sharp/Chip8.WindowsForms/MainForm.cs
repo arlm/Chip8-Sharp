@@ -427,11 +427,8 @@ namespace Chip8.WindowsForms
 
                 for (int i = 0; i < graphics.Length; i++)
                 {
-                    byte pixel = graphics[i];
-                    var color = (pixel > 0) ? appleIIcGreen : Color.Black;
-
-                    *pointer = color.ToArgb();
-                    pointer++; // 4 bytes (1 int) per pixel
+                    *pointer = graphics[i];
+                    pointer++;
                 }
             }
 
