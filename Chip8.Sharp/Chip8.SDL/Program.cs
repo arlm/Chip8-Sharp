@@ -114,7 +114,7 @@ namespace Chip8
             Debug.Print("Loaded...");
 
             // Initialize the CHIP-8 system (Clear the memory, registers and screen)
-            myChip8 = new CPU();
+            myChip8 = new CPU((uint)((appleIIcGreen.a << 24) | (appleIIcGreen.r << 16) | (appleIIcGreen.g << 8) | appleIIcGreen.b));
             myChip8.OnDraw += DrawGraphics;
             myChip8.OnStartSound += OnStartSound;
             myChip8.OnEndSound += OnEndSound;
