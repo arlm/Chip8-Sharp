@@ -34,10 +34,6 @@ namespace Chip8.WPF
         readonly TimeSpan targetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 1000);
         TimeSpan lastTime;
 
-        // frame rate handling
-        private DateTime frameDateTime;
-        private double averageDeltaTime;
-
         private static readonly Color ambar = Color.FromArgb(0xFF, 0xFF, 0xB0, 0x00);
         private static readonly Color lightAmbar = Color.FromArgb(0xFF, 0xFF, 0xCC, 0x00);
         private static readonly Color green1 = Color.FromArgb(0xFF, 0x33, 0xFF, 0x00);
@@ -387,25 +383,17 @@ namespace Chip8.WPF
             if (!pause)
             {
                 myChip8.EmulateCycle();
+                clockRateStatusLabel.Content = $"{myChip8.ClockRate.ToString("F1")} Hz (avg: {(myChip8.ProcessingTime / 10.0).ToString("#,##0.00", NumberFormatInfo.CurrentInfo)} ns)";
+                frameRateStatusLabel.Content = $"{myChip8.FrameRate.ToString("F1")} FPS (avg: {(myChip8.RenderingTime / 10.0).ToString("#,##0.00", NumberFormatInfo.CurrentInfo)} ns)";
             }
         }
 
         void OnDraw(byte[] graphics)
         {
-            const double SMOOTHING = 0.9;
-
             imgScreen.Dispatcher.Invoke(() =>
             {
                 Draw(graphics);
                 imgScreen.InvalidateVisual();
-
-                // frame rate
-                var currentDateTime = DateTime.Now;
-                var currentDeltaTime = (currentDateTime - frameDateTime).TotalSeconds;
-                frameDateTime = currentDateTime;
-                averageDeltaTime = averageDeltaTime * SMOOTHING + currentDeltaTime * (1 - SMOOTHING);
-                var frameRate = 1.0 / averageDeltaTime;
-                frameRateStatusLabel.Text = $"{frameRate.ToString("F1")} FPS";
             });
         }
 

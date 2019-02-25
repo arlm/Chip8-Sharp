@@ -91,11 +91,11 @@ namespace Chip8.Core
 
         public double ClockRate { get; private set; }
 
-        public long ProcessingTime { get; private set; }
+        public double ProcessingTime { get; private set; }
 
         public double FrameRate { get; private set; }
 
-        public long RenderingTime { get; private set; }
+        public double RenderingTime { get; private set; }
 
         public Action<byte[]> OnDraw { get; set; }
 
@@ -1065,7 +1065,7 @@ namespace Chip8.Core
             }
 
             watch.Stop();
-            this.RenderingTime = watch.ElapsedMilliseconds;
+            this.ProcessingTime = (this.ProcessingTime * SMOOTHING) + (watch.ElapsedTicks * (1 - SMOOTHING));
 
             var currentDateTime = DateTime.Now;
             var currentDeltaTime = (currentDateTime - this.clockDateTime).TotalSeconds;
@@ -1080,7 +1080,7 @@ namespace Chip8.Core
                 this.OnDraw?.Invoke(this.VideoBuffer.ToByteArray());
 
                 watch.Stop();
-                this.RenderingTime = watch.ElapsedMilliseconds;
+                this.RenderingTime = (this.RenderingTime * SMOOTHING) + (watch.ElapsedTicks * (1 - SMOOTHING));
 
                 currentDateTime = DateTime.Now;
                 currentDeltaTime = (currentDateTime - this.frameDateTime).TotalSeconds;

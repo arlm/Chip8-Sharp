@@ -10,5 +10,6 @@
         <ComboBox Name="cbPrograms" HorizontalAlignment="Left" Height="25" Width="640" VerticalAlignment="Top" Margin="0,0,0,0" SelectionChanged="ComboBox_SelectionChanged" />
         <Image Name="imgScreen" Margin="0,33,0,0" Height="480" Width="640" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" />
         <Label x:Name="frameRateStatusLabel" Content="0 FPS" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top" Foreground="Red"/>
+        <Label x:Name="clockRateStatusLabel" Content="0 Hz" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top" Foreground="Red" RenderTransformOrigin="1.234,2.481"/>
     </Grid>
 </Window>
