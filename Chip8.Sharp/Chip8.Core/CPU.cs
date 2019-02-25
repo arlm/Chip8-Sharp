@@ -11,6 +11,7 @@ namespace Chip8.Core
     {
         public const int WIDTH = 64;
         public const int HEIGHT = 32;
+        private const double SMOOTHING = 0.9;
 
         // The CHIP-8 has 35 opcodes which are all two bytes long.
         internal ushort Opcode;
@@ -78,6 +79,23 @@ namespace Chip8.Core
         //    0x00E0 – Clears the screen
         //    0xDXYN – Draws a sprite on the screen
         internal bool ShouldDraw;
+
+        // frame rate
+        private DateTime clockDateTime;
+
+        private DateTime frameDateTime;
+
+        private double averageDeltaClockTime;
+
+        private double averageDeltaFrameTime;
+
+        public double ClockRate { get; private set; }
+
+        public long ProcessingTime { get; private set; }
+
+        public double FrameRate { get; private set; }
+
+        public long RenderingTime { get; private set; }
 
         public Action<byte[]> OnDraw { get; set; }
 
@@ -150,6 +168,8 @@ namespace Chip8.Core
 
         public void EmulateCycle()
         {
+            var watch = Stopwatch.StartNew();
+
             // Fetch this.Opcode
 
             // During this step, the system will fetch one opcode from the memory at the location specified by the program counter (pc).
@@ -1044,9 +1064,29 @@ namespace Chip8.Core
                 --this.ST;
             }
 
+            watch.Stop();
+            this.RenderingTime = watch.ElapsedMilliseconds;
+
+            var currentDateTime = DateTime.Now;
+            var currentDeltaTime = (currentDateTime - this.clockDateTime).TotalSeconds;
+            this.clockDateTime = currentDateTime;
+            this.averageDeltaClockTime = (this.averageDeltaClockTime * SMOOTHING) + (currentDeltaTime * (1 - SMOOTHING));
+            this.ClockRate = 1.0 / this.averageDeltaClockTime;
+
             if (this.VideoBuffer.IsDirty)
             {
+                watch.Restart();
+
                 this.OnDraw?.Invoke(this.VideoBuffer.ToByteArray());
+
+                watch.Stop();
+                this.RenderingTime = watch.ElapsedMilliseconds;
+
+                currentDateTime = DateTime.Now;
+                currentDeltaTime = (currentDateTime - this.frameDateTime).TotalSeconds;
+                this.frameDateTime = currentDateTime;
+                this.averageDeltaFrameTime = (this.averageDeltaFrameTime * SMOOTHING) + (currentDeltaTime * (1 - SMOOTHING));
+                this.FrameRate = 1.0 / this.averageDeltaFrameTime;
             }
         }
 

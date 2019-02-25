@@ -392,18 +392,20 @@ namespace Chip8.WPF
 
         void OnDraw(byte[] graphics)
         {
+            const double SMOOTHING = 0.9;
+
             imgScreen.Dispatcher.Invoke(() =>
             {
                 Draw(graphics);
                 imgScreen.InvalidateVisual();
 
                 // frame rate
-                DateTime currentDateTime = DateTime.Now;
-                double currentDeltaTime = (currentDateTime - frameDateTime).TotalSeconds;
+                var currentDateTime = DateTime.Now;
+                var currentDeltaTime = (currentDateTime - frameDateTime).TotalSeconds;
                 frameDateTime = currentDateTime;
-                averageDeltaTime = averageDeltaTime * 0.9 + currentDeltaTime * 0.1;
-                int frameRate = (int)(1.0 / averageDeltaTime);
-                frameRateStatusLabel.Content = frameRate + " FPS";
+                averageDeltaTime = averageDeltaTime * SMOOTHING + currentDeltaTime * (1 - SMOOTHING);
+                var frameRate = 1.0 / averageDeltaTime;
+                frameRateStatusLabel.Text = $"{frameRate.ToString("F1")} FPS";
             });
         }
 

@@ -431,7 +431,7 @@ namespace Chip8
                 }
 
                 //Set text to be rendered
-                timerText = $"Average {avgFPS.ToString("0.00", NumberFormatInfo.CurrentInfo)} Frames Per Second";
+                timerText = $"Average {avgFPS.ToString("F2", NumberFormatInfo.CurrentInfo)} Frames Per Second";
 
                 var color = white;
 
