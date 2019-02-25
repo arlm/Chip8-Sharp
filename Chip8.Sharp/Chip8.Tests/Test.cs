@@ -2790,7 +2790,7 @@ namespace Chip8.Tests
                     break;
                 }
 
-                emptyMemory[testAddress] = unchecked((byte)(0xC0 | (0x00 & 0x0F)));
+                emptyMemory[testAddress] = 0xC0 | (0x00 & 0x0F);
                 emptyMemory[testAddress + 1] = unchecked((byte)value);
             }
 
@@ -3490,10 +3490,8 @@ namespace Chip8.Tests
                             Assert.Throws<InvalidOperationException>(cpu.EmulateCycle);
                             continue;
                         }
-                        else
-                        {
-                            cpu.EmulateCycle();
-                        }
+
+                        cpu.EmulateCycle();
 
                         Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SKNP V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 
@@ -3571,10 +3569,8 @@ namespace Chip8.Tests
                             Assert.Throws<InvalidOperationException>(cpu.EmulateCycle);
                             continue;
                         }
-                        else
-                        {
-                            cpu.EmulateCycle();
-                        }
+
+                        cpu.EmulateCycle();
 
                         Assert.AreEqual(opcode, cpu.Opcode, $"Opcode shoud be 0x{opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} - SKNP V{registerX.ToString("X1", NumberFormatInfo.CurrentInfo)}");
 

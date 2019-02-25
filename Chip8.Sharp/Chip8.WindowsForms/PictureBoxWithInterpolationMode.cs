@@ -8,11 +8,11 @@ namespace Chip8.WindowsForms
         // http://stackoverflow.com/a/13484101/25124
         public InterpolationMode InterpolationMode { get; set; }
 
-        protected override void OnPaint(PaintEventArgs paintEventArgs)
+        protected override void OnPaint(PaintEventArgs pe)
         {
-            paintEventArgs.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
-            paintEventArgs.Graphics.InterpolationMode = InterpolationMode;
-            base.OnPaint(paintEventArgs);
+            pe.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
+            pe.Graphics.InterpolationMode = InterpolationMode;
+            base.OnPaint(pe);
         }
     }
 }

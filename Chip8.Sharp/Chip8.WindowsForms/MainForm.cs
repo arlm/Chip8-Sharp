@@ -20,10 +20,10 @@ namespace Chip8.WindowsForms
         private readonly Bitmap screenImage;
         private readonly ICPU myChip8;
 
-        private bool quit = false;
-        private bool pause = false;
-        private bool debugKeys = false;
-        private bool debugPixels = false;
+        private bool quit;
+        private bool pause;
+        private bool debugKeys;
+        private bool debugPixels;
         private float zoom = 9.5f;
 
         // For timing..
