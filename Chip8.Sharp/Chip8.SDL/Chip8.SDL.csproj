@@ -18,6 +18,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Remove="progs\bc_test copy.txt" />
+      <None Remove="progs\BC_test.txt" />
+      <None Remove="progs\Keypad Test [Hap, 2006].txt" />
+      <None Remove="progs\BMP Viewer - Hello %28C8 example%29 [Hap, 2005].txt" />
+      <None Remove="progs\Delay Timer Test [Matthew Mikolay, 2010].txt" />
+      <None Remove="progs\SC_Test.txt" />
+      <None Remove="progs\Random Number Test [Matthew Mikolay, 2010].txt" />
+      <None Remove="progs\Kiwi.txt" />
+    </ItemGroup>
+    <ItemGroup>
       <None Update="progs\invaders.c8">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
@@ -48,7 +58,85 @@
       <None Update="assets\up.bmp">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="progs\BC_test.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\FONTS.chip8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\chip8logo.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Keypad Test [Hap, 2006].ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\IBM.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Test_RegisterLoad_8xy0.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Test_RegisterLoad_Annn.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Delay Timer Test [Matthew Mikolay, 2010].ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\IBM Logo.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Chip8Picture.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\BMP Viewer - Hello %28C8 example%29 [Hap, 2005].ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
       <None Update="progs\demo.c8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Test_RegisterLoad_6xkk.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Kiwi.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Chip8 emulator Logo [Garstyciuks].ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\SCTEST.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Random Number Test [Matthew Mikolay, 2010].ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Chip8 Picture.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Division Test [Sergey Naydenov, 2010].ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\ch8.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Test_RegisterLoad_Fx15_Fx18.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\IBMLogo.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Kiwi8_logo_1.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Kiwi8_logo_2.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\SC_Test.sch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\Test_RegisterLoad_Fx55_Fx65.ch8">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="progs\demo.ch8">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

@@ -96,15 +96,6 @@
     <None Include="progs\demo.c8">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="progs\invaders.c8">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="progs\pong2.c8">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="progs\tetris.c8">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -123,18 +114,6 @@
       <Project>{13f0ffe7-d3e4-4f12-84ef-4e66e35e9188}</Project>
       <Name>Chip8.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="progs\demo.c8.asm" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="progs\invaders.c8.asm" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="progs\pong2.c8.asm" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="progs\tetris.c8.asm" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\CHIP-8.logo.bmp">
