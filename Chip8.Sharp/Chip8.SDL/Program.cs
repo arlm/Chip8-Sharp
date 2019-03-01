@@ -113,14 +113,17 @@ namespace Chip8
             currentTexture = textures[(int)KeyPressSurface.Default];
             Debug.Print("Loaded...");
 
+            var pixelColor = appleIIcGreen;
+            var backgroundColor = gray;
             // Initialize the CHIP-8 system (Clear the memory, registers and screen)
-            myChip8 = new CPU((uint)((appleIIcGreen.a << 24) | (appleIIcGreen.r << 16) | (appleIIcGreen.g << 8) | appleIIcGreen.b));
+            myChip8 = new CPU((uint)((pixelColor.a << 24) | (pixelColor.r << 16) | (pixelColor.g << 8) | pixelColor.b),
+                                (uint)((backgroundColor.a << 24) | (backgroundColor.r << 16) | (backgroundColor.g << 8) | backgroundColor.b));
             myChip8.OnDraw += DrawGraphics;
             myChip8.OnStartSound += OnStartSound;
             myChip8.OnEndSound += OnEndSound;
 
             // Load (copy) the game into the memory
-            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar.ToString(CultureInfo.CurrentCulture)}demo.c8");
+            myChip8.LoadGame($"progs{Path.DirectorySeparatorChar.ToString(CultureInfo.CurrentCulture)}demo.ch8");
 
             //Rotation variables
             double angle = 0;
@@ -535,33 +538,18 @@ namespace Chip8
             SDL.SDL_RenderClear(driver.rendererPtr);
             SDL.SDL_RenderSetScale(driver.rendererPtr, zoom, zoom);
 
-            color = gray;
-
-            //Render red filled quad
-            var fillRect = new SDL.SDL_Rect
+            for(int index = 0; index < graphics.Length; index += 4)
             {
-                x = 0,
-                y = 0,
-                w = CPU.WIDTH,
-                h = CPU.HEIGHT
-            };
+                SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 
+                                            graphics[index + 2], // R
+                                            graphics[index + 1], // G
+                                            graphics[index], // B
+                                            graphics[index + 3]);    // A
 
-            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, color.r, color.g, color.b, color.a);
-            SDL.SDL_RenderFillRect(driver.rendererPtr, ref fillRect);
+                var y = (index / 4) / CPU.WIDTH;
+                var x = (index / 4) % CPU.WIDTH;
 
-            color = appleIIGreen;
-
-            SDL.SDL_SetRenderDrawColor(driver.rendererPtr, color.r, color.g, color.b, color.a);
-
-            for(int index = 0; index < graphics.Length; index++)
-            {
-                if (graphics[index] == 1)
-                {
-                    var y = index / CPU.WIDTH;
-                    var x = index % CPU.WIDTH;
-
-                    SDL.SDL_RenderDrawPoint(driver.rendererPtr, x, y);
-                }
+                SDL.SDL_RenderDrawPoint(driver.rendererPtr, x, y);
             }
 
             //Reset render target
