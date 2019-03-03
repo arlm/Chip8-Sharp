@@ -21,6 +21,7 @@ namespace Chip8
     class Program : IDisposable
     {
         // In this example we assume you will create a separate class to handle the opcodes.
+        [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private static ICPU myChip8;
 
         private const int WIDTH = 640;
@@ -116,8 +117,12 @@ namespace Chip8
             var pixelColor = appleIIcGreen;
             var backgroundColor = gray;
             // Initialize the CHIP-8 system (Clear the memory, registers and screen)
+
+#pragma warning disable IDISP003 // Dispose previous before re-assigning is not needed during construction
             myChip8 = new CPU((uint)((pixelColor.a << 24) | (pixelColor.r << 16) | (pixelColor.g << 8) | pixelColor.b),
                                 (uint)((backgroundColor.a << 24) | (backgroundColor.r << 16) | (backgroundColor.g << 8) | backgroundColor.b));
+#pragma warning restore IDISP003 // Dispose previous before re-assigning is not needed during construction
+
             myChip8.OnDraw += DrawGraphics;
             myChip8.OnStartSound += OnStartSound;
             myChip8.OnEndSound += OnEndSound;
@@ -700,6 +705,9 @@ namespace Chip8
             {
                 if (disposing)
                 {
+                    myChip8?.Dispose();
+                    myChip8 = null;
+
                     // dispose managed state (managed objects).
                     currentTexture = null;
 

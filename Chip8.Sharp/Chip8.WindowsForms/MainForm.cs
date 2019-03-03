@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Chip8.WindowsForms
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IDisposable
     {
         private const int WIDTH = 640;
         private const int HEIGHT = 480;
@@ -32,7 +32,7 @@ namespace Chip8.WindowsForms
         readonly TimeSpan targetElapsedTime = TimeSpan.FromTicks(TimeSpan.TicksPerSecond / 1000);
         TimeSpan lastTime;
 
-        private static readonly Color ambar =  Color.FromArgb(0xFF, 0xFF, 0xB0, 0x00);
+        private static readonly Color ambar = Color.FromArgb(0xFF, 0xFF, 0xB0, 0x00);
         private static readonly Color lightAmbar = Color.FromArgb(0xFF, 0xFF, 0xCC, 0x00);
         private static readonly Color green1 = Color.FromArgb(0xFF, 0x33, 0xFF, 0x00);
         private static readonly Color green2 = Color.FromArgb(0xFF, 0x00, 0xFF, 0x33);
@@ -66,8 +66,8 @@ namespace Chip8.WindowsForms
             const string STARTUP_FILE = "demo";
 
             var files = Directory.EnumerateFiles("progs", "*.c8");
-            
-            foreach(var file in files)
+
+            foreach (var file in files)
             {
                 cbPrograms.Items.Add(Path.GetFileNameWithoutExtension(file));
             }
@@ -423,6 +423,11 @@ namespace Chip8.WindowsForms
         {
             LoadProgram((string)cbPrograms.SelectedItem);
             pbScreen.Focus();
+        }
+
+        public void Dispose()
+        {
+            myChip8?.Dispose();
         }
     }
 }
