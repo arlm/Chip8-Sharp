@@ -2,7 +2,7 @@
 
 namespace Chip8.Core
 {
-    public interface ICPU
+    public interface ICPU : IDisposable
     {
         double ClockRate { get; }
 

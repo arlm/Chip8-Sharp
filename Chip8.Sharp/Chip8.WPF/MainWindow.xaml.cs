@@ -15,7 +15,7 @@ namespace Chip8.WPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDisposable
     {
         private const int WIDTH = 640;
         private const int HEIGHT = 480;
@@ -422,6 +422,11 @@ namespace Chip8.WPF
         {
             LoadProgram((string)cbPrograms.SelectedItem);
             imgScreen.Focus();
+        }
+
+        public void Dispose()
+        {
+            myChip8?.Dispose();
         }
     }
 }
