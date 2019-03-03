@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Chip8.WindowsForms
 {
-    public partial class MainForm : Form, IDisposable
+    public partial class MainForm : Form
     {
         private const int WIDTH = 640;
         private const int HEIGHT = 480;
@@ -425,9 +425,19 @@ namespace Chip8.WindowsForms
             pbScreen.Focus();
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
-            myChip8?.Dispose();
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+                myChip8?.Dispose();
+
+            }
+            base.Dispose(disposing);
         }
     }
 }
