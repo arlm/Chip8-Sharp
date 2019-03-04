@@ -242,14 +242,12 @@ namespace Chip8.Core
                     // For example, 0x00E0 and 0x00EE both start with 0x00.
                     // In this case we add an additional switch and compare the last four bits:
                     case 0x0:
-                        switch (op.NN)
+                        switch (op.KK)
                         {
-                            // 0x00E0: Clears the screen
                             case 0xE0:
                                 this.op_CLS();
                                 break;
 
-                            // 0x00EE: Returns from subroutine
                             case 0xEE:
                                 this.op_RET();
                                 break;
@@ -260,40 +258,30 @@ namespace Chip8.Core
                         }
                         break;
 
-                    // 0x1NNN: Jumps to address NNN.
                     case 0x1:
                         this.op_JP_addr(op);
                         break;
 
-                    // 0x2NNN: This opcode calls the subroutine at address NNN.
                     case 0x2:
                         this.op_CALL_addr(op);
                         break;
 
-                    // 0x3XNN: Skips the next instruction if VX equals NN.
-                    // (Usually the next instruction is a jump to skip a code block)    
                     case 0x3:
                         this.op_SE_Vx_byte(op, vx);
                         break;
 
-                    // 0x4XNN: Skips the next instruction if VX doesn't equal NN.
-                    // (Usually the next instruction is a jump to skip a code block)    
                     case 0x4:
                         this.op_SNE_Vx_byte(op, vx);
                         break;
 
-                    // 0x5XY0: Skips the next instruction if VX equals VY.
-                    // (Usually the next instruction is a jump to skip a code block)    
                     case 0x5:
                         this.op_SE_Vx_Vy(op, vx, vy);
                         break;
 
-                    // 0x6XNN: Sets VX to NN.
                     case 0x6:
                         this.op_LD_Vx_byte(op);
                         break;
 
-                    // 0x7XNN: Adds NN to VX. (Carry flag is not changed)
                     case 0x7:
                         this.op_ADD_Vx_byte(op);
                         break;
@@ -302,52 +290,38 @@ namespace Chip8.Core
                         {
                             switch (op.N)
                             {
-                                // 0x8XY0: Sets VX to the value of VY.
                                 case 0x0:
                                     this.op_LD_Vx_Vy(op, vy);
                                     break;
 
-                                // 0x8XY1: Sets VX to VX or VY. (Bitwise OR operation)
                                 case 0x1:
                                     this.op_OR_Vx_Vy(op, vy);
                                     break;
 
-                                // 0x8XY2: Sets VX to VX and VY. (Bitwise AND operation)
                                 case 0x2:
                                     this.op_AND_Vx_Vy(op, vy);
                                     break;
 
-                                // 0x8XY3: Sets VX to VX xor VY.
                                 case 0x3:
                                     this.op_XOR_Vx_Vy(op, vy);
                                     break;
 
-                                // 0x8XY4: This opcode adds the value of VY to VX.
-                                // Register VF is set to 1 when there is a carry and set to 0 when there isn’t.
                                 case 0x4:
                                     this.op_ADD_Vx_Vy(op, vx, vy);
                                     break;
 
-                                // 0x8XY5: VY is subtracted from VX. VF is set to 0 when
-                                // there's a borrow, and 1 when there isn't. 
                                 case 0x5:
                                     this.op_SUB_Vx_Vy(op, vx, vy);
                                     break;
 
-                                // 0x8XY6: Stores the least significant bit of VX in VF 
-                                // and then shifts VX to the right by 1.
                                 case 0x6:
                                     this.op_SHR_Vx_Vy(op, vx);
                                     break;
 
-                                // 0x8XY7: Sets VX to VY minus VX. VF is set to 0 when 
-                                // there's a borrow, and 1 when there isn't.
                                 case 0x7:
                                     this.op_SUBN_Vx_Vy(op, vx, vy);
                                     break;
 
-                                // 0x8XYE: Stores the most significant bit of VX in VF  
-                                // and then shifts VX to the left by 1.
                                 case 0xE:
                                     this.op_SHL_Vx_Vy(op, vx);
                                     break;
@@ -359,42 +333,33 @@ namespace Chip8.Core
                             break;
                         }
 
-                    // 0x9XY0: Skips the next instruction if VX doesn't equal VY.
-                    // (Usually the next instruction is a jump to skip a code block)    
                     case 0x9:
                         this.op_SNE_Vx_Vy(op, vx, vy);
                         break;
 
-                    // 0xANNN: Sets this.I to the address NNN
                     case 0xA:
                         this.op_LD_I_addr(op);
                         break;
 
-                    // 0xBNNN: Jumps to the address NNN plus V0.
                     case 0xB:
                         this.op_JP_V0_addr(op);
                         break;
 
-                    // 0xCXNN: Sets VX to the result of a bitwise and operation on a random number
-                    // (Typically: 0 to 255) and NN.
                     case 0xC:
                         this.op_RND_Vx_byte(op);
                         break;
 
-                    // 0xDXYN: Draws a sprite at coordinate (VX, VY) 
                     case 0xD:
                         this.op_DRW_Vx_Vy_nibble(op, vx, vy);
                         break;
 
                     case 0xE:
-                        switch (op.NN)
+                        switch (op.KK)
                         {
-                            // 0xEX9E: Skips the next instruction if the key stored in VX is pressed
                             case 0x9E:
                                 this.op_SKP_Vx(op, vx);
                                 break;
 
-                            // 0xEX9E: Skips the next instruction if the key stored in VX is pressed
                             case 0xA1:
                                 this.op_SKNP_Vx(op, vx);
                                 break;
@@ -406,54 +371,40 @@ namespace Chip8.Core
                         break;
 
                     case 0xF:
-                        switch (op.NN)
+                        switch (op.KK)
                         {
-                            // 0xFX07: Sets VX to the value of the delay timer.
                             case 0x07:
                                 this.op_LD_Vx_DT(op);
                                 break;
 
-                            // 0xFX0A: A key press is awaited, and then stored in VX.
-                            // (Blocking Operation. All instruction halted until next key event)
                             case 0x0A:
                                 this.op_LD_Vx_K(op);
                                 break;
 
-                            // 0xFX15: Sets the delay timer to VX.
                             case 0x15:
                                 this.op_LD_DT_Vx(op, vx);
                                 break;
 
-                            // 0xFX18: Sets the sound timer to VX.
                             case 0x18:
                                 this.op_LD_ST_Vx(op, vx);
                                 break;
 
-                            // 0xFX1E: Adds VX to this.I.
-                            // VF is set to 1 when there is a range overflow (this.I+VX>0xFFF), and to 0 when there isn't.
                             case 0x1E:
                                 this.op_ADD_I_Vx(op, vx);
                                 break;
 
-                            // 0xFX29: Sets this.I to the location of the sprite for the character in VX.
-                            // Characters 0x0-0xF are represented by a 4x5 font.
                             case 0x29:
                                 this.op_LD_F_Vx(op, vx);
                                 break;
 
-                            // 0x0033: Stores the Binary-coded decimal representation of VX at the addresses this.I, this.I plus 1, and this.I plus 2
                             case 0x33:
                                 this.op_LD_B_Vx(op, vx);
                                 break;
 
-                            // 0xFX55: Stores V0 to VX (including VX) in memory starting at address this.I.
-                            // The offset from this.I is increased by 1 for each value written, but this.I itself is left unmodified
                             case 0x55:
                                 this.op_LD_IPtr_Vx(op);
                                 break;
 
-                            // 0xFX65: Fills V0 to VX (including VX) with values from memory starting at address this.I.
-                            // The offset from this.I is increased by 1 for each value written, but this.I itself is left unmodified
                             case 0x65:
                                 this.op_LD_Vx_IPtr(op);
                                 break;
@@ -468,8 +419,6 @@ namespace Chip8.Core
                         Debug.Print($"Unknown opcode: {this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)}");
                         break;
                 }
-
-                // Execute this.Opcode
 
                 // Update timers
                 if (this.DT > 0)

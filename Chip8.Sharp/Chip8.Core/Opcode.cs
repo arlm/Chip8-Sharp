@@ -28,7 +28,7 @@ namespace Chip8.Core
 
         public DataWord OpCode => opCode;
 
-        public byte NN => nn;
+        public byte KK => nn;
         public ushort NNN => nnn;
         public byte N => n; 
         public byte X => x;
@@ -57,7 +57,7 @@ namespace Chip8.Core
 
         public override string ToString()
         {
-            return $"0x{OpCode.Word.ToString("X4", NumberFormatInfo.CurrentInfo)} (X: 0x{X.ToString("X1", NumberFormatInfo.CurrentInfo)}, Y: 0x{Y.ToString("X1", NumberFormatInfo.CurrentInfo)}, N: 0x{N.ToString("X1", NumberFormatInfo.CurrentInfo)}, NN: 0x{NN.ToString("X2", NumberFormatInfo.CurrentInfo)}, NNN: 0x{NNN.ToString("X3", NumberFormatInfo.CurrentInfo)} Type: 0x{Type.ToString("X1", NumberFormatInfo.CurrentInfo)})";
+            return $"0x{OpCode.Word.ToString("X4", NumberFormatInfo.CurrentInfo)} (X: 0x{X.ToString("X1", NumberFormatInfo.CurrentInfo)}, Y: 0x{Y.ToString("X1", NumberFormatInfo.CurrentInfo)}, N: 0x{N.ToString("X1", NumberFormatInfo.CurrentInfo)}, NN: 0x{KK.ToString("X2", NumberFormatInfo.CurrentInfo)}, NNN: 0x{NNN.ToString("X3", NumberFormatInfo.CurrentInfo)} Type: 0x{Type.ToString("X1", NumberFormatInfo.CurrentInfo)})";
         }
     }
 }
