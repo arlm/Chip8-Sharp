@@ -73,13 +73,6 @@ namespace Chip8.Core
         // The CHIP-8 has a HEX based keypad(0x0 - 0xF), you can use an array to store the current state of the key.
         internal byte[] Keys;
 
-        // If the draw flag is set, update the screen
-        // Because the system does not draw every cycle, we should set a draw flag when we need to update our screen.
-        // Only two opcodes should set this flag:
-        //    0x00E0 – Clears the screen
-        //    0xDXYN – Draws a sprite on the screen
-        internal bool ShouldDraw;
-
         // frame rate
         private DateTime clockDateTime;
 
@@ -105,6 +98,7 @@ namespace Chip8.Core
 
         private Random rand = new Random();
 
+        [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private SemaphoreSlim cpuBusy = new SemaphoreSlim(1, 1);
 
         [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
@@ -115,6 +109,8 @@ namespace Chip8.Core
 
         [SuppressMessage("Microsoft.Usage", "CA2213: Disposable fields should be disposed", Justification = "All disposing opportunities manually checked")]
         private CancellationTokenSource ctsGraphics = new CancellationTokenSource();
+
+        private bool firstCycle = true;
 
         // Initialize registers and memory once
         public CPU(uint foregroundColor = 0xFF_FF_FF_FF, uint backgroundColor = 0xFF_00_00_00)
@@ -220,6 +216,12 @@ namespace Chip8.Core
 
             try
             {
+                if (this.firstCycle)
+                {
+                    this.Draw();
+                    this.firstCycle = false;
+                }
+
                 var watch = Stopwatch.StartNew();
 
                 // Fetch this.Opcode
@@ -1127,35 +1129,7 @@ namespace Chip8.Core
 
                 if (this.VideoBuffer.IsDirty)
                 {
-                    try
-                    {
-                        this.gfxBusy.Wait(this.ctsGraphics.Token);
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        Debug.Print("GFX rendering operation cancelled");
-                        return;
-                    }
-
-                    try
-                    {
-                        watch.Restart();
-
-                        this.OnDraw?.Invoke(this.VideoBuffer.ToByteArray());
-
-                        watch.Stop();
-                        this.RenderingTime = (this.RenderingTime * SMOOTHING) + (watch.ElapsedTicks * (1 - SMOOTHING));
-
-                        currentDateTime = DateTime.Now;
-                        currentDeltaTime = (currentDateTime - this.frameDateTime).TotalSeconds;
-                        this.frameDateTime = currentDateTime;
-                        this.averageDeltaFrameTime = (this.averageDeltaFrameTime * SMOOTHING) + (currentDeltaTime * (1 - SMOOTHING));
-                        this.FrameRate = 1.0 / this.averageDeltaFrameTime;
-                    }
-                    finally
-                    {
-                        this.gfxBusy.Release();
-                    }
+                    this.Draw();
                 }
             }
             finally
@@ -1183,6 +1157,39 @@ namespace Chip8.Core
             this.ctsGraphics?.Cancel();
             this.ctsGraphics?.Dispose();
             this.gfxBusy?.Dispose();
+        }
+
+        private void Draw()
+        {
+            try
+            {
+                this.gfxBusy.Wait(this.ctsGraphics.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.Print("GFX rendering operation cancelled");
+                return;
+            }
+
+            try
+            {
+                var watch = Stopwatch.StartNew();
+
+                this.OnDraw?.Invoke(this.VideoBuffer.ToByteArray());
+
+                watch.Stop();
+                this.RenderingTime = (this.RenderingTime * SMOOTHING) + (watch.ElapsedTicks * (1 - SMOOTHING));
+
+                var currentDateTime = DateTime.Now;
+                var currentDeltaTime = (currentDateTime - this.frameDateTime).TotalSeconds;
+                this.frameDateTime = currentDateTime;
+                this.averageDeltaFrameTime = (this.averageDeltaFrameTime * SMOOTHING) + (currentDeltaTime * (1 - SMOOTHING));
+                this.FrameRate = 1.0 / this.averageDeltaFrameTime;
+            }
+            finally
+            {
+                this.gfxBusy.Release();
+            }
         }
     }
 }

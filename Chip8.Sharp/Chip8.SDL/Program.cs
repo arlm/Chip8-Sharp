@@ -62,9 +62,6 @@ namespace Chip8
         private static float zoom = 9.5f;
         private static SDL.SDL_Point screenCenter;
 
-        private static readonly Timer fpsTimer = new Timer();
-        private static int countedFrames;
-
         private static readonly byte[] keys =
         {
              0x00, 0x00, 0x00, 0x00,
@@ -138,10 +135,6 @@ namespace Chip8
                 x = WIDTH / 2,
                 y = HEIGHT / 2
             };
-
-            //Start counting frames per second
-            countedFrames = 0;
-            fpsTimer.Start();
 
             //While application is running
             while (!quit)
@@ -424,22 +417,11 @@ namespace Chip8
                 // If we press or release a key, we should store this state in the part that emulates the keypad
                 myChip8.SetKeys(keys);
 
-                // 60 Hz = 1000 ms /60 = 16.666 ms  => approx. 17 ms (17 ms * 60 = 1020 ms)
-                //SDL.SDL_Delay(17);
-
-                //Calculate and correct fps
-                var avgFPS = countedFrames / (fpsTimer.Ticks / 1000.0);
-
-                // It is possible for there to be a very small amount of time passed
-                // for the first frame and have it give us a really high fps.
-                // This is why we correct the value if it is really high.
-                if (avgFPS > 2000000)
-                {
-                    avgFPS = 0;
-                }
+                // Render the last shown image
+                pixelDebugTexture.Render(0, 0, null, 0, screenCenter);
 
                 //Set text to be rendered
-                timerText = $"Average {avgFPS.ToString("F2", NumberFormatInfo.CurrentInfo)} Frames Per Second";
+                timerText = $"Average {myChip8.FrameRate.ToString("F2", NumberFormatInfo.CurrentInfo)} Frames Per Second";
 
                 var color = white;
 
@@ -452,10 +434,6 @@ namespace Chip8
                     Debug.Print("Unable to render FPS texture!");
                 }
 
-                //Clear screen
-                //SDL.SDL_SetRenderDrawColor(driver.rendererPtr, 0xFF, 0xFF, 0xFF, 0xFF);
-                //SDL.SDL_RenderClear(driver.rendererPtr);
-
                 //Render textures
                 fpsTextTexture.Render((WIDTH - fpsTextTexture.Width) / 2, (HEIGHT - (int)(fpsTextTexture.Height * 1.75)));
 
@@ -464,8 +442,6 @@ namespace Chip8
                 {
                     Debug.Print("Failed to present render!");
                 }
-
-                ++countedFrames;
             }
 
             return 0;
@@ -529,7 +505,6 @@ namespace Chip8
             pixelDebugTexture.Render(0, 0, null, angle, screenCenter);
             return angle;
         }
-
 
         // SDL.SDL_Point screenCenter, float scale
         private static void DrawGraphics(byte[] graphics)
