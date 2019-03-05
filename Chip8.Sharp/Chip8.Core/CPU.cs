@@ -247,15 +247,15 @@ namespace Chip8.Core
                         switch (op.KK)
                         {
                             case 0xE0:
-                                this.op_CLS();
+                                this.op_CLS(ref op);
                                 break;
 
                             case 0xEE:
-                                this.op_RET();
+                                this.op_RET(ref op);
                                 break;
 
                             default:
-                                this.op_SYS_addr();
+                                this.op_SYS_addr(ref op);
                                 break;
                         }
                         break;
