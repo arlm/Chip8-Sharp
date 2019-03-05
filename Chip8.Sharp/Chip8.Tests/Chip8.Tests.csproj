@@ -36,8 +36,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Test.cs" />
+    <Compile Include="TestCPU.cs" />
     <Compile Include="Utils\GammaFunctions.cs" />
+    <Compile Include="TestOpcodes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
