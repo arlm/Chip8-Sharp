@@ -233,8 +233,10 @@ namespace Chip8.Core
 
                 var op = new Opcode(this.Opcode);
 
-                var vx = this.V[op.X];
-                var vy = this.V[op.Y];
+                ref var vx = ref this.V[op.X];
+                ref var vy = ref this.V[op.Y];
+                ref var v0 = ref this.V[0x0];
+                ref var vf = ref this.V[0xF];
 
                 switch (op.Type)
                 {
@@ -259,31 +261,31 @@ namespace Chip8.Core
                         break;
 
                     case 0x1:
-                        this.op_JP_addr(op);
+                        this.op_JP_addr(ref op);
                         break;
 
                     case 0x2:
-                        this.op_CALL_addr(op);
+                        this.op_CALL_addr(ref op);
                         break;
 
                     case 0x3:
-                        this.op_SE_Vx_byte(op, vx);
+                        this.op_SE_Vx_byte(ref op, ref vx);
                         break;
 
                     case 0x4:
-                        this.op_SNE_Vx_byte(op, vx);
+                        this.op_SNE_Vx_byte(ref op, ref vx);
                         break;
 
                     case 0x5:
-                        this.op_SE_Vx_Vy(op, vx, vy);
+                        this.op_SE_Vx_Vy(ref op, ref vx, ref vy);
                         break;
 
                     case 0x6:
-                        this.op_LD_Vx_byte(op);
+                        this.op_LD_Vx_byte(ref op, ref vx);
                         break;
 
                     case 0x7:
-                        this.op_ADD_Vx_byte(op);
+                        this.op_ADD_Vx_byte(ref op, ref vx);
                         break;
 
                     case 0x8:
@@ -291,39 +293,39 @@ namespace Chip8.Core
                             switch (op.N)
                             {
                                 case 0x0:
-                                    this.op_LD_Vx_Vy(op, vy);
+                                    this.op_LD_Vx_Vy(ref op, ref vx, ref vy);
                                     break;
 
                                 case 0x1:
-                                    this.op_OR_Vx_Vy(op, vy);
+                                    this.op_OR_Vx_Vy(ref op, ref vx, ref vy);
                                     break;
 
                                 case 0x2:
-                                    this.op_AND_Vx_Vy(op, vy);
+                                    this.op_AND_Vx_Vy(ref op, ref vx, ref vy);
                                     break;
 
                                 case 0x3:
-                                    this.op_XOR_Vx_Vy(op, vy);
+                                    this.op_XOR_Vx_Vy(ref op, ref vx, ref vy);
                                     break;
 
                                 case 0x4:
-                                    this.op_ADD_Vx_Vy(op, vx, vy);
+                                    this.op_ADD_Vx_Vy(ref op, ref vx, ref vy, ref vf);
                                     break;
 
                                 case 0x5:
-                                    this.op_SUB_Vx_Vy(op, vx, vy);
+                                    this.op_SUB_Vx_Vy(ref op, ref vx, ref vy, ref vf);
                                     break;
 
                                 case 0x6:
-                                    this.op_SHR_Vx_Vy(op, vx);
+                                    this.op_SHR_Vx_Vy(ref op, ref vx, ref vx);
                                     break;
 
                                 case 0x7:
-                                    this.op_SUBN_Vx_Vy(op, vx, vy);
+                                    this.op_SUBN_Vx_Vy(ref op, ref vx, ref vy, ref vf);
                                     break;
 
                                 case 0xE:
-                                    this.op_SHL_Vx_Vy(op, vx);
+                                    this.op_SHL_Vx_Vy(ref op, ref vx, ref vx);
                                     break;
 
                                 default:
@@ -334,34 +336,34 @@ namespace Chip8.Core
                         }
 
                     case 0x9:
-                        this.op_SNE_Vx_Vy(op, vx, vy);
+                        this.op_SNE_Vx_Vy(ref op, ref vx, ref vy);
                         break;
 
                     case 0xA:
-                        this.op_LD_I_addr(op);
+                        this.op_LD_I_addr(ref op);
                         break;
 
                     case 0xB:
-                        this.op_JP_V0_addr(op);
+                        this.op_JP_V0_addr(ref op, ref v0);
                         break;
 
                     case 0xC:
-                        this.op_RND_Vx_byte(op);
+                        this.op_RND_Vx_byte(ref op, ref vx);
                         break;
 
                     case 0xD:
-                        this.op_DRW_Vx_Vy_nibble(op, vx, vy);
+                        this.op_DRW_Vx_Vy_nibble(ref op, ref vx, ref vy, ref vf);
                         break;
 
                     case 0xE:
                         switch (op.KK)
                         {
                             case 0x9E:
-                                this.op_SKP_Vx(op, vx);
+                                this.op_SKP_Vx(ref op, ref vx);
                                 break;
 
                             case 0xA1:
-                                this.op_SKNP_Vx(op, vx);
+                                this.op_SKNP_Vx(ref op, ref vx);
                                 break;
 
                             default:
@@ -374,39 +376,39 @@ namespace Chip8.Core
                         switch (op.KK)
                         {
                             case 0x07:
-                                this.op_LD_Vx_DT(op);
+                                this.op_LD_Vx_DT(ref op, ref vx);
                                 break;
 
                             case 0x0A:
-                                this.op_LD_Vx_K(op);
+                                this.op_LD_Vx_K(ref op, ref vx);
                                 break;
 
                             case 0x15:
-                                this.op_LD_DT_Vx(op, vx);
+                                this.op_LD_DT_Vx(ref op, ref vx);
                                 break;
 
                             case 0x18:
-                                this.op_LD_ST_Vx(op, vx);
+                                this.op_LD_ST_Vx(ref op, ref vx);
                                 break;
 
                             case 0x1E:
-                                this.op_ADD_I_Vx(op, vx);
+                                this.op_ADD_I_Vx(ref op, ref vx);
                                 break;
 
                             case 0x29:
-                                this.op_LD_F_Vx(op, vx);
+                                this.op_LD_F_Vx(ref op, ref vx);
                                 break;
 
                             case 0x33:
-                                this.op_LD_B_Vx(op, vx);
+                                this.op_LD_B_Vx(ref op, ref vx);
                                 break;
 
                             case 0x55:
-                                this.op_LD_IPtr_Vx(op);
+                                this.op_LD_IPtr_Vx(ref op);
                                 break;
 
                             case 0x65:
-                                this.op_LD_Vx_IPtr(op);
+                                this.op_LD_Vx_IPtr(ref op);
                                 break;
 
                             default:

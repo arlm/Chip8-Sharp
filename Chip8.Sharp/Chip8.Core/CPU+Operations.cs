@@ -61,7 +61,7 @@ namespace Chip8.Core
         /// 0x1nnn Opcode: Jumps to address nnn
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_JP_addr(Opcode op)
+        internal void op_JP_addr(ref Opcode op)
         {
             // Now that we have stored the program counter, we can set it to the address NNN.
             // Remember, because we’re calling a subroutine at a specific address, 
@@ -81,7 +81,7 @@ namespace Chip8.Core
         /// 0x2nnn Opcode: This opcode calls the subroutine at address nnn
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_CALL_addr(Opcode op)
+        internal void op_CALL_addr(ref Opcode op)
         {
             if (this.SP > 0xF)
             {
@@ -109,7 +109,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Usually the next instruction is a jump to skip a code block</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SE_Vx_byte(Opcode op, byte vx)
+        internal void op_SE_Vx_byte(ref Opcode op, ref byte vx)
         {
             if (vx == op.KK)
             {
@@ -134,7 +134,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Usually the next instruction is a jump to skip a code block</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SNE_Vx_byte(Opcode op, byte vx)
+        internal void op_SNE_Vx_byte(ref Opcode op, ref byte vx)
         {
             if (vx != op.KK)
             {
@@ -158,7 +158,7 @@ namespace Chip8.Core
         /// 0x5xy0 Opcode: Skips the next instruction if Vx is equal Vy
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SE_Vx_Vy(Opcode op, byte vx, byte vy)
+        internal void op_SE_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy)
         {
             if (op.X > 0xF)
             {
@@ -192,14 +192,14 @@ namespace Chip8.Core
         /// 0x6xkk Opcode: Sets Vy to kk
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_Vx_byte(Opcode op)
+        internal void op_LD_Vx_byte(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
                 throw new InvalidOperationException("LD Vx, byte operation should not use X bigger than 0xF");
             }
 
-            this.V[op.X] = op.KK;
+            vx = op.KK;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -213,14 +213,14 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Carry flag is not changed</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_ADD_Vx_byte(Opcode op)
+        internal void op_ADD_Vx_byte(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
                 throw new InvalidOperationException("ADD Vx, byte operation should not use X bigger than 0xF");
             }
 
-            this.V[op.X] += op.KK;
+            vx += op.KK;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -233,7 +233,7 @@ namespace Chip8.Core
         /// 0x8xy0 Opcode: Sets Vx to the value of Vy
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_Vx_Vy(Opcode op, byte vy)
+        internal void op_LD_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy)
         {
             if (op.X > 0xF)
             {
@@ -245,7 +245,7 @@ namespace Chip8.Core
                 throw new InvalidOperationException("LD Vx, Vy operation should not use Y bigger than 0xF");
             }
 
-            this.V[op.X] = vy;
+            vx = vy;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -259,7 +259,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Bitwise OR operation</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_OR_Vx_Vy(Opcode op, byte vy)
+        internal void op_OR_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy)
         {
             if (op.X > 0xF)
             {
@@ -271,7 +271,7 @@ namespace Chip8.Core
                 throw new InvalidOperationException("OR Vx, Vy operation should not use Y bigger than 0xF");
             }
 
-            this.V[op.X] |= vy;
+            vx |= vy;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -285,7 +285,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Bitwise AND operation</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_AND_Vx_Vy(Opcode op, byte vy)
+        internal void op_AND_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy)
         {
             if (op.X > 0xF)
             {
@@ -297,7 +297,7 @@ namespace Chip8.Core
                 throw new InvalidOperationException("AND Vx, Vy operation should not use Y bigger than 0xF");
             }
 
-            this.V[op.X] &= vy;
+            vx &= vy;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -311,7 +311,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Bitwise XOR operation</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_XOR_Vx_Vy(Opcode op, byte vy)
+        internal void op_XOR_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy)
         {
             if (op.X > 0xF)
             {
@@ -323,7 +323,7 @@ namespace Chip8.Core
                 throw new InvalidOperationException("XOR Vx, Vy operation should not use Y bigger than 0xF");
             }
 
-            this.V[op.X] ^= vy;
+            vx ^= vy;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -337,7 +337,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Register VF is set to 1 when there is a carry and set to 0 when there isn’t</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_ADD_Vx_Vy(Opcode op, byte vx, byte vy)
+        internal void op_ADD_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy, ref byte vf)
         {
             if (op.X >= 0xF)
             {
@@ -351,7 +351,7 @@ namespace Chip8.Core
 
             if (vy > (0xFF - vx))
             {
-                this.V[op.X] += vy;
+                vx += vy;
 
                 // Carry
                 // Because the register can only store values from 0 to 255 (8 bit value),
@@ -359,13 +359,13 @@ namespace Chip8.Core
                 // it can’t be stored in the register (or actually it starts counting from 0 again).
                 // If the sum of VX and VY is larger than 255, 
                 // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
-                this.V[0xF] = 1;
+                vf = 1;
             }
             else
             {
-                this.V[op.X] += vy;
+                vx += vy;
 
-                this.V[0xF] = 0;
+                vf = 0;
             }
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -380,7 +380,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>VF is set to 0 when there's a borrow, and 1 when there isn't</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SUB_Vx_Vy(Opcode op, byte vx, byte vy)
+        internal void op_SUB_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy, ref byte vf)
         {
             if (op.X >= 0xF)
             {
@@ -394,7 +394,7 @@ namespace Chip8.Core
 
             if (vx > vy)
             {
-                this.V[op.X] -= vy;
+                vx -= vy;
 
                 // Carry
                 // Because the register can only store values from 0 to 255 (8 bit value),
@@ -402,13 +402,13 @@ namespace Chip8.Core
                 // it can’t be stored in the register (or actually it starts counting from 0 again).
                 // If the sum of VX and VY is larger than 255, 
                 // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
-                this.V[0xF] = 1;
+                vf = 1;
             }
             else
             {
-                this.V[op.X] -= vy;
+                vx -= vy;
 
-                this.V[0xF] = 0;
+                vf = 0;
             }
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -422,7 +422,7 @@ namespace Chip8.Core
         /// 0x8xy6 Opcode: Stores the least significant bit of Vx in VF and then shifts Vx to the right by 1
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SHR_Vx_Vy(Opcode op, byte vx)
+        internal void op_SHR_Vx_Vy(ref Opcode op, ref byte vx, ref byte vf)
         {
             if (op.X >= 0xF)
             {
@@ -434,8 +434,8 @@ namespace Chip8.Core
                 throw new InvalidOperationException("SHR Vx, {Vy} operation should not use Y as 0xF or bigger (the carry flag register)");
             }
 
-            this.V[0xF] = unchecked((byte)(vx & 0x01));
-            this.V[op.X] >>= 1;
+            vf = unchecked((byte)(vx & 0x01));
+            vx >>= 1;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -449,7 +449,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>VF is set to 0 when there's a borrow, and 1 when there isn't</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SUBN_Vx_Vy(Opcode op, byte vx, byte vy)
+        internal void op_SUBN_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy, ref byte vf)
         {
             if (op.X >= 0xF)
             {
@@ -463,7 +463,7 @@ namespace Chip8.Core
 
             if (vy > vx)
             {
-                this.V[op.X] = unchecked((byte)(vy - vx));
+                vx = unchecked((byte)(vy - vx));
 
                 // Carry
                 // Because the register can only store values from 0 to 255 (8 bit value),
@@ -471,13 +471,13 @@ namespace Chip8.Core
                 // it can’t be stored in the register (or actually it starts counting from 0 again).
                 // If the sum of VX and VY is larger than 255, 
                 // we use the carry flag to let the system know that the total sum of both values was indeed larger than 255. 
-                this.V[0xF] = 1;
+                vf = 1;
             }
             else
             {
-                this.V[op.X] = unchecked((byte)(vy - vx));
+                vx = unchecked((byte)(vy - vx));
 
-                this.V[0xF] = 0;
+                vf = 0;
             }
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
@@ -491,7 +491,7 @@ namespace Chip8.Core
         /// 0x8xyE Opcode: Stores the most significant bit of Vx in VF and then shifts Vx to the left by 1
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SHL_Vx_Vy(Opcode op, byte vx)
+        internal void op_SHL_Vx_Vy(ref Opcode op, ref byte vx, ref byte vf)
         {
             if (op.X >= 0xF)
             {
@@ -503,8 +503,8 @@ namespace Chip8.Core
                 throw new InvalidOperationException("SUBN Vx, Vy operation should not use Y as 0xF or bigger (the carry flag register)");
             }
 
-            this.V[0xF] = unchecked((byte)((vx & 0x80) >> 7));
-            this.V[op.X] <<= 1;
+            vf = unchecked((byte)((vx & 0x80) >> 7));
+            vx <<= 1;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -518,7 +518,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Usually the next instruction is a jump to skip a code block</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SNE_Vx_Vy(Opcode op, byte vx, byte vy)
+        internal void op_SNE_Vx_Vy(ref Opcode op, ref byte vx, ref byte vy)
         {
             if (op.X > 0xF)
             {
@@ -552,7 +552,7 @@ namespace Chip8.Core
         /// 0xAnnn Opcode: Sets I to the address nnn
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_I_addr(Opcode op)
+        internal void op_LD_I_addr(ref Opcode op)
         {
             this.I = op.NNN;
 
@@ -567,23 +567,23 @@ namespace Chip8.Core
         /// 0xBnnn Opcode: Jumps to the address nnn plus V0
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_JP_V0_addr(Opcode op)
+        internal void op_JP_V0_addr(ref Opcode op, ref byte v0)
         {
             // Now that we have stored the program counter, we can set it to the address NNN.
             // Remember, because we’re calling a subroutine at a specific address, 
             // you should not increase the program counter by two.
-            var dest = this.V[0] + op.NNN;
+            var dest = v0 + op.NNN;
 
             if (dest < 0x200)
             {
-                var message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + this.V[0] (0x{this.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})";
+                var message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + v0 (0x{v0.ToString("X2", NumberFormatInfo.CurrentInfo)})";
                 Debug.Print(message);
                 throw new InvalidOperationException(message);
             }
 
             if (dest > 0xFFF)
             {
-                var message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + this.V[0] (0x{this.V[0].ToString("X2", NumberFormatInfo.CurrentInfo)})";
+                var message = $"Illegal jump target: 0x{dest.ToString("X4", NumberFormatInfo.CurrentInfo)} => 0x{this.Opcode.ToString("X4", NumberFormatInfo.CurrentInfo)} + v0 (0x{v0.ToString("X2", NumberFormatInfo.CurrentInfo)})";
                 Debug.Print(message);
                 throw new InvalidOperationException(message);
             }
@@ -595,14 +595,14 @@ namespace Chip8.Core
         /// 0xCxkk Opcode: Sets Vx to the result of a bitwise and operation on a random number (Typically: 0 to 255) and kk
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_RND_Vx_byte(Opcode op)
+        internal void op_RND_Vx_byte(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
                 throw new InvalidOperationException("RND Vx, byte operation should not use X bigger than 0xF");
             }
 
-            this.V[op.X] = unchecked((byte)(this.rand.Next(0, 0x100) & op.KK));
+            vx = unchecked((byte)(this.rand.Next(0, 0x100) & op.KK));
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -616,7 +616,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Sets VF to 1 on collision, 0 otherwise</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_DRW_Vx_Vy_nibble(Opcode op, byte vx, byte vy)
+        internal void op_DRW_Vx_Vy_nibble(ref Opcode op, ref byte vx, ref byte vy, ref byte vf)
         {
             // Fetch the position and height of the sprite
             ushort height = op.N;
@@ -624,7 +624,7 @@ namespace Chip8.Core
             ushort pixel;
 
             // Reset register VF
-            this.V[0xF] = 0;
+            vf = 0;
 
             // Loop over each row
             for (int row = 0; row < height; row++)
@@ -643,7 +643,7 @@ namespace Chip8.Core
                         //  If it is set, we need to register the collision by setting the VF register
                         if (this.VideoBuffer[vx + column, vy + row])
                         {
-                            this.V[0xF] = 1;
+                            vf = 1;
                         }
 
                         // Set the pixel value by using XOR
@@ -663,7 +663,7 @@ namespace Chip8.Core
         /// 0xEx9E Opcode: Skips the next instruction if the key stored in Vx is pressed
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SKP_Vx(Opcode op, byte vx)
+        internal void op_SKP_Vx(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
@@ -693,7 +693,7 @@ namespace Chip8.Core
         /// 0xExA1 Opcode: Skips the next instruction if the key stored in Vx is not pressed
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_SKNP_Vx(Opcode op, byte vx)
+        internal void op_SKNP_Vx(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
@@ -723,14 +723,14 @@ namespace Chip8.Core
         /// 0xFx07 Opcode: Sets Vx to the value of the delay timer
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_Vx_DT(Opcode op)
+        internal void op_LD_Vx_DT(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
                 throw new InvalidOperationException("LD Vx, this.DT operation should not use X bigger than 0xF");
             }
 
-            this.V[op.X] = this.DT;
+            vx = this.DT;
 
             // Because every instruction is 2 bytes long, we need to increment the program counter by two after every executed opcode.
             // This is true unless you jump to a certain address in the memory or if you call a subroutine
@@ -744,7 +744,9 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Blocking Operation. All instruction execution is halted until next key event</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_Vx_K(Opcode op)
+        [SuppressMessage("Microsoft.Usage", "CA1801", Justification = "Keeping parameter op to mantain coherence on the API")]
+        [SuppressMessage("Microsoft.CSharp", "CC0057", Justification = "Keeping parameter op to mantain coherence on the API")]
+        internal void op_LD_Vx_K(ref Opcode op, ref byte vx)
         {
             var keyPressed = false;
 
@@ -757,7 +759,7 @@ namespace Chip8.Core
 
                     if (keyPressed)
                     {
-                        this.V[op.X] = unchecked((byte)index);
+                        vx = unchecked((byte)index);
                         break;
                     }
                 }
@@ -776,7 +778,7 @@ namespace Chip8.Core
         /// 0xFx15 Opcode: Sets the delay timer to Vx
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_DT_Vx(Opcode op, byte vx)
+        internal void op_LD_DT_Vx(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
@@ -796,7 +798,7 @@ namespace Chip8.Core
         /// 0xFx18 Opcode: Sets the sound timer to Vx
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_ST_Vx(Opcode op, byte vx)
+        internal void op_LD_ST_Vx(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
@@ -822,7 +824,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>VF is set to 1 when there is a range overflow (I+Vx>0xFFF), and to 0 when there isn't</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_ADD_I_Vx(Opcode op, byte vx)
+        internal void op_ADD_I_Vx(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
@@ -848,7 +850,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>Characters 0x0-0xF are represented by a 4x5 font</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_F_Vx(Opcode op, byte vx)
+        internal void op_LD_F_Vx(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
@@ -873,7 +875,7 @@ namespace Chip8.Core
         /// 0xFx33 Opcode: Stores the Binary-coded decimal representation of Vx at the addresses I, I + 1, and I + 2
         /// </summary>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_B_Vx(Opcode op, byte vx)
+        internal void op_LD_B_Vx(ref Opcode op, ref byte vx)
         {
             if (op.X > 0xF)
             {
@@ -906,7 +908,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>The offset from I is increased by 1 for each value written, but I itself is left unmodified</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_IPtr_Vx(Opcode op)
+        internal void op_LD_IPtr_Vx(ref Opcode op)
         {
             if (op.X > 0xF)
             {
@@ -942,7 +944,7 @@ namespace Chip8.Core
         /// </summary>
         /// <remarks>The offset from I is increased by 1 for each value written, but I itself is left unmodified</remarks>
         [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Using op_ prefix for all CPU instructions methods")]
-        internal void op_LD_Vx_IPtr(Opcode op)
+        internal void op_LD_Vx_IPtr(ref Opcode op)
         {
             if (op.X > 0xF)
             {
